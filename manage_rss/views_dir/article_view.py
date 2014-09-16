@@ -28,10 +28,10 @@ def parser_google_alert_view(request):
             '')
 
         url = feed['entries'][i].link
-
-        #将google alert的rss中的链接去掉google网站的前缀和后缀
-        url = url.split('&ampct')
-        url = url[0].replace("https://www.google.com/url?rct=j&ampsa=t&ampurl=", '')
+        url = unquote(url)
+        # 将google alert的rss中的链接去掉google网站的前缀和后缀
+        url = url.split('&ct')
+        url = url[0].replace("https://www.google.com/url?rct=j&sa=t&url=", '')
 
         (article, created) = Article.objects.get_or_create(url__exact=url,
                                                            defaults={'title': title, 'context': description, 'url': url,

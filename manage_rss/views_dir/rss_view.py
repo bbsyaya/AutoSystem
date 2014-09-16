@@ -31,7 +31,6 @@ class unpub_article_feed(Feed):
 
 
     def items(self, obj):
-        oo = Article.objects.filter(pub_status__exact='unpublish').order_by('-publish_date')[:10]
         return Article.objects.filter(pub_status__exact='unpublish').order_by('-publish_date')[:10]
 
     def item_title(self, item):
@@ -42,6 +41,8 @@ class unpub_article_feed(Feed):
     def item_description(self, item):
         from django.core.urlresolvers import reverse
 
+        #https://docs.djangoproject.com/en/dev/ref/contrib/sites/#getting-the-current-domain-for-full-urls
+        #使用django自带的Site模块获取网站的网址
         set_article_status_url = Site.objects.get_current().domain + reverse('set_article_status_url', kwargs={'article_id': int(item.id),
                                                                                       'publish_status': 'publishable'})
 
@@ -51,5 +52,5 @@ class unpub_article_feed(Feed):
         return context
 
 
-def item_link(self, item):
-    return item.url
+    def item_link(self, item):
+        return item.url
