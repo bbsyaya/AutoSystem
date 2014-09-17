@@ -1,12 +1,13 @@
 from django.db import models
 from tinymce.models import HTMLField
+from autoslug import AutoSlugField
 
 # Create your models here.
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
-    keywords = models.CharField(max_length=100)
     remark = models.CharField(max_length=300, null=True, blank=True)
+    slug = AutoSlugField(populate_from='name', always_update=True)
 
     def __str__(self):
         return self.name
@@ -21,8 +22,8 @@ class Rss(models.Model):
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=50, choices=TYPE_CHOICE, default='normal_rss')
     url = models.CharField(max_length=300)
-    remark = models.CharField(max_length=300)
-    group = models.ForeignKey('Group')
+    remark = models.CharField(max_length=300, null=True, blank=True)
+    group = models.ForeignKey('Group', null=True, blank=True)
 
 
     def __str__(self):
@@ -39,26 +40,26 @@ class Article(models.Model):
         ('r', 'Read'),
     )
 
-    PUB_STATUS_CHOICE = (
-        ('unpublish', 'unPublish'),
-        ('published', 'Published'),
-        ('publishable', 'Publishable'),
-        ('decline', 'Decline'),
+    REVIEW_CHOICE = (
+        ('p', 'Publishable'),
+        ('d', 'Decline'),
     )
+
 
     url = models.URLField(max_length=300)
     title = models.CharField(max_length=300)
     context = HTMLField()
     read_status = models.CharField(max_length=1, choices=READ_STATUS_CHOICE, default='u')
-    pub_status = models.CharField(max_length=1, choices=PUB_STATUS_CHOICE, default='unpublish')
+    review_status = models.CharField(max_length=1, choices=REVIEW_CHOICE, default='d')
     grab_date = models.DateTimeField(auto_now_add=True)
-    publish_date = models.DateTimeField(null=True, blank=True)
     rss = models.ForeignKey('Rss')
+    pub_info = models.ForeignKey('PubInfo',null=True)
 
 
     # https://docs.djangoproject.com/en/dev/ref/urlresolvers/#django.core.urlresolvers.reverse
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
+
         return reverse('article_url', kwargs={'article_id': str(self.id)})
 
 
@@ -67,3 +68,9 @@ class Site(models.Model):
     url = models.URLField(max_length=300)
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
+
+
+class PubInfo(models.Model):
+    site = models.ForeignKey('Site')
+    post_id = models.CharField(max_length=6)
+    pub_date = models.DateTimeField(null=True, blank=True)
