@@ -26,5 +26,5 @@ urlpatterns = [
 
     #发布文章
     #例如 http://127.0.0.1:8000/manage_rss/pub_article/1/5/
-    url(r'^pub_article/(?P<site_id>\d+)/(?P<article_id>\d+)/$', pub_article_view),
+    url(r'^pub_article/(?P<site_id>\d+)/(?P<article_id>\d+)/$', pub_article_view, name = 'pub_article_url'),
 ]

@@ -1,3 +1,6 @@
+# encoding = utf-8
+from __future__ import unicode_literals
+from django.core.urlresolvers import reverse
 from django.db import models
 from tinymce.models import HTMLField
 from autoslug import AutoSlugField
@@ -8,6 +11,7 @@ class Group(models.Model):
     name = models.CharField(max_length=100)
     remark = models.CharField(max_length=300, null=True, blank=True)
     slug = AutoSlugField(populate_from='name', always_update=True)
+    site = models.ForeignKey('Site')
 
     def __str__(self):
         return self.name
@@ -45,7 +49,6 @@ class Article(models.Model):
         ('d', 'Decline'),
     )
 
-
     url = models.URLField(max_length=300)
     title = models.CharField(max_length=300)
     context = HTMLField()
@@ -53,14 +56,25 @@ class Article(models.Model):
     review_status = models.CharField(max_length=1, choices=REVIEW_CHOICE, default='d')
     grab_date = models.DateTimeField(auto_now_add=True)
     rss = models.ForeignKey('Rss')
-    pub_info = models.ForeignKey('PubInfo',null=True)
+    pub_info = models.ForeignKey('PubInfo', null=True, blank=True)
 
 
     # https://docs.djangoproject.com/en/dev/ref/urlresolvers/#django.core.urlresolvers.reverse
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
-
         return reverse('article_url', kwargs={'article_id': str(self.id)})
+
+    def pub_article(self):
+        if self.pub_info:
+            post_link = self.pub_info.site.url + '?p=' + self.pub_info.post_id
+            html = "<a href='%s' target='_blank'>Link</a>" %post_link
+        else:
+            html = "<a href='%s' target='_blank'>Pub</a>" % reverse("pub_article_url",
+                                                                    args=[self.rss.group.site.pk, self.pk])
+        return html
+
+    # If you'd rather not escape the output of the method, give the method an allow_tags attribute whose value is True
+    pub_article.allow_tags = True
+    pub_article.short_description = 'Pub Article'
 
 
 class Site(models.Model):
@@ -69,8 +83,15 @@ class Site(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
+
 
 class PubInfo(models.Model):
     site = models.ForeignKey('Site')
     post_id = models.CharField(max_length=6)
     pub_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        str = self.site.name + ' ' + self.post_id
+        return str

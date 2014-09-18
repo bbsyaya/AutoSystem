@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for AutoSystem project.
 
@@ -82,6 +83,7 @@ USE_TZ = True
 
 
 # add 2014-9-14
+# django.contrib.staticfiles 要求设置STATIC_ROOT和MEDIA_ROOT，这样能自动收集所有的静态文件到指定的目录下
 STATIC_ROOT = BASE_DIR + '/static/'
 
 MEDIA_ROOT = BASE_DIR + '/media/'
@@ -93,7 +95,10 @@ STATIC_URL = '/static/'
 
 SITE_ID = 1
 
-#http://stackoverflow.com/questions/20873625/pycharm-code-inspection-complains-template-file-not-found-how-to-fix
+TEMPLATE_DIRS = ( os.path.join(BASE_DIR, 'templates'),)
+
+
+# http://stackoverflow.com/questions/20873625/pycharm-code-inspection-complains-template-file-not-found-how-to-fix
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',

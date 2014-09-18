@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import render_to_response, get_object_or_404
 from manage_rss.function.wordpress import new_post
-from manage_rss.models import Rss, Article, Group
+from manage_rss.models import Rss, Article, Group, PubInfo, Site
 from urllib import unquote
 
 __author__ = 'GoTop'
@@ -11,7 +11,7 @@ import feedparser
 
 def get_rss_article_view(request, group_name):
     """
-    获取google alert的rss链接的文章并保存
+    获取rss链接的文章并保存
     :param request:
     :return:
     """
@@ -80,6 +80,9 @@ def pub_article_view(request, site_id, article_id):
     """
     article = get_object_or_404(Article, pk=article_id)
     post_id = new_post(site_id, article_id)
+    site = Site.objects.get(pk = site_id)
+    pub_info = PubInfo.objects.create(site=site, post_id=post_id)
     article.pub_status = 'published'
+    article.pub_info = pub_info
     article.save()
     return render_to_response('result.html', {'text': article.title + '已发布id为article_id的文章，post id为 post_id'})
