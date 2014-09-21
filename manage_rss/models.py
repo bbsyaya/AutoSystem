@@ -16,6 +16,22 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
+    def article_num(self):
+        rss_set = Rss.objects.filter(group = self)
+        article_num = 0
+        for rss in rss_set:
+            article_num = article_num +Article.objects.filter(rss=rss).count()
+        return article_num
+    article_num.short_description = 'Article Num'
+
+    def grab_article(self):
+        html = "<a href='%s' target='_blank'>Grab</a>" % reverse("grab_article_of_group", args=[self.pk])
+        return html
+
+    # If you'd rather not escape the output of the method, give the method an allow_tags attribute whose value is True
+    grab_article.allow_tags = True
+    grab_article.short_description = 'Grab Article'
+
 
 class Rss(models.Model):
     TYPE_CHOICE = (
@@ -36,6 +52,10 @@ class Rss(models.Model):
 
     class Meta:
         verbose_name_plural = "rss"
+
+    def article_num(self):
+        return Article.objects.filter(rss=self.id).count()
+    article_num.short_description = 'Article Num'
 
 
 class Article(models.Model):
@@ -59,14 +79,15 @@ class Article(models.Model):
     pub_info = models.ForeignKey('PubInfo', null=True, blank=True)
 
 
-    # https://docs.djangoproject.com/en/dev/ref/urlresolvers/#django.core.urlresolvers.reverse
-    def get_absolute_url(self):
-        return reverse('article_url', kwargs={'article_id': str(self.id)})
+    def group(self):
+        return self.rss.group
+
+    group.short_description = 'Group'
 
     def pub_article(self):
         if self.pub_info:
             post_link = self.pub_info.site.url + '?p=' + self.pub_info.post_id
-            html = "<a href='%s' target='_blank'>Link</a>" %post_link
+            html = "<a href='%s' target='_blank'>Link</a>" % post_link
         else:
             html = "<a href='%s' target='_blank'>Pub</a>" % reverse("pub_article_url",
                                                                     args=[self.rss.group.site.pk, self.pk])
@@ -75,6 +96,13 @@ class Article(models.Model):
     # If you'd rather not escape the output of the method, give the method an allow_tags attribute whose value is True
     pub_article.allow_tags = True
     pub_article.short_description = 'Pub Article'
+
+    # https://docs.djangoproject.com/en/dev/ref/urlresolvers/#django.core.urlresolvers.reverse
+    def get_absolute_url(self):
+        return reverse('article_url', kwargs={'article_id': str(self.id)})
+
+    def __str__(self):
+        return self.title
 
 
 class Site(models.Model):

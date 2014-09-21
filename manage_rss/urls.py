@@ -3,13 +3,13 @@ from django.conf.urls import url
 from manage_rss import views
 
 from manage_rss.views_dir.article_view import get_rss_article_view, pub_article_view, \
-    set_publish_status_view
+    set_publish_status_view, get_categories_view
 from manage_rss.views_dir.rss_view import unpub_article_feed
 
 urlpatterns = [
     # 获取google alert的rss链接的文章并保存
-    # 例如 http://127.0.0.1:8000/manage_rss/get_rss_article
-    url(r'^get_rss_article$', get_rss_article_view),
+    # 例如 http://127.0.0.1:8000/manage_rss/get_rss_article/1
+    url(r'^get_rss_article/(?P<group_id>[-\w]+)$', get_rss_article_view, name = 'grab_article_of_group'),
 
     #使用下载到本地Article数据表中的文章生成RSS
     #例如 http://127.0.0.1:8000/manage_rss/acmilan/rss/
@@ -27,4 +27,8 @@ urlpatterns = [
     #发布文章
     #例如 http://127.0.0.1:8000/manage_rss/pub_article/1/5/
     url(r'^pub_article/(?P<site_id>\d+)/(?P<article_id>\d+)/$', pub_article_view, name = 'pub_article_url'),
+
+    #获取site_id的所有category
+    #例如 http://127.0.0.1:8000/manage_rss/get_categories/1/
+    url(r'^get_categories/(?P<site_id>\d+)/$', get_categories_view),
 ]

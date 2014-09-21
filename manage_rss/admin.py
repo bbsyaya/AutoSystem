@@ -8,12 +8,18 @@ from manage_rss.models import Article, Rss, Group, Site, PubInfo
 class RssInline(admin.TabularInline):
     model = Rss
 
+
+class ArticleInline(admin.TabularInline):
+    model = Article
+
+
 class PubInfoInline(admin.TabularInline):
     model = PubInfo
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'url', 'grab_date', 'read_status', 'review_status', 'rss', 'pub_info', 'pub_article')
+    list_display = (
+    'title', 'url', 'grab_date', 'read_status', 'review_status', 'group', 'rss', 'pub_info', 'pub_article')
 
     actions = ['make_publishable']
 
@@ -25,17 +31,19 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 class RssAdmin(admin.ModelAdmin):
-    list_display = ( 'name', 'group', 'url', 'remark')
+    list_display = ( 'name', 'group', 'url', 'remark', 'article_num')
+    inlines = [ArticleInline, ]
 
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'remark')
+    list_display = ('name', 'slug', 'remark', 'grab_article', 'article_num')
     # 在group的修改页面显示它的rss模块
     inlines = [RssInline, ]
 
 
 class SiteAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'username')
+
 
 class PubInfoAdmin(admin.ModelAdmin):
     list_display = ('site', 'post_id')

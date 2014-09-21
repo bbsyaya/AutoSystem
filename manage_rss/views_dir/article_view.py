@@ -1,7 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django.shortcuts import render_to_response, get_object_or_404
-from manage_rss.function.wordpress import new_post
+from manage_rss.function.rss import gen_fivefilters_rss
+from manage_rss.function.wordpress import new_post, get_categories
 from manage_rss.models import Rss, Article, Group, PubInfo, Site
 from urllib import unquote
 
@@ -9,18 +10,19 @@ __author__ = 'GoTop'
 import feedparser
 
 
-def get_rss_article_view(request, group_name):
+def get_rss_article_view(request, group_id):
     """
     获取rss链接的文章并保存
     :param request:
     :return:
     """
-    group = Group.objects.get(name__exact=group_name)
+    group = Group.objects.get(pk__exact=group_id)
     rss_queryset = Rss.objects.filter(group=group)
 
     articles = []
     for rss in rss_queryset:
-        feed = feedparser.parse(rss.url)
+        fivefilters_full_article_rss = gen_fivefilters_rss(rss.url)
+        feed = feedparser.parse(fivefilters_full_article_rss)
 
         for i in range(0, len(feed['entries'])):
             title = feed['entries'][i].title
@@ -36,6 +38,7 @@ def get_rss_article_view(request, group_name):
             # 将google alert的rss中的链接去掉google网站的前缀和后缀
             url = url.split('&ct')
             url = url[0].replace("https://www.google.com/url?rct=j&sa=t&url=", '')
+
 
             (article, created) = Article.objects.get_or_create(url__exact=url,
                                                                defaults={'title': title, 'context': description,
@@ -86,3 +89,7 @@ def pub_article_view(request, site_id, article_id):
     article.pub_info = pub_info
     article.save()
     return render_to_response('result.html', {'text': article.title + '已发布id为article_id的文章，post id为 post_id'})
+
+def get_categories_view(request, site_id):
+    categories = get_categories(site_id)
+    return render_to_response('result.html', {'list': categories})
