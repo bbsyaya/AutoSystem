@@ -3,7 +3,7 @@ from django.conf.urls import url
 from manage_rss import views
 
 from manage_rss.views_dir.article_view import get_rss_article_view, pub_article_view, \
-    set_publish_status_view, get_categories_view
+    set_publishable_status_view, get_categories_view
 from manage_rss.views_dir.rss_view import unpub_article_feed
 
 urlpatterns = [
@@ -21,7 +21,7 @@ urlpatterns = [
 
     #设置文章的publish_status
     #例如 http://127.0.0.1:8000/manage_rss/set_publish_status/5/decline/
-    url(r'^set_publish_status/(?P<article_id>\d+)/(?P<publish_status>\w+)/$', set_publish_status_view,
+    url(r'^set_publish_status/(?P<article_id>\d+)/(?P<publish_status>\w+)/$', set_publishable_status_view,
         name='set_article_status_url'),
 
     #发布文章

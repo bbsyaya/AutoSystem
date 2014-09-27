@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from manage_rss.models import Article, Rss, Group, Site, PubInfo
+from .models import Article, Rss, Group, Site, PubInfo
 # Register your models here.
 
 class RssInline(admin.TabularInline):
@@ -19,16 +19,13 @@ class PubInfoInline(admin.TabularInline):
 
 class ArticleAdmin(admin.ModelAdmin):
     list_display = (
-    'title', 'url', 'grab_date', 'read_status', 'review_status', 'group', 'rss', 'pub_info', 'pub_article')
+    'title', 'url', 'grab_date', 'read_status', 'publishable_status', 'group', 'rss', 'pub_info', 'pub_article')
 
     actions = ['make_publishable']
-
-
+    #在change list页面选择多项后的，批量操作
     def make_publishable(self, request, queryset):
-        queryset.update(review_status='p')
-
+        queryset.update(review_status=True)
     make_publishable.short_description = "Mark selected articles as publishable"
-
 
 class RssAdmin(admin.ModelAdmin):
     list_display = ( 'name', 'group', 'url', 'remark', 'article_num')

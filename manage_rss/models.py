@@ -72,8 +72,8 @@ class Article(models.Model):
     url = models.URLField(max_length=300)
     title = models.CharField(max_length=300)
     context = HTMLField()
-    read_status = models.CharField(max_length=1, choices=READ_STATUS_CHOICE, default='u')
-    review_status = models.CharField(max_length=1, choices=REVIEW_CHOICE, default='d')
+    read_status = models.BooleanField(default=False)
+    publishable_status = models.BooleanField(default=False)
     grab_date = models.DateTimeField(auto_now_add=True)
     rss = models.ForeignKey('Rss')
     pub_info = models.ForeignKey('PubInfo', null=True, blank=True)
@@ -83,6 +83,9 @@ class Article(models.Model):
         return self.rss.group
 
     group.short_description = 'Group'
+
+
+
 
     def pub_article(self):
         if self.pub_info:
