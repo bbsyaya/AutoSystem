@@ -41,7 +41,7 @@ class Rss(models.Model):
 
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=50, choices=TYPE_CHOICE, default='normal_rss')
-    url = models.CharField(max_length=300)
+    url = models.URLField(max_length=300)
     remark = models.CharField(max_length=300, null=True, blank=True)
     group = models.ForeignKey('Group', null=True, blank=True)
 
@@ -75,7 +75,7 @@ class Article(models.Model):
     read_status = models.BooleanField(default=False)
     publishable_status = models.BooleanField(default=False)
     grab_date = models.DateTimeField(auto_now_add=True)
-    rss = models.ForeignKey('Rss')
+    rss = models.ForeignKey('Rss', related_name='articles')
     pub_info = models.ForeignKey('PubInfo', null=True, blank=True)
 
 

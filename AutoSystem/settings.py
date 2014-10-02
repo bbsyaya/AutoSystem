@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'manage_rss',
     'django.contrib.sites',
+    'adminbrowse',
 
 )
 
@@ -105,3 +106,4 @@ TEMPLATE_LOADERS = (
 )
 
 
+ADMINBROWSE_MEDIA_URL= STATIC_ROOT +'/adminbrowse/media/'

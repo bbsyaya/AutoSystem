@@ -15,7 +15,7 @@ urlpatterns = [
     #例如 http://127.0.0.1:8000/manage_rss/acmilan/rss/
     url(r'^(?P<keywords>[-\w]+)/rss/$', unpub_article_feed()),
 
-    #查看保存到本地的单篇文章(未完成)
+    #查看保存到本地的单篇文章(未完    `成)
     #例如 http://127.0.0.1:8000/manage_rss/article/5/
     url(r'^article/(?P<article_id>\d+)/$', views.article_view, name='article_url'),
 
