@@ -20,7 +20,7 @@ class PubInfoInline(admin.TabularInline):
 
 class ArticleAdmin(AutoBrowseModelAdmin):
     #为了使用link_to_url()方法，必须将list_display的()改为[]
-    list_display = ['title', 'url', 'grab_date', 'read_status', 'publishable_status', 'group', 'rss', 'pub_info',
+    list_display = ['title', 'url', 'published','grab_date', 'read_status', 'publishable_status', 'group', 'rss', 'pub_info',
                     'pub_article']
 
     link_to_url(Article, 'url')

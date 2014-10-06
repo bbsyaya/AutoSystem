@@ -1,3 +1,4 @@
+# coding=utf-8
 # encoding = utf-8
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
@@ -72,6 +73,7 @@ class Article(models.Model):
     url = models.URLField(max_length=300)
     title = models.CharField(max_length=300)
     context = HTMLField()
+    published = models.DateTimeField(null=True, blank=True)
     read_status = models.BooleanField(default=False)
     publishable_status = models.BooleanField(default=False)
     grab_date = models.DateTimeField(auto_now_add=True)
@@ -104,7 +106,9 @@ class Article(models.Model):
     def get_absolute_url(self):
         return reverse('article_url', kwargs={'article_id': str(self.id)})
 
-    def __str__(self):
+    #https://docs.djangoproject.com/en/dev/ref/unicode/#choosing-between-str-and-unicode
+    #如果用__str__,当title里有非utf8字符时，admin界面的删除会出错
+    def __unicode__(self):
         return self.title
 
 
@@ -114,7 +118,7 @@ class Site(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 
@@ -123,6 +127,6 @@ class PubInfo(models.Model):
     post_id = models.CharField(max_length=6)
     pub_date = models.DateTimeField(null=True, blank=True)
 
-    def __str__(self):
+    def __unicode__(self):
         str = self.site.name + ' ' + self.post_id
         return str

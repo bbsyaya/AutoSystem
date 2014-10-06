@@ -10,3 +10,5 @@ url = 'https://www.google.com/alerts/feeds/13170735741204529184/1115075382193329
 url_prefix = 'http://ftr.fivefilters.org/makefulltextfeed.php?url='
 print  str + quote(url)
 
+date_str = 'Sat, 04 Oct 2014 09:45:00 +0000'
+

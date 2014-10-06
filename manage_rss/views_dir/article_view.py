@@ -8,6 +8,7 @@ from urllib import unquote
 
 __author__ = 'GoTop'
 import feedparser
+from datetime import datetime
 
 
 def get_rss_article_view(request, group_id):
@@ -39,8 +40,15 @@ def get_rss_article_view(request, group_id):
             url = url.split('&ct')
             url = url[0].replace("https://www.google.com/url?rct=j&sa=t&url=", '')
 
+            try:
+                published = datetime(*feed['entries'][i].published_parsed[0:6])
+            except:
+                published = None
+
             (article, created) = Article.objects.get_or_create(url__exact=url,
-                                                               defaults={'title': title, 'context': description,
+                                                               defaults={'title': title,
+                                                                         'context': description,
+                                                                         'published': published,
                                                                          'url': url,
                                                                          'rss': rss})
 
