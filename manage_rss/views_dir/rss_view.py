@@ -34,7 +34,7 @@ class unpub_article_feed(Feed):
 
     def items(self, obj):
         #https://docs.djangoproject.com/en/dev/topics/db/queries/#backwards-related-objects
-        rss_set = obj.rss_set.all()
+        rss_set = obj.related_rss.all()
         all_article_set = []
         for rss in rss_set:
             #在使用SQLite的时候，因为其没有boolean型，所以django model中的boolean型在SQLite中保存数字1,0
@@ -69,3 +69,4 @@ class unpub_article_feed(Feed):
 
     def item_link(self, item):
         return item.url
+

@@ -38,13 +38,14 @@ class RssAdmin(AutoBrowseModelAdmin):
     list_display = ['name', 'group', 'url', 'remark', 'article_num']
     inlines = [ArticleInline, ]
     link_to_url(Rss, 'url')
-    #link_to_changelist(Rss, 'relate_rss')
+
     link_to_change(Rss, 'articles')
 
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'remark', 'grab_article', 'article_num')
+class GroupAdmin(AutoBrowseModelAdmin):
+    list_display = ('name', 'slug', 'remark', 'grab_article', 'article_num', 'rss_url')
     # 在group的修改页面显示它的rss模块
     inlines = [RssInline, ]
+    link_to_changelist(Group, 'related_rss')
 
 
 class SiteAdmin(admin.ModelAdmin):

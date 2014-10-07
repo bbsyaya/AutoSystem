@@ -88,7 +88,7 @@ import logging
 import os.path
 import re
 
-from lib.tornado import escape  # mod by WG
+from . import escape  # mod by WG
 
 class Template(object):
     """A compiled template.

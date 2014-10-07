@@ -33,6 +33,14 @@ class Group(models.Model):
     grab_article.allow_tags = True
     grab_article.short_description = 'Grab Article'
 
+    def rss_url(self):
+        html = "<a href='%s' target='_blank'>Rss Url</a>" % reverse("group_rss_url", args=[self.slug])
+        return html
+
+    # If you'd rather not escape the output of the method, give the method an allow_tags attribute whose value is True
+    rss_url.allow_tags = True
+    rss_url.short_description = 'Rss Url'
+
 
 class Rss(models.Model):
     TYPE_CHOICE = (
@@ -44,7 +52,7 @@ class Rss(models.Model):
     type = models.CharField(max_length=50, choices=TYPE_CHOICE, default='normal_rss')
     url = models.URLField(max_length=300)
     remark = models.CharField(max_length=300, null=True, blank=True)
-    group = models.ForeignKey('Group', null=True, blank=True)
+    group = models.ForeignKey('Group', null=True, blank=True, related_name='related_rss')
 
 
     def __str__(self):

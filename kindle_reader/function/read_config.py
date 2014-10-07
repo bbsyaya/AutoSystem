@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
+from os.path import dirname
 
 __author__ = 'GoTop'
 
@@ -176,7 +177,8 @@ class KRConfig():
 
             # search in current directory and PATH to find kinglegen
             sep = iswindows and ';' or ':'
-            dirs = ['.']
+            #将该文件的上一层绝对地址加入dirs中
+            dirs = [dirname(os.path.split(os.path.realpath(__file__))[0]),]
             dirs.extend(os.getenv('PATH').split(sep))
             for dir in dirs:
                 if dir:
@@ -189,6 +191,7 @@ class KRConfig():
 
     def getwork_dir(self):
         try:
-            return os.path.abspath(os.path.dirname(sys.argv[0]))
+            #以当前文件的上一级目录为work_dir
+            return dirname(os.path.split(os.path.realpath(__file__))[0])
         except:
             return None

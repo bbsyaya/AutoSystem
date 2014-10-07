@@ -24,7 +24,6 @@ from email.mime.text import MIMEText
 from email.utils import parsedate_tz
 from datetime import date, datetime, timedelta
 
-
 import subprocess
 import Queue, threading
 import socket, urllib2, urllib
@@ -38,7 +37,7 @@ from lib import feedparser
 from function.template import *
 from function.read_config import KRConfig
 
-#不加入以下设置，从数据库中读取出非ascii的字符串将会提示编码错误
+# 不加入以下设置，从数据库中读取出非ascii的字符串将会提示编码错误
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -61,10 +60,14 @@ class feedDownloader(threading.Thread):
     remove_attributes = ['class', 'id', 'title', 'style', 'width', 'height', 'onclick']
 
     def __init__(self, threadname, config):
+        # 注意：使用这种方式创建进程时，一定要显式的调用父类的初始化函数。
         threading.Thread.__init__(self, name=threadname)
         self.krconfig = config
 
+
     def run(self):
+        # 通过继承Thread类，重写它的run方法来创建线程
+        # 重写父类run方法，在线程启动后执行该方法内的代码。
         global feedq
 
         while True:
@@ -80,6 +83,7 @@ class feedDownloader(threading.Thread):
         """access feed by url"""
         force_full_text = 0
         try:
+            # 如果config里在feed的url前设置了full字样
             if feed[0:4] == 'full':
                 force_full_text = 1
                 feed_data = self.parsefeed(feed[4:])
@@ -88,6 +92,7 @@ class feedDownloader(threading.Thread):
                 else:
                     raise UserWarning("illegal feed:{}".format(feed))
             else:
+                # 没设置full字样时
                 feed_data = self.parsefeed(feed)
                 if feed_data:
                     return feed_data, force_full_text
@@ -147,9 +152,10 @@ class feedDownloader(threading.Thread):
                     if 'published' in entry:
                         published_datetime = self.parsetime(entry.published)
                     else:
-                        #todo 会报错
+                        # todo 会报错
                         published_datetime = None
 
+                # 时间超过config里设定的max_old_date的就不再使用来生成mobi了
                 if datetime.utcnow() - published_datetime > self.krconfig.max_old_date:
                     break
 
@@ -170,8 +176,10 @@ class feedDownloader(threading.Thread):
                 }
 
                 if force_full_text:
+                    # 如果设置了获取rss的全文
                     local_entry['content'], images = self.force_full_text(entry.link)
                 else:
+                    # 如果没设置获取rss的全文
                     try:
                         local_entry['content'], images = self.parse_summary(entry.content[0].value, entry.link)
                     except:
@@ -182,12 +190,16 @@ class feedDownloader(threading.Thread):
                         text=True))[:200]
 
                 local['entries'].append(local_entry)
+
+                # 将这篇文章中的图片存入imgq队列中
                 for i in images:
                     imgq.put(i)
                 item_idx += 1
 
             if len(local['entries']) > 0:
+                # 获取feedlock锁对象，往updated_feeds里添加整理好的一个feed的信息时
                 if feedlock.acquire():
+                    # updated_feeds为全局变量
                     updated_feeds.append(local)
                     feedlock.release()
                 else:
@@ -245,12 +257,16 @@ class feedDownloader(threading.Thread):
         img_count = 0
         images = []
         for img in list(soup.findAll('img')):
+            # 如果<img>标签中没有src地址，就将其去除
             if (self.krconfig.max_image_per_article >= 0 and img_count >= self.krconfig.max_image_per_article) \
                     or img.has_key('src') is False:
+                #PageElement.extract() removes a tag or string from the tree.
+                #It returns the tag or string that was extracted
                 img.extract()
             else:
                 try:
                     if img['src'].encode('utf-8').lower().endswith(('jpg', 'jpeg', 'gif', 'png', 'bmp')):
+                        #处理img标签的src并映射到本地文件
                         localimage, fullname = self.parse_image(img['src'])
                         # 确定结尾为图片后缀，防止下载非图片文件（如用于访问分析的假图片）
                         if os.path.isfile(fullname) is False:
@@ -318,6 +334,7 @@ class ImageDownloader(threading.Thread):
         global imgq
 
         while True:
+            # 从imgq队列中获取图片信息，然后下载
             i = imgq.get()
             self.getimage(i)
             imgq.task_done()
@@ -354,11 +371,31 @@ class ImageDownloader(threading.Thread):
             logging.error("Failed: {}".format(e, i['url'].encode('utf-8')))
 
 
-class KindleReader(object):
+class KindleReader():
     """core of KindleReader"""
 
-    def __init__(self, config):
-        self.krconfig = config
+    def __init__(self, feeds=[]):
+        self.feeds = feeds
+        self.work_dir = os.path.split(os.path.realpath(__file__))[0]
+
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
+                            datefmt='%m-%d %H:%M')
+
+        self.check()
+        st = time.time()
+        logging.info("welcome, start ...")
+
+        try:
+            self.main()
+        except Exception, e:
+            logging.info("Error: %s " % e)
+
+        logging.info("used time {}s".format(time.time() - st))
+        logging.info("done.")
+
+        if not self.krconfig.auto_exit:
+            raw_input("Press any key to exit...")
+
 
     def sendmail(self, data):
         """send html to kindle"""
@@ -388,7 +425,7 @@ class KindleReader(object):
         att = MIMEText(data, 'base64', 'utf-8')
         att["Content-Type"] = 'application/octet-stream'
         att["Content-Disposition"] = 'attachment; filename="kindle-reader-%s.mobi"' % (
-        datetime.utcnow() + self.krconfig.timezone).strftime('%Y%m%d-%H%M%S')
+            datetime.utcnow() + self.krconfig.timezone).strftime('%Y%m%d-%H%M%S')
         msg.attach(att)
 
         try:
@@ -413,9 +450,12 @@ class KindleReader(object):
 
         logging.info("generate .mobi file start... ")
 
-        data_dir = os.path.join(self.krconfig.work_dir, 'data')
+        data_dir = os.path.join(self.work_dir, 'data')
+        # data目录为存放生成的mobi文件的目录
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
+
+        # 根据TEMPLATES字典中的key值（'content.html'，'toc.ncx'，'content.opf'）生成对应的文件
         for tpl in TEMPLATES:
             if tpl is 'book.html':
                 continue
@@ -434,8 +474,10 @@ class KindleReader(object):
         mobi8_file = "KindleReader8-%s.mobi" % (datetime.utcnow() + self.krconfig.timezone).strftime('%Y%m%d-%H%M%S')
         mobi6_file = "KindleReader-%s.mobi" % (datetime.utcnow() + self.krconfig.timezone).strftime('%Y%m%d-%H%M%S')
         opf_file = os.path.join(data_dir, "content.opf")
-        subprocess.call('"%s" "%s" -o "%s" > log.txt' %
-                        (self.krconfig.kindlegen, opf_file, mobi8_file), shell=True)
+
+        log_file = os.path.join(self.work_dir, "log.txt")
+        subprocess.call('"%s" "%s" -o "%s" > %s' %
+                        (self.krconfig.kindlegen, opf_file, mobi8_file, log_file), shell=True)
 
         # kindlegen生成的mobi，含有v6/v8两种格式
         mobi8_file = os.path.join(data_dir, mobi8_file)
@@ -461,14 +503,36 @@ class KindleReader(object):
             logging.info(".mobi save as: {}({}KB)".format(mobi_file, os.path.getsize(mobi_file) / 1024))
             return mobi_file
 
+    def check(self):
+        """
+        检查config文件与kindlegen文件是否存在
+        :rtype : object
+        :return:
+        """
+        try:
+            configfile = os.path.join(self.work_dir, "config.ini")
+            self.krconfig = KRConfig(configfile=configfile)
+        except:
+            logging.error("config file {} not found or format error".format(os.path.join(work_dir, "config.ini")))
+            sys.exit(1)
+
+        if not self.krconfig.kindlegen:
+            logging.error("Can't find kindlegen")
+            sys.exit(1)
+
+    # To use your method without an instance of a class you can attach a class method decorator like so
     def main(self):
         global imgq
         global feedq
         global updated_feeds
-        feed_idx = 1
-        feed_num = len(self.krconfig.feeds)
 
-        for feed in self.krconfig.feeds:
+        feed_idx = 1
+
+        # 读出config文件中设置的feed链接
+        self.feeds.append(self.krconfig.feeds)
+        feed_num = len(self.feeds)
+
+        for feed in self.feeds:
             if feed[0:4] == 'full':
                 logging.info("[{}/{}](force full text):{}".format(feed_idx, feed_num, feed[4:]))
             else:
@@ -482,6 +546,9 @@ class KindleReader(object):
             feedthreads.append(f)
         for f in feedthreads:
             f.setDaemon(True)
+            # run方法 和start方法: 它们都是从Thread继承而来的，run()方法将在线程开启后执行，
+            # 可以把相关的逻辑写到run方法中（通常把run方法称为活动[Activity]。）；
+            # start()方法用于启动线程。
             f.start()
 
         imgthreads = []
@@ -506,32 +573,33 @@ class KindleReader(object):
 
 
 if __name__ == '__main__':
+    KindleReader('')
 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
-                        datefmt='%m-%d %H:%M')
-
-    try:
-        work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
-        krc = KRConfig(configfile=os.path.join(work_dir, "config.ini"))
-    except:
-        logging.error("config file {} not found or format error".format(os.path.join(work_dir, "config.ini")))
-        sys.exit(1)
-
-    if not krc.kindlegen:
-        logging.error("Can't find kindlegen")
-        sys.exit(1)
-
-    st = time.time()
-    logging.info("welcome, start ...")
-
-    try:
-        kr = KindleReader(config=krc)
-        kr.main()
-    except Exception, e:
-        logging.info("Error: %s " % e)
-
-    logging.info("used time {}s".format(time.time() - st))
-    logging.info("done.")
-
-    if not krc.auto_exit:
-        raw_input("Press any key to exit...")
+    # logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
+    # datefmt='%m-%d %H:%M')
+    #
+    # try:
+    # work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+    # krc = KRConfig(configfile=os.path.join(work_dir, "config.ini"))
+    # except:
+    #     logging.error("config file {} not found or format error".format(os.path.join(work_dir, "config.ini")))
+    #     sys.exit(1)
+    #
+    # if not krc.kindlegen:
+    #     logging.error("Can't find kindlegen")
+    #     sys.exit(1)
+    #
+    # st = time.time()
+    # logging.info("welcome, start ...")
+    #
+    # try:
+    #     kr = KindleReader(config=krc)
+    #     kr.main()
+    # except Exception, e:
+    #     logging.info("Error: %s " % e)
+    #
+    # logging.info("used time {}s".format(time.time() - st))
+    # logging.info("done.")
+    #
+    # if not krc.auto_exit:
+    #     raw_input("Press any key to exit...")
