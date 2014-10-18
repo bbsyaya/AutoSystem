@@ -94,6 +94,10 @@ MEDIA_ROOT = BASE_DIR + '/media/'
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    'manage_rss/static',
+)
+
 SITE_ID = 1
 
 TEMPLATE_DIRS = ( os.path.join(BASE_DIR, 'templates'),)
@@ -105,5 +109,25 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
+ADMINBROWSE_MEDIA_URL = STATIC_ROOT + '/adminbrowse/media/'
 
-ADMINBROWSE_MEDIA_URL= STATIC_ROOT +'/adminbrowse/media/'
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': "advanced",
+    # 'skin': "o2k7",
+    'theme_advanced_toolbar_location': "top",
+
+    # Buttons/controls
+    # http://www.tinymce.com/wiki.php/TinyMCE3x:Buttons/controls
+    'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,separator,outdent,indent,separator,undo,redo",
+    'theme_advanced_buttons2': "fontsizeselect,formatselect",
+    'theme_advanced_buttons3': "",
+
+    'theme_advanced_resizing': "true",
+    'theme_advanced_font_sizes': "16px,24px",
+    'font_size_style_values': "16px,18px,20px",
+    'height': "600",
+    'width': "800",
+    'content_css': "/static/tinymce/test.css"
+
+
+}
