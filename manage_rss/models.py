@@ -82,8 +82,9 @@ class Article(models.Model):
     title = models.CharField(max_length=300)
     context = HTMLField()
     published = models.DateTimeField(null=True, blank=True)
-    read_status = models.BooleanField(default=False)
-    publishable_status = models.BooleanField(default=False)
+    read_status = models.BooleanField(default=False)#TRUE表明已经生成RSS，FALSE表明未生成RSS
+    editable_status = models.BooleanField(default=False)#TRUE表明需要修改，FALSE表明不需要
+    publishable_status = models.BooleanField(default=False)#TRUE表明可以发布，FALSE表明不能发布
     grab_date = models.DateTimeField(auto_now_add=True)
     rss = models.ForeignKey('Rss', related_name='articles')
     pub_info = models.ForeignKey('PubInfo', null=True, blank=True)

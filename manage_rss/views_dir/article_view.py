@@ -59,7 +59,7 @@ def get_rss_article_view(request, group_id):
 
 def set_publishable_status_view(request, article_id, publishable_status):
     """
-    设置文章的publish_status
+    设置文章的publishable_status
     :param request:
     :param article_id:
     :return:
@@ -71,16 +71,37 @@ def set_publishable_status_view(request, article_id, publishable_status):
         ('decline', 'Decline'),
     )
 
-    if publishable_status == 1:
+    if publishable_status == '1':
         publishable_status = True
-    elif publishable_status == 0:
+    elif publishable_status == '0':
         publishable_status = False
 
     article.publishable_status = publishable_status
     article.save()
-    result = article.title + '已设置为' + str(publishable_status)
+    result = article.title + ' publishable_status已设置为' + str(publishable_status)
 
     return render_to_response('result.html', {'text': result})
+
+def set_editable_status_view(request, article_id, editable_status):
+    """
+    设置文章的editable_status
+    :param request:
+    :param article_id:
+    :return:
+    """
+    article = get_object_or_404(Article, pk=article_id)
+
+    if editable_status == '1':
+        editable_status = True
+    elif editable_status == '0':
+        editable_status = False
+
+    article.editable_status = editable_status
+    article.save()
+    result = article.title + ' editable_status已设置为' + str(editable_status)
+
+    return render_to_response('result.html', {'text': result})
+
 
 
 def pub_article_view(request, site_id, article_id):

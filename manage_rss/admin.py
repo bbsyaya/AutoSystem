@@ -19,8 +19,9 @@ class PubInfoInline(admin.TabularInline):
 
 
 class ArticleAdmin(AutoBrowseModelAdmin):
-    #为了使用link_to_url()方法，必须将list_display的()改为[]
-    list_display = ['title', 'url', 'published','grab_date', 'read_status', 'publishable_status', 'group', 'rss', 'pub_info',
+    # 为了使用link_to_url()方法，必须将list_display的()改为[]
+    list_display = ['title', 'url', 'published', 'grab_date', 'read_status', 'editable_status', 'publishable_status',
+                    'group', 'rss', 'pub_info',
                     'pub_article']
 
     link_to_url(Article, 'url')
@@ -40,6 +41,7 @@ class RssAdmin(AutoBrowseModelAdmin):
     link_to_url(Rss, 'url')
 
     link_to_change(Rss, 'articles')
+
 
 class GroupAdmin(AutoBrowseModelAdmin):
     list_display = ('name', 'slug', 'remark', 'grab_article', 'article_num', 'rss_url')

@@ -127,7 +127,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'font_size_style_values': "16px,18px,20px",
     'height': "600",
     'width': "800",
-    'content_css': "/static/tinymce/test.css"
+    'content_css': "/static/tinymce/content_css.css"
 
 
 }
