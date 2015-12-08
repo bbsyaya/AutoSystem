@@ -42,6 +42,8 @@ INSTALLED_APPS = (
     'manage_rss',
     'django.contrib.sites',
     'adminbrowse',
+    'video',
+    'django_youtube',
 
 )
 
@@ -128,6 +130,14 @@ TINYMCE_DEFAULT_CONFIG = {
     'height': "600",
     'width': "800",
     'content_css': "/static/tinymce/content_css.css"
-
-
 }
+
+
+YOUTUBE_AUTH_EMAIL = 'imgotop@gmail.com'
+YOUTUBE_AUTH_PASSWORD = 'the660330588'
+YOUTUBE_DEVELOPER_KEY = 'AIzaSyAp4Dr7YgwofjNbosQ5VZFXm8G5A1QNIPQ'
+YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleusercontent.com'
+
+#Here is your client ID:505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleusercontent.com
+
+#Here is your client secret：zrCoLrliGOYAA4yuG7Mr3KH8

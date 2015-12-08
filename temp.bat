@@ -1,0 +1,3 @@
+set SSH_AUTH_SOCK=/tmp/ssh-FyNRkg7604/agent.7604
+set SSH_AGENT_PID=7140; export SSH_AGENT_PID
+
