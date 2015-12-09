@@ -3,12 +3,16 @@ from __future__ import unicode_literals
 
 __author__ = 'GoTop'
 
-from urllib import quote
 
-url = 'https://www.google.com/alerts/feeds/13170735741204529184/11150753821933293629'
+import youtube_upload, pafy
 
-url_prefix = 'http://ftr.fivefilters.org/makefulltextfeed.php?url='
-print  str + quote(url)
+url = "https://www.youtube.com/watch?v=bMt47wvK6u0"
 
-date_str = 'Sat, 04 Oct 2014 09:45:00 +0000'
+video = pafy.new(url)
 
+print(video.title)
+
+
+plurl = "https://www.youtube.com/playlist?list=PLNWIWf8IRkr9k-2nkMxb08Q2p2Wmbx1Hs"
+playlist = pafy.get_playlist(plurl)
+print(playlist['title'])
