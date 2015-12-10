@@ -1,39 +1,40 @@
+# coding=utf-8
+from __future__ import unicode_literals
 from django.shortcuts import render, render_to_response
 
 # Create your views here.
 from django.template import RequestContext
 from video.models import Video
 
-def _video_params(request, video_id):
 
-    width = request.GET.get("width", "70%")
-    height = request.GET.get("height", "350")
-    origin = request.get_host()
-
-    return {"video_id": video_id, "origin": origin, "width": width, "height": height}
-
-def video_list(request, username=None):
+def check_video_status_view(request, url):
     """
-    list of videos of a user
-    if username does not set, shows the currently logged in user
+    返回视频的状态，是否已经下载到vps，是否已经上传到b百度云等
+    :param request:
+    :param url:
+    :return:
     """
 
-    # If user is not authenticated and username is None, raise an error
-    if username is None and not request.user.is_authenticated():
-        from django.http import Http404
-        raise Http404
+def get_youtube_list_video_url_view(request, list_url):
+    """
+    获取youtube的list里的视频链接
+    :param request:
+    :param list_url:
+    :return:
+    """
 
-    from django.contrib.auth.models import User
-    user = User.objects.get(username=username) if username else request.user
+def download_video_view(request, url):
+    """
+    下载youtube的视频到VPS
+    :param request:
+    :param url:
+    :return:
+    """
 
-    # loop through the videos of the user
-    videos = Video.objects.filter(user=user).all()
-    video_params = []
-    for video in videos:
-        video_params.append(_video_params(request, video.video_id))
-
-    return render_to_response(
-        "django_youtube/videos.html",
-        {"video_params": video_params},
-        context_instance=RequestContext(request)
-    )
+def upload_video_to_baiduyun_view(request, video_id):
+    """
+    上传视频到百度云
+    :param request:
+    :param video_id:
+    :return:
+    """
