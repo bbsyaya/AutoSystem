@@ -132,12 +132,19 @@ TINYMCE_DEFAULT_CONFIG = {
     'content_css': "/static/tinymce/content_css.css"
 }
 
-
 YOUTUBE_AUTH_EMAIL = 'imgotop@gmail.com'
-YOUTUBE_AUTH_PASSWORD = 'the660330588'
+YOUTUBE_AUTH_PASSWORD = ''
 YOUTUBE_DEVELOPER_KEY = 'AIzaSyAp4Dr7YgwofjNbosQ5VZFXm8G5A1QNIPQ'
 YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleusercontent.com'
 
-#Here is your client ID:505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleusercontent.com
+YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
+YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"
 
-#Here is your client secret：zrCoLrliGOYAA4yuG7Mr3KH8
+#访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code&redirect_uri=http://127.0.0.1:8000
+#可获得Authorization Code
+#再用post的方式，用Authorization Code去获取access token
+
+YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
+#https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code
+
+
