@@ -4,80 +4,69 @@ from __future__ import unicode_literals
 __author__ = 'GoTop'
 
 import os
-import logging
+import sys
 import httplib2
 
 from googleapiclient.discovery import build
-from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django_sample.plus.models import CredentialsModel
-from django_sample import settings
-from oauth2client import xsrfutil
 from oauth2client.client import flow_from_clientsecrets
-from oauth2client.django_orm import Storage
-
-CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets.json')
-
-FLOW = flow_from_clientsecrets(
-    CLIENT_SECRETS,
-    scope='https://www.googleapis.com/auth/plus.me',
-    redirect_uri='http://localhost:8000/oauth2callback')
+from oauth2client.file import Storage
+from oauth2client.tools import argparser, run_flow
 
 
-@login_required
-def index(request):
-    storage = Storage(CredentialsModel, 'id', request.user, 'credential')
-    credential = storage.get()
-    # 如果credential为空，或者无效，则将网页重定位到认证页面，让用户登陆认证
-    if credential is None or credential.invalid == True:
-        FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY,
-                                                       request.user)
-        authorize_url = FLOW.step1_get_authorize_url()
-        return HttpResponseRedirect(authorize_url)
-    else:
-        http = httplib2.Http()
-        http = credential.authorize(http)
-        service = build("plus", "v1", http=http)
-        activities = service.activities()
-        activitylist = activities.list(collection='public',
-                                       userId='me').execute()
-        logging.info(activitylist)
+CLIENT_SECRETS_FILE = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
 
-        return render(request, 'plus/welcome.html', {
-            'activitylist': activitylist,
-        })
+YOUTUBE_READ_WRITE_SCOPE = "https://www.googleapis.com/auth/youtube"
+YOUTUBE_API_SERVICE_NAME = "youtube"
+YOUTUBE_API_VERSION = "v3"
 
+SCOPES = (
+    'https://www.googleapis.com/auth/youtube',
+)
 
-@login_required
-def auth_return(request):
-    if not xsrfutil.validate_token(settings.SECRET_KEY, request.REQUEST['state'],
-                                   request.user):
-        return HttpResponseBadRequest()
-    credential = FLOW.step2_exchange(request.REQUEST)
-    storage = Storage(CredentialsModel, 'id', request.user, 'credential')
-    storage.put(credential)
-    return HttpResponseRedirect("/")
+flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
+                               scope=[YOUTUBE_READ_WRITE_SCOPE],
+                               redirect_uri='http://localhost:8000/oauth2/oauth2callback')
 
+storage = Storage('storage.json')
+#storage.delete()
+credentials = storage.get()
 
-drive_service = build('drive', 'v2', http=http_auth)
+if credentials is None or credentials.invalid:
+    flags = argparser.parse_args()
+    credentials = run_flow(flow, storage, flags)
 
-flow = client.flow_from_clientsecrets(
-    'client_secrets.json',
-    scope='https://www.googleapis.com/auth/youtube',
-    redirect_uri='http://www.example.com/oauth2callback')
+youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+                http=credentials.authorize(httplib2.Http()))
 
-auth_uri = flow.step1_get_authorize_url()
+channels_response = youtube.channels().list(
+    mine=True,
+    part="contentDetails"
+).execute()
 
-credentials = flow.step2_exchange(auth_code)
-http_auth = credentials.authorize(httplib2.Http())
+for channel in channels_response["items"]:
+    # From the API response, extract the playlist ID that identifies the list
+    # of videos uploaded to the authenticated user's channel.
+    uploads_list_id = channel["contentDetails"]["relatedPlaylists"]["uploads"]
 
-drive_service = build('drive', 'v2', http=http_auth)
+    print "Videos in list %s" % uploads_list_id
 
-files = drive_service.files().list().execute()
+    # Retrieve the list of videos uploaded to the authenticated user's channel.
+    playlistitems_list_request = youtube.playlistItems().list(
+        playlistId=uploads_list_id,
+        part="snippet",
+        maxResults=50
+    )
 
-flow = client.flow_from_clientsecrets(...)
-flow.params['access_type'] = 'offline'
+    while playlistitems_list_request:
+        playlistitems_list_response = playlistitems_list_request.execute()
+
+        # Print information about each video.
+        for playlist_item in playlistitems_list_response["items"]:
+            title = playlist_item["snippet"]["title"]
+            video_id = playlist_item["snippet"]["resourceId"]["videoId"]
+            print "%s (%s)" % (title, video_id)
+
+        playlistitems_list_request = youtube.playlistItems().list_next(
+            playlistitems_list_request, playlistitems_list_response)
+
+    print
