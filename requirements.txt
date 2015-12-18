@@ -1,3 +1,4 @@
+googleapiclient
 Django==1.7c3
 cffi==1.3.1
 cryptography==1.1.2

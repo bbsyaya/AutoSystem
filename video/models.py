@@ -38,3 +38,5 @@ class Youku(models.Model):
 class BaiduYun(models.Model):
     uri = models.CharField(max_length=50)
 
+
+

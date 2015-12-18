@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'adminbrowse',
     'video',
     'django_youtube',
+    'oauth2_authentication'
 
 )
 

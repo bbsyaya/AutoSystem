@@ -16,6 +16,7 @@ urlpatterns = patterns('',
                        url(r'^tinymce/', include('tinymce.urls')),
 
                        url(r'^youtube/', include('django_youtube.urls')),
+                       url(r'^oauth2/', include('oauth2_authentication.urls', namespace="oauth2")),
 
 
 )
