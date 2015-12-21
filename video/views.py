@@ -61,8 +61,8 @@ def search_view(request, q, max_results):
     :param max_results:
     :return:
     """
-    service = get_authenticated_service(request)
-    search_response = service.search().list(
+    youtube = get_authenticated_service(request)
+    search_response = youtube.search().list(
         q=q,
         part="id,snippet",
         maxResults=max_results
@@ -92,11 +92,12 @@ def search_view(request, q, max_results):
 def my_subscription_view(request):
     """
     获取订阅我的频道的人的信息
+    同一个google账号有两个用户名的，选择不同的用户名，返回的订阅信息也不一样
     :param request:
     :return:
     """
-    service = get_authenticated_service(request)
-    response = service.subscriptions().list(part='snippet',
+    youtube = get_authenticated_service(request)
+    response = youtube.subscriptions().list(part='snippet',
                                             mine=True,
                                             maxResults=10).execute()
     subscriptions_list = []
@@ -108,4 +109,66 @@ def my_subscription_view(request):
                                'text': response["pageInfo"]["totalResults"]})
 
 
+def my_youtube_homepage_view(request, max_results):
+    """
+    获取认证用户的youtube 首页视频信息
+    https://developers.google.com/youtube/v3/docs/activities/list#errors
+    :param request:
+    :return:
+    """
+    youtube = get_authenticated_service(request)
+    response = youtube.activities().list(part='snippet',
+                                         home=True,
+                                         maxResults=max_results).execute()
+    video_list = []
 
+    for result in response.get("items", []):
+        video_list.append(result['snippet']["title"])
+    return render_to_response('result.html',
+                              {'list': video_list})
+
+
+def my_watchlater_lists_view(request, max_results):
+    """
+    获取认证用户的watchlater列表
+
+    参考： https://developers.google.com/youtube/v3/docs/playlistItems/list#try-it
+    :param request:
+    :param max_results:
+    :return:
+    """
+    youtube = get_authenticated_service(request)
+
+    # Retrieve the contentDetails part of the channel resource for the
+    # authenticated user's channel.
+    channels_response = youtube.channels().list(
+        mine=True,
+        part="contentDetails"
+    ).execute()
+
+    for channel in channels_response["items"]:
+        # From the API response, extract the playlist ID that identifies the list
+        # of videos uploaded to the authenticated user's channel.
+        watchLater_list_id = channel["contentDetails"]["relatedPlaylists"]["watchLater"]
+
+        # Retrieve the list of watchLater videos in the authenticated user's channel.
+        playlistitems_list_request = youtube.playlistItems().list(
+            playlistId=watchLater_list_id,
+            part="snippet",
+            maxResults=50
+        )
+
+        while playlistitems_list_request:
+            playlistitems_list_response = playlistitems_list_request.execute()
+
+            # Print information about each video.
+            for playlist_item in playlistitems_list_response["items"]:
+                title = playlist_item["snippet"]["title"]
+                video_id = playlist_item["snippet"]["resourceId"]["videoId"]
+                print "%s (%s)" % (title, video_id)
+
+        playlistitems_list_request = youtube.playlistItems().list_next(
+            playlistitems_list_request, playlistitems_list_response)
+
+        return render_to_response('result.html',
+                              {'list': playlistitems_list_response})
