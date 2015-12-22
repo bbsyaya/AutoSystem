@@ -1,6 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 
 # Create your views here.
 import os
@@ -29,67 +29,6 @@ CLIENT_SECRETS = os.path.join(
 
 REDIRECT_URI = 'http://127.0.0.1:8000/oauth2/oauth2callback'
 SCOPES = 'https://www.googleapis.com/auth/youtube'
-
-
-def get_account_ids(service):
-    accounts = service.management().accounts().list().execute()
-    ids = []
-    if accounts.get('items'):
-        for account in accounts['items']:
-            ids.append(account['id'])
-    return ids
-
-
-def get_playlists_view(request):
-    service = get_authenticated_service(request)
-    playlists_request = service.liveBroadcasts().list(
-        part="id,snippet",
-        maxResults=50
-    )
-
-    while playlists_request:
-        playlists_response = playlists_request.execute()
-
-        for playlist in playlists_response.get("items", []):
-            print "%s (%s)" % (playlist["snippet"]["title"], playlist["id"])
-
-        list_broadcasts_request = service.liveBroadcasts().list_next(
-            playlists_request, playlists_response)
-
-
-def search_view(request, q, max_results):
-    """
-    在youtube上搜索关键字q，返回结果数设置为max_results
-
-    :param request:
-    :param q:
-    :param max_results:
-    :return:
-    """
-    service = get_authenticated_service(request)
-    search_response = service.search().list(
-        q=q,
-        part="id,snippet",
-        maxResults=max_results
-    ).execute()
-
-    videos = []
-
-    channels = []
-    playlists = []
-
-    # Add each result to the appropriate list, and then display the lists of
-    # matching videos, channels, and playlists.
-    for search_result in search_response.get("items", []):
-        if search_result["id"]["kind"] == "youtube#video":
-            videos.append("%s (%s)" % (search_result["snippet"]["title"],
-                                       search_result["id"]["videoId"]))
-        elif search_result["id"]["kind"] == "youtube#channel":
-            channels.append("%s (%s)" % (search_result["snippet"]["title"],
-                                         search_result["id"]["channelId"]))
-        elif search_result["id"]["kind"] == "youtube#playlist":
-            playlists.append("%s (%s)" % (search_result["snippet"]["title"],
-                                          search_result["id"]["playlistId"]))
 
 
 @login_required
@@ -148,4 +87,31 @@ def oauth2callback_view(request):
 
 @login_required
 def index(request):
-    service = get_authenticated_service(request)
+    get_authenticated_service(request)
+    # if service:
+    #     text = '认证成功！'
+    # else:
+    #     text = '认证失败'
+    return render_to_response('result.html',
+                              {'text': text}
+    )
+
+
+@login_required
+def reauthenticate_view(request):
+    user = request.user
+    storage = Storage(CredentialsModel, 'id', user, 'credential')
+    if storage:
+        storage.delete()
+        service = get_authenticated_service(request)
+        text = '删除本地认证文件后再认证成功！'
+
+    else:
+        text = '未能删除本地认证文件'
+
+    return render_to_response('result.html',
+                              {'text': text}
+    )
+
+
+

@@ -219,6 +219,8 @@ pip-log.txt
 #############
 .idea/*
 .idea/workspace.xml
+/.idea/*
+/.idea/
 
 
 #############
@@ -226,6 +228,8 @@ pip-log.txt
 #############
 local_settings.py
 
+#oauth2_client_secret
+oauth2_authentication/client_secret.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

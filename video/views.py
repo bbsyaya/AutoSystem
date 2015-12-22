@@ -141,6 +141,7 @@ def my_watchlater_lists_view(request, max_results):
 
     # Retrieve the contentDetails part of the channel resource for the
     # authenticated user's channel.
+    # 通过channels查询认证用户的contentDetails里的relatedPlaylists的watchLater
     channels_response = youtube.channels().list(
         mine=True,
         part="contentDetails"
@@ -155,7 +156,7 @@ def my_watchlater_lists_view(request, max_results):
         playlistitems_list_request = youtube.playlistItems().list(
             playlistId=watchLater_list_id,
             part="snippet",
-            maxResults=50
+            maxResults=max_results
         )
 
         while playlistitems_list_request:
@@ -171,4 +172,6 @@ def my_watchlater_lists_view(request, max_results):
             playlistitems_list_request, playlistitems_list_response)
 
         return render_to_response('result.html',
-                              {'list': playlistitems_list_response})
+                                  {'list': playlistitems_list_response})
+
+

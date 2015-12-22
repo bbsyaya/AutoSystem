@@ -17,7 +17,7 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/my_youtube_homepage/50
     url(r'my_youtube_homepage/(?P<max_results>\d+)$', views.my_youtube_homepage_view, name='my_youtube_homepage'),
 
-    # http://127.0.0.1:8000/video/my_watchlater_lists/50
+    # http://127.0.0.1:8000/video/my_watchlater_lists/5
     url(r'my_watchlater_lists/(?P<max_results>\d+)$', views.my_watchlater_lists_view,
         name='my_youtube_homepage'),
 
