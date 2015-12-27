@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_settings',# https://github.com/jqb/django-settings
     'manage_rss',
     'django.contrib.sites',
     'adminbrowse',

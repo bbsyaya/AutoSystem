@@ -25,7 +25,7 @@ def get_subscription_list_view(request):
     """
 
 
-def get_youtube_list_video_url_view(request, list_url):
+def get_youtube_list_video_view(request, list_url):
     """
     获取youtube的list里的视频链接
     :param request:
@@ -91,7 +91,7 @@ def search_view(request, q, max_results):
 
 def my_subscription_view(request):
     """
-    获取订阅我的频道的人的信息
+    获取认证用户订阅的频道的信息
     同一个google账号有两个用户名的，选择不同的用户名，返回的订阅信息也不一样
     :param request:
     :return:
@@ -109,23 +109,33 @@ def my_subscription_view(request):
                                'text': response["pageInfo"]["totalResults"]})
 
 
-def my_youtube_homepage_view(request, max_results):
+def my_homepage_subscription_view(request, max_results):
     """
-    获取认证用户的youtube 首页视频信息
+    获取认证用户的youtube首页显示的订阅频道信息
     https://developers.google.com/youtube/v3/docs/activities/list#errors
     :param request:
     :return:
     """
     youtube = get_authenticated_service(request)
+
+    # home: This parameter can only be used in a properly authorized request. Set this
+    # parameter's value to true to retrieve the activity feed that displays on
+    # the YouTube home page for the currently authenticated user.
     response = youtube.activities().list(part='snippet',
                                          home=True,
                                          maxResults=max_results).execute()
-    video_list = []
+    homepage_subscription_list = []
 
     for result in response.get("items", []):
-        video_list.append(result['snippet']["title"])
+        if result['snippet']["type"] == 'upload':
+            homepage_subscription_list.append(result['snippet']["title"])
+        else:
+            # https://developers.google.com/youtube/v3/docs/activities
+            # https://developers.google.com/youtube/v3/docs/activities#snippet.type
+            #有的type没有title
+            continue
     return render_to_response('result.html',
-                              {'list': video_list})
+                              {'list': homepage_subscription_list})
 
 
 def my_watchlater_lists_view(request, max_results):
@@ -153,25 +163,32 @@ def my_watchlater_lists_view(request, max_results):
         watchLater_list_id = channel["contentDetails"]["relatedPlaylists"]["watchLater"]
 
         # Retrieve the list of watchLater videos in the authenticated user's channel.
+        # fields 的设置参考 https://developers.google.com/youtube/v3/getting-started#partial
         playlistitems_list_request = youtube.playlistItems().list(
             playlistId=watchLater_list_id,
             part="snippet",
-            maxResults=max_results
+            maxResults=max_results,
+            fields="items(id,snippet/title)"
         )
 
-        while playlistitems_list_request:
-            playlistitems_list_response = playlistitems_list_request.execute()
+        # 参考 http://stackoverflow.com/a/31795605/1314124
+        res = playlistitems_list_request.execute()
+        nextPageToken = res.get('nextPageToken')
+        while ('nextPageToken' in res):
+            nextPage = youtube.playlistItems().list(
+                part="snippet",
+                playlistId=watchLater_list_id,
+                maxResults=max_results,
+                pageToken=nextPageToken
+            ).execute()
+            res['items'] = res['items'] + nextPage['items']
 
-            # Print information about each video.
-            for playlist_item in playlistitems_list_response["items"]:
-                title = playlist_item["snippet"]["title"]
-                video_id = playlist_item["snippet"]["resourceId"]["videoId"]
-                print "%s (%s)" % (title, video_id)
-
-        playlistitems_list_request = youtube.playlistItems().list_next(
-            playlistitems_list_request, playlistitems_list_response)
+            if 'nextPageToken' not in nextPage:
+                res.pop('nextPageToken', None)
+            else:
+                nextPageToken = nextPage['nextPageToken']
 
         return render_to_response('result.html',
-                                  {'list': playlistitems_list_response})
+                                  {'list': res['items']})
 
 

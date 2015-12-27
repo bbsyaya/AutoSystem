@@ -32,6 +32,7 @@ print authorize_url
 code = raw_input('Enter the verification code and hit ENTER when you\'re done:')
 code = code.strip()
 access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
+#youku的access_token的expires_in时间是2592000秒，也就是30天
 print 'token', access_token.headers
 
 print '-' * 80

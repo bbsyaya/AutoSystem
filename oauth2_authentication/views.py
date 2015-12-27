@@ -29,36 +29,62 @@ CLIENT_SECRETS = os.path.join(
 
 REDIRECT_URI = 'http://127.0.0.1:8000/oauth2/oauth2callback'
 SCOPES = 'https://www.googleapis.com/auth/youtube'
+YOUTUBE_API_SERVICE_NAME = "youtube"
+YOUTUBE_API_VERSION = "v3"
 
 
-@login_required
 def get_authenticated_service(request):
     """
     让用户到google上进行认证，返回认证后的http服务
     :param request:
     :return:
     """
-    FLOW = flow_from_clientsecrets(
-        CLIENT_SECRETS,
-        scope=SCOPES,
-        redirect_uri=REDIRECT_URI
-    )
     user = request.user
     storage = Storage(CredentialsModel, 'id', user, 'credential')
     credential = storage.get()
 
     if credential is None or credential.invalid is True:
-        # there will be some error show I ignore the validate part
-        # FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY, user)
-        authorize_url = FLOW.step1_get_authorize_url()
-        f = FlowModel(id=user, flow=FLOW)
-        f.save()
-        return HttpResponseRedirect(authorize_url)
+        result = None
     else:
         http = httplib2.Http()
         http = credential.authorize(http)
-        service = build('youtube', 'v3', http=http)
-        return service
+        service = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, http=http)
+        result = service
+    return result
+
+
+@login_required
+def authenticate_view(request):
+    """
+    进行google账号认证
+
+    :param request:
+    :return:
+    """
+    result = get_authenticated_service(request)
+
+    if result is None:
+
+        # 如果未在本地查找到认证文件，则重定向到指定的authorize_url
+        FLOW = flow_from_clientsecrets(
+            CLIENT_SECRETS,
+            scope=SCOPES,
+            redirect_uri=REDIRECT_URI
+        )
+
+        # there will be some error show I ignore the validate part
+        # FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY, user)
+        authorize_url = FLOW.step1_get_authorize_url()
+        user = request.user
+        f = FlowModel(id=user, flow=FLOW)
+        f.save()
+        # 根据urls.py的设置，会调用oauth2callback_view()，打开authorize_url进行认证
+        return HttpResponseRedirect(authorize_url)
+
+    else:
+        # 如果返回的是认证后的service，则显示成功获取的文字即可
+        return render_to_response('result.html',
+                                  {'text': '本地保存有认证文件'})
 
 
 @login_required
@@ -76,7 +102,6 @@ def oauth2callback_view(request):
 
     # I have to use socks5 proxy to access google, because I live in China
     # http = httplib2.Http(proxy_info=httplib2.ProxyInfo(httplib2.socks.PROXY_TYPE_SOCKS5, '127.0.0.1', 8115))
-
     FLOW = FlowModel.objects.get(id=user).flow
     credential = FLOW.step2_exchange(request.REQUEST)
     # 保存认证
@@ -86,32 +111,20 @@ def oauth2callback_view(request):
 
 
 @login_required
-def index(request):
-    get_authenticated_service(request)
-    # if service:
-    #     text = '认证成功！'
-    # else:
-    #     text = '认证失败'
-    return render_to_response('result.html',
-                              {'text': text}
-    )
-
-
-@login_required
-def reauthenticate_view(request):
+def reauthorize_view(request):
     user = request.user
     storage = Storage(CredentialsModel, 'id', user, 'credential')
     if storage:
         storage.delete()
-        service = get_authenticated_service(request)
-        text = '删除本地认证文件后再认证成功！'
+        text = '删除本地认证文件！'
 
     else:
-        text = '未能删除本地认证文件'
+        text = '在本地没有对应的storage文件，未能删除本地认证文件'
 
     return render_to_response('result.html',
                               {'text': text}
     )
+
 
 
 
