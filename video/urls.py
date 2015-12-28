@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
 
-from video.views_dir import youtube_view
+from video.views_dir import youtube_view, youku_view
 
 
 __author__ = 'GoTop'
@@ -11,6 +11,9 @@ from django.conf.urls import patterns, url
 from . import views
 
 urlpatterns = [
+    ###########
+    # YouTube
+    ###########
     # http://127.0.0.1:8000/video/search?q=gta&max_results=10
     url(r'search/(?P<q>\w+)/(?P<max_results>\d+)$', views.search_view, name='search'),
 
@@ -34,4 +37,9 @@ urlpatterns = [
     url(r'download_youtube_video/(?P<num>\d+)$', youtube_view.download_youtube_video_view),
 
 
+    ###########
+    #优酷
+    ###########
+    # http://127.0.0.1:8000/video/youku_upload/1
+    url(r'youku_upload/(?P<video_id>\w+)/$', youku_view.youku_upload_view),
 ]

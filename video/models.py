@@ -14,6 +14,7 @@ class Video(models.Model):
     title_cn = models.CharField(max_length=50, null=True, blank=True)
     subtile_en = models.CharField(max_length=50, null=True, blank=True)
     subtile_cn = models.CharField(max_length=50, null=True, blank=True)
+    file = models.FileField(upload_to='youtube', null=True, blank=True)
     youku = models.ForeignKey('Youku', null=True, blank=True)
     baiduy_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, null=True, blank=True)
@@ -29,7 +30,7 @@ class Video(models.Model):
     def youtube_url(self):
         return 'https://www.youtube.com/watch?v=%s' % self.video_id
 
-    #youtube_url = property(_youtube_url)
+    # youtube_url = property(_youtube_url)
 
 
     thumbnail_image.allow_tags = True

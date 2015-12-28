@@ -22,7 +22,7 @@ class MyLogger(object):
 
 def my_hook(d):
     if d['status'] == 'finished':
-        print('Done downloading, now converting ...')
+        print(d)
 
 
 def get_translate_title_video(num):
@@ -39,16 +39,6 @@ def download_youtube_video_main(num):
     for idx, video in enumerate(tran_video_list):
         # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding-youtube-dl
         # 参数 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L121-L269
-        # ydl_opts = {
-        #     'format': 'bestaudio/best',
-        #     'postprocessors': [{'key': 'FFmpegExtractAudio',
-        #                         'preferredcodec': 'mp3',
-        #                         'preferredquality': '192',
-        #                        }],
-        #     'logger': MyLogger(),
-        #     'progress_hooks': [my_hook],
-        # }
-
         ydl_opts = {
             'verbose': True,
             'format': 'bestvideo+bestaudio',  # choice of quality
@@ -58,10 +48,8 @@ def download_youtube_video_main(num):
                                    'key': 'FFmpegExtractAudio',
                                    'preferredcodec': 'mp3',
                                }],
-            'prefer_ffmpeg' : True,
+            'prefer_ffmpeg': True,
             'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin"
-
-
         }
 
         # 参考 http://willdrevo.com/downloading-youtube-and-soundcloud-audio-with-python-and-pandas/
@@ -69,19 +57,20 @@ def download_youtube_video_main(num):
         options = {
             'format': '160+250',  # choice of quality
             # 'extractaudio': True,  # only keep the audio
-            #'audioformat': "mp3",  # convert to mp3
+            # 'audioformat': "mp3",  # convert to mp3
             'outtmpl': 'E:\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
             'noplaylist': True,  # only download single song, not playlist
-            'subtitleslangs': ['zh-Hans','en'],#要写成list的形式
+            'subtitleslangs': ['zh-Hans', 'en'],  #要写成list的形式
             'writeautomaticsub': True,
             'merge_output_format': 'mkv',
             'embedsubtitles': True,
+            'progress_hooks': [my_hook],
         }
 
         with youtube_dl.YoutubeDL(options) as ydl:
             # youtube_url = video.youtube_url
             # 用设置成list的形式
-            ydl.download([video.youtube_url])
+            r = ydl.download([video.youtube_url])
 
         # 控制for循环的次数，从而控制下载的视频数
         # 参考 http://stackoverflow.com/questions/3162271/get-loop-count-inside-a-python-for-loop
@@ -89,20 +78,4 @@ def download_youtube_video_main(num):
             break
 
 
-def list_streams(youtube):
-    print "Live streams:"
-
-    list_streams_request = youtube.liveStreams().list(
-        part="id,snippet",
-        mine=True,
-        maxResults=50
-    )
-
-    while list_streams_request:
-        list_streams_response = list_streams_request.execute()
-
-        for stream in list_streams_response.get("items", []):
-            print "%s (%s)" % (stream["snippet"]["title"], stream["id"])
-
-        list_streams_request = youtube.liveStreams().list_next(
-            list_streams_request, list_streams_response)
+    #todo 返回成功下的的视频列表

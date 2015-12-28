@@ -4,14 +4,12 @@
 </head>
 
 {% for key, value in dict_items %}
-    <li>key:{{ key }}</li>
-    <li>value:{{ value }}</li>
+    <li>{{ key }} : {{ value }}</li>
 {% endfor %}
 
 {% for dict_items in dict_in_list %}
     {% for key, value in dict_items %}
-        <li>key:{{ key }}</li>
-        <li>value:{{ value }}</li>
+        <li>key:{{ key }} : {{ value }}</li>
     {% endfor %}
 {% endfor %}
 

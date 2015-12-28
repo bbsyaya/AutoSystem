@@ -26,7 +26,7 @@ urlpatterns = patterns(
     # 优酷认证
     ####################
     # http://127.0.0.1:8000/oauth2/youku_authenticate
-    url(r'^youku_authenticate$', youku_views.youku_authenticate_view),
+    url(r'^youku_authenticate$', youku_views.youku_authenticate_view,name='youku_authenticate'),
 
     # http://127.0.0.1:8000/oauth2/youku_oauth2callback
     url(r'^youku_oauth2callback', youku_views.youku_oauth2callback_view),

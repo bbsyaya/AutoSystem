@@ -8,7 +8,7 @@ __author__ = 'GoTop'
 
 from django.contrib.auth.decorators import login_required
 from AutoSystem import settings
-from function.youku import youku_get_authenticate_online
+
 
 from pyoauth2 import Client
 import django_settings
@@ -25,19 +25,19 @@ YOUKU_TOKEN_URL = 'https://openapi.youku.com/v2/oauth2/token'
 @login_required
 def youku_authenticate_view(request):
     """
-    通过django_settings，在数据库中查找之前获取到的access token
-
+    先通过django_settings，在数据库中查找之前获取到的access token
+    如果本地没有，就到优酷上去获取,会跳转到youku的认证页面
     :param request:
     :return:
     """
-    # 在本地获取youku_access_token
-    youku_access_token = django_settings.get('youku_access_token', default=None)
+    client = Client(CLIENT_ID, CLIENT_SECRET,
+                    site='https://openapi.youku.com/v2',
+                    authorize_url=YOUKU_AUTHORIZE_URL,
+                    token_url=YOUKU_TOKEN_URL)
 
-    if youku_access_token is None:
-        # 到youtube获取access token
-        youku_access_token = youku_get_authenticate_online(request)
-
-    return youku_access_token
+    authorize_url = client.auth_code.authorize_url(redirect_uri=REDIRECT_URL,
+                                                   scope=SCOPE)
+    return HttpResponseRedirect(authorize_url)
 
 
 @login_required
@@ -55,6 +55,10 @@ def youku_oauth2callback_view(request):
                     token_url=YOUKU_TOKEN_URL)
 
     access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
+
     django_settings.set('String', 'youku_access_token', access_token)
-    return render_to_response('result.html',
-                              {'text': access_token.token})
+
+    #由youku认证页面转来的，没有request.META.HTTP_REFERER变量
+    # 所以无法设置其返回前面的页面
+    #return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return render_to_response('result.html',{'text': access_token.token})
