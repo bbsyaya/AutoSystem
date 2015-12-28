@@ -8,8 +8,9 @@ __author__ = 'GoTop'
 
 from django.contrib.auth.decorators import login_required
 from AutoSystem import settings
-from pyoauth2 import Client
+from function.youku import youku_get_authenticate_online
 
+from pyoauth2 import Client
 import django_settings
 
 CLIENT_ID = client_id = settings.YOUKU_CLIENT_ID
@@ -19,36 +20,6 @@ SCOPE = ''
 
 YOUKU_AUTHORIZE_URL = 'https://openapi.youku.com/v2/oauth2/authorize'
 YOUKU_TOKEN_URL = 'https://openapi.youku.com/v2/oauth2/token'
-
-
-@login_required
-def youku_get_authenticate_online(request):
-    """
-    让用户到youku上进行认证，返回认证后的http服务
-    :param request:
-    :return:
-    """
-    client = Client(CLIENT_ID, CLIENT_SECRET,
-                    site='https://openapi.youku.com/v2',
-                    authorize_url=YOUKU_AUTHORIZE_URL,
-                    token_url=YOUKU_TOKEN_URL)
-
-    print '-' * 80
-    authorize_url = client.auth_code.authorize_url(redirect_uri=REDIRECT_URL,
-                                                   scope=SCOPE)
-    return HttpResponseRedirect(authorize_url)
-
-    print 'Go to the following link in your browser:'
-    print authorize_url
-
-    code = raw_input('Enter the verification code and hit ENTER when you\'re done:')
-    code = code.strip()
-    access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
-    # youku的access_token的expires_in时间是2592000秒，也就是30天
-    # 将获到的access token保存到本地数据库
-    django_settings.set('String', 'youku_access_token', access_token)
-
-    return access_token
 
 
 @login_required
