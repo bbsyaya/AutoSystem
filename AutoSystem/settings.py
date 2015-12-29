@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'adminbrowse',
     'video',
-    'django_youtube',
+    #'django_youtube',
     'oauth2_authentication'
 
 )
@@ -91,7 +91,9 @@ USE_TZ = True
 # django.contrib.staticfiles 要求设置STATIC_ROOT和MEDIA_ROOT，这样能自动收集所有的静态文件到指定的目录下
 STATIC_ROOT = BASE_DIR + '/static/'
 
-MEDIA_ROOT = BASE_DIR + '/media/'
+MEDIA_ROOT = 'E:/media/'
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -138,6 +140,10 @@ YOUTUBE_AUTH_EMAIL = 'imgotop@gmail.com'
 YOUTUBE_AUTH_PASSWORD = ''
 YOUTUBE_DEVELOPER_KEY = 'AIzaSyAp4Dr7YgwofjNbosQ5VZFXm8G5A1QNIPQ'
 YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleusercontent.com'
+
+YOUTUBE_DOWNLOAD_DIR = 'E:\media\Video\YouTube'
+
+
 
 YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
 YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"

@@ -69,7 +69,7 @@ def get_subscription_update_video_view(request, max_results):
             # 有的type没有title
             continue
 
-    return render_to_response('video_result.html',
+    return render_to_response('result.html',
                               {'text': '以下视频已保存',
                                'dict_in_list': video_list})
 
@@ -77,6 +77,6 @@ def get_subscription_update_video_view(request, max_results):
 def download_youtube_video_view(request, num):
     download_youtube_video_main(num)
     # todo 添加保存下载信息到数据库的方法
-    return render_to_response('video_result.html',
+    return render_to_response('result.html',
                               {'text': '视频已下载'}
     )

@@ -14,7 +14,7 @@ class Video(models.Model):
     title_cn = models.CharField(max_length=50, null=True, blank=True)
     subtile_en = models.CharField(max_length=50, null=True, blank=True)
     subtile_cn = models.CharField(max_length=50, null=True, blank=True)
-    file = models.FileField(upload_to='youtube', null=True, blank=True)
+    file = models.CharField(max_length=100, null=True, blank=True)
     youku = models.ForeignKey('Youku', null=True, blank=True)
     baiduy_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, null=True, blank=True)
@@ -36,12 +36,12 @@ class Video(models.Model):
     thumbnail_image.allow_tags = True
 
 
-class YT_playlist(models.Model):
-    """
-    设置关注youtube的用户，或者
-    """
-    playlist_id = models.URLField(max_length=100, primary_key=True)
-    remark = models.CharField(max_length=50)
+# class YT_playlist(models.Model):
+#     """
+#     设置关注youtube的用户，或者
+#     """
+#     playlist_id = models.URLField(max_length=100, primary_key=True)
+#     remark = models.CharField(max_length=50)
 
 
 class YT_channel():

@@ -8,7 +8,7 @@ from .models import Video
 
 # Register your models here.
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'title_cn', 'thumbnail_image', 'publishedAt', 'show_youtube_url')
+    list_display = ('title', 'title_cn', 'thumbnail_image', 'publishedAt', 'show_youtube_url','file')
     list_editable = ['title_cn']
     readonly_fields = ('publishedAt',)
     list_per_page = 10
