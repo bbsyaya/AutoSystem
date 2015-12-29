@@ -24,6 +24,8 @@ def youku_get_authenticate():
     :return:
     """
     # 在本地获取youku_access_token
+    # 如果获取过新的access token，那么旧的access token会失效
+    # todo 如何判断access token 是否还有效？
     youku_access_token = django_settings.get('youku_access_token', default=None)
     if youku_access_token is None:
         # 到youku获取access token

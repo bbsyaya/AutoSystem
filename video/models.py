@@ -37,7 +37,7 @@ class Video(models.Model):
 
 
 # class YT_playlist(models.Model):
-#     """
+# """
 #     设置关注youtube的用户，或者
 #     """
 #     playlist_id = models.URLField(max_length=100, primary_key=True)
@@ -61,7 +61,13 @@ class YouTube(models.Model):
 
 
 class Youku(models.Model):
-    video_id = models.CharField(max_length=50)
+    video_id = models.CharField(max_length=50, primary_key=True)
+
+
+    @property
+    def url(self):
+        url = 'http://v.youku.com/v_show/id_' + self.video_id + '.html'
+        return url
 
 
 class BaiduYun(models.Model):

@@ -36,3 +36,10 @@ todo:
 
 使用ajax技术，优美简洁的django admin节目，适合在mobile上显示操作
 
+在youtube上建立一些playlist，浏览youtube是可以把需要下载的视频加入这些list，
+AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
+
+制作网站的宣传视频，要求用户点赞，评论，订阅，关注微信微博等，自动合成到视频的前面或后面
+
+在威客网站上翻译文章的信息管理
+

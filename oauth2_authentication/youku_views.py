@@ -9,7 +9,6 @@ __author__ = 'GoTop'
 from django.contrib.auth.decorators import login_required
 from AutoSystem import settings
 
-
 from pyoauth2 import Client
 import django_settings
 
@@ -56,9 +55,10 @@ def youku_oauth2callback_view(request):
 
     access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
 
-    django_settings.set('String', 'youku_access_token', access_token)
+    access_token_string = access_token.token
+    django_settings.set('String', 'youku_access_token', access_token_string, False)
 
-    #由youku认证页面转来的，没有request.META.HTTP_REFERER变量
+    # 由youku认证页面转来的，没有request.META.HTTP_REFERER变量
     # 所以无法设置其返回前面的页面
-    #return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    return render_to_response('result.html',{'text': access_token.token})
+    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return render_to_response('result.html', {'text': access_token_string})
