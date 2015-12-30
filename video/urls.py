@@ -4,7 +4,6 @@ from django.conf.urls import patterns, include, url
 
 from video.views_dir import youtube_view, youku_view
 
-
 __author__ = 'GoTop'
 
 from django.conf.urls import patterns, url
@@ -38,13 +37,18 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/download_youtube_video/1
     url(r'download_multi_youtube_video/(?P<num>\d+)$', youtube_view.download_multi_youtube_video_view),
 
-    url(r'download_youtube_video/(?P<num>\d+)$', youtube_view.download_youtube_video_view),
+    # http://127.0.0.1:8000/video/download_single_youtube_video/zmZfonO6PkI
+    url(r'download_single_youtube_video/(?P<video_id>\w+)$', youtube_view.download_single_youtube_video_view,
+        name='download_single_youtube_video'),
+
     ###########
-    #优酷
+    # 优酷
     ###########
     # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
     url(r'youku_upload/(?P<video_id>\w+)/$', youku_view.youku_upload_view, name='youku_upload'),
 
-    url(r'get_youku_video/(?P<video_id>\w+)/$', youku_view.get_youku_video_view),
+    # http://127.0.0.1:8000/video/get_youku_video/XMTQyOTQ3NzgyOA==
+    # 因为优酷的video id 里可能含有 = 号，所以这样要用 . 来 代替 \w
+    url(r'get_youku_video_info/(?P<video_id>.+)$', youku_view.get_youku_video_info_view, name='get_youku_video_info'),
 
 ]

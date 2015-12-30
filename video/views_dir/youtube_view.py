@@ -4,7 +4,7 @@ from django.shortcuts import render, render_to_response
 
 # Create your views here.
 from django.template import RequestContext
-from video.function.youtube import download_youtube_video_main
+from video.function.youtube import download_multi_youtube_video_main, download_single_youtube_video_main
 from video.models import Video
 from oauth2_authentication.views import get_authenticated_service
 
@@ -29,10 +29,10 @@ def get_subscription_update_video_view(request, max_results):
     nextPageToken = res.get('nextPageToken')
     while ('nextPageToken' in res):
         nextPage = youtube.activities().list(
-            part='snippet, contentDetails',
-            home=True,
-            maxResults=max_results,
-            pageToken=nextPageToken
+                part='snippet, contentDetails',
+                home=True,
+                maxResults=max_results,
+                pageToken=nextPageToken
         ).execute()
         res['items'] = res['items'] + nextPage['items']
 
@@ -49,7 +49,7 @@ def get_subscription_update_video_view(request, max_results):
                      'title': result['snippet']["title"],
                      'publishedAt': result['snippet']["publishedAt"],
                      'thumbnail': result['snippet']['thumbnails']["default"]["url"]
-            }
+                     }
 
             import datetime, dateutil.parser
 
@@ -60,7 +60,7 @@ def get_subscription_update_video_view(request, max_results):
                                         title=video['title'],
                                         publishedAt=d,
                                         thumbnail=video['thumbnail']
-            )
+                                        )
 
             video_list.append(video)
         else:
@@ -79,12 +79,12 @@ def download_multi_youtube_video_view(request, num):
     # todo 添加保存下载信息到数据库的方法
     return render_to_response('result.html',
                               {'text': '视频已下载'}
-    )
+                              )
 
 
 def download_single_youtube_video_view(request, video_id):
-    download_youtube_video_main(num)
+    download_single_youtube_video_main(video_id)
     # todo 添加保存下载信息到数据库的方法
     return render_to_response('result.html',
                               {'text': '视频已下载'}
-    )
+                              )

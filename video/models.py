@@ -3,22 +3,22 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+
 # Create your models here.
 class Video(models.Model):
     video_id = models.CharField(max_length=50, primary_key=True)
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=100)
     description = models.CharField(max_length=300, null=True, blank=True)
     publishedAt = models.DateTimeField(null=True, blank=True)
     thumbnail = models.URLField(max_length=300, null=True, blank=True)
 
-    title_cn = models.CharField(max_length=50, null=True, blank=True)
+    title_cn = models.CharField(max_length=100, null=True, blank=True)
     subtile_en = models.CharField(max_length=50, null=True, blank=True)
     subtile_cn = models.CharField(max_length=50, null=True, blank=True)
     file = models.CharField(max_length=100, null=True, blank=True)
     youku = models.ForeignKey('Youku', null=True, blank=True)
     baiduy_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, null=True, blank=True)
-
 
     def __str__(self):
         return self.title
@@ -62,8 +62,11 @@ class YouTube(models.Model):
 
 class Youku(models.Model):
     video_id = models.CharField(max_length=50, primary_key=True)
+    title = models.CharField(max_length=100, null=True, blank=True)
     tags = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=300, null=True, blank=True)
+    category = models.CharField(max_length=50, null=True, blank=True)
+    published = models.DateTimeField(null=True, blank=True)
 
     @property
     def url(self):
@@ -73,6 +76,3 @@ class Youku(models.Model):
 
 class BaiduYun(models.Model):
     uri = models.CharField(max_length=50)
-
-
-

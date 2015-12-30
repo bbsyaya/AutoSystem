@@ -49,3 +49,5 @@ AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 
 在威客网站上翻译文章的信息管理
 
+在Video Model中设置一个字段，用于控制是否发布视频，选择不发布的视频，之后可以不显示在list diaplay中
+
