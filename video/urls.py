@@ -36,12 +36,15 @@ urlpatterns = [
         name='my_youtube_homepage'),
 
     # http://127.0.0.1:8000/video/download_youtube_video/1
+    url(r'download_multi_youtube_video/(?P<num>\d+)$', youtube_view.download_multi_youtube_video_view),
+
     url(r'download_youtube_video/(?P<num>\d+)$', youtube_view.download_youtube_video_view),
-
-
     ###########
     #优酷
     ###########
     # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
-    url(r'youku_upload/(?P<video_id>\w+)/$', youku_view.youku_upload_view),
+    url(r'youku_upload/(?P<video_id>\w+)/$', youku_view.youku_upload_view, name='youku_upload'),
+
+    url(r'get_youku_video/(?P<video_id>\w+)/$', youku_view.get_youku_video_view),
+
 ]

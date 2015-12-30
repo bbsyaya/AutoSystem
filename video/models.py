@@ -62,7 +62,8 @@ class YouTube(models.Model):
 
 class Youku(models.Model):
     video_id = models.CharField(max_length=50, primary_key=True)
-
+    tags = models.CharField(max_length=50, null=True, blank=True)
+    description = models.CharField(max_length=300, null=True, blank=True)
 
     @property
     def url(self):

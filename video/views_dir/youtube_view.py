@@ -74,7 +74,15 @@ def get_subscription_update_video_view(request, max_results):
                                'dict_in_list': video_list})
 
 
-def download_youtube_video_view(request, num):
+def download_multi_youtube_video_view(request, num):
+    download_multi_youtube_video_main(num)
+    # todo 添加保存下载信息到数据库的方法
+    return render_to_response('result.html',
+                              {'text': '视频已下载'}
+    )
+
+
+def download_single_youtube_video_view(request, video_id):
     download_youtube_video_main(num)
     # todo 添加保存下载信息到数据库的方法
     return render_to_response('result.html',

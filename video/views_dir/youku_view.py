@@ -33,3 +33,19 @@ def youku_upload_view(request, video_id):
     video.save()
 
     return render_to_response('result.html', {'text': '上传成功, 在优酷上的video id为 ' + youku_video_id})
+
+
+def get_youku_video_view(request, video_id):
+    """
+    根据优酷的video id，获取视频的相关信息
+    :param request:
+    :param video_id:
+    :return:
+    """
+    youku_service = YoukuVideos(CLIENT_ID)
+    video_info = youku_service.find_video_by_id(video_id)
+    return render_to_response('result.html', {'dict_items': video_info})
+
+
+
+

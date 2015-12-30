@@ -31,7 +31,7 @@ def get_translate_title_video(num):
     tran_video_list = Video.objects.filter(title_cn__isnull=True).order_by('publishedAt', 'title')[:num]
 
 
-def download_youtube_video_main(num):
+def download_multi_youtube_video_main(num):
     """
     下载num个已对标题进行翻译的youtube视频
     :return:
@@ -71,8 +71,8 @@ def download_youtube_video_main(num):
             video_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
                                                     keyword=video.video_id,
                                                     extend=options.get('merge_output_format', None))
-            if(video_filepath.__len__()) == 1:
-                #从list中把唯一的一个数据pop出来
+            if (video_filepath.__len__()) == 1:
+                # 从list中把唯一的一个数据pop出来
                 video_filepath = video_filepath.pop()
                 video_filepath_list.append(video_filepath)
                 video.file = video_filepath
@@ -84,6 +84,48 @@ def download_youtube_video_main(num):
 
     # todo 返回成功下的的视频列表
     return video_filepath_list
+
+
+def download_single_youtube_video_main(video_id):
+    """
+    下载单个youtube视频，并将下载后的视频文件的目录保存到Video.file
+    :param video_id:
+    :return:
+    """
+    video = Video.objects.get(video_id=video_id)
+    options = {
+        'format': '160+250',  # choice of quality
+        # 'extractaudio': True,  # only keep the audio
+        # 'audioformat': "mp3",  # convert to mp3
+        'outtmpl': settings.YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
+        'noplaylist': True,  # only download single song, not playlist
+        'verbose': True,
+        'subtitleslangs': ['zh-Hans', 'en'],  # 要写成list的形式
+        'writeautomaticsub': True,
+        'embedsubtitles': True,
+        'merge_output_format': 'mkv',
+        'prefer_ffmpeg': True,
+        'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin"
+        # 'progress_hooks': [my_hook],
+    }
+
+    with youtube_dl.YoutubeDL(options) as ydl:
+        # youtube_url = video.youtube_url
+        # 用设置成list的形式
+        ydl.download([video.youtube_url])
+
+        # youtube-dl下载成功后并不会返回下载视频文件的信息
+        # todo 所以要自己查看下载目录下是否有相关video id的视频，以此来判断是否下载成功
+        # 并将视频文件的地址保存到对应的字段
+        video_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
+                                                keyword=video.video_id,
+                                                extend=options.get('merge_output_format', None))
+        if (video_filepath.__len__()) == 1:
+            # 从list中把唯一的一个数据pop出来
+            video_filepath = video_filepath.pop()
+            video.file = video_filepath
+            video.save()
+    return video_filepath
 
 
 def search_keyword_in_file(dir, keyword, extend=None):
