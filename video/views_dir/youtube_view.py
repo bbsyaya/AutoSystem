@@ -5,7 +5,7 @@ from django.shortcuts import render, render_to_response
 # Create your views here.
 from django.template import RequestContext
 from video.function.youtube import download_multi_youtube_video_main, download_single_youtube_video_main
-from video.models import Video
+from video.models import Video, YT_channel
 from oauth2_authentication.views import get_authenticated_service
 
 
@@ -44,30 +44,34 @@ def get_subscription_update_video_view(request, max_results):
     # 从返回的对象里找出type为upload的
     video_list = []
     for result in res.get("items", []):
-        if result['snippet']["type"] == 'upload':
-            video = {'video_id': result['contentDetails']["upload"]["videoId"],
-                     'title': result['snippet']["title"],
-                     'publishedAt': result['snippet']["publishedAt"],
-                     'thumbnail': result['snippet']['thumbnails']["default"]["url"]
-                     }
+        channel = YT_channel.objects.filter(channel_id=result['snippet']["channelId"]).first()
+        if channel and channel.is_download:
+            # 如果该视频所属的频道被设置需要下载，才进行下载
+            # todo 待测试
+            if result['snippet']["type"] == 'upload':
+                video = {'video_id': result['contentDetails']["upload"]["videoId"],
+                         'title': result['snippet']["title"],
+                         'publishedAt': result['snippet']["publishedAt"],
+                         'thumbnail': result['snippet']['thumbnails']["default"]["url"]
+                         }
 
-            import datetime, dateutil.parser
+                import datetime, dateutil.parser
 
-            # publishedAt 为ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ)格式，类似2008-09-26T01:51:42.000Z
-            d = dateutil.parser.parse(video['publishedAt'])
+                # publishedAt 为ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ)格式，类似2008-09-26T01:51:42.000Z
+                d = dateutil.parser.parse(video['publishedAt'])
 
-            Video.objects.get_or_create(video_id=video['video_id'],
-                                        title=video['title'],
-                                        publishedAt=d,
-                                        thumbnail=video['thumbnail']
-                                        )
+                Video.objects.get_or_create(video_id=video['video_id'],
+                                            title=video['title'],
+                                            publishedAt=d,
+                                            thumbnail=video['thumbnail']
+                                            )
 
-            video_list.append(video)
-        else:
-            # https://developers.google.com/youtube/v3/docs/activities
-            # https://developers.google.com/youtube/v3/docs/activities#snippet.type
-            # 有的type没有title
-            continue
+                video_list.append(video)
+            else:
+                # https://developers.google.com/youtube/v3/docs/activities
+                # https://developers.google.com/youtube/v3/docs/activities#snippet.type
+                # 有的type没有title
+                continue
 
     return render_to_response('result.html',
                               {'text': '以下视频已保存',

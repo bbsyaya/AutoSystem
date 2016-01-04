@@ -5,18 +5,24 @@ from django.core import urlresolvers
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
 from django.contrib import admin
-from .models import Video, Youku
+from .models import Video, Youku, YT_channel, Category
 
 
 # Register your models here.
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'title_cn', 'thumbnail_image', 'publishedAt', 'show_download_youtube_url', 'show_youtube_url',
+        'title', 'title_cn', 'show_thumbnail', 'publishedAt', 'show_download_youtube_url', 'show_youtube_url',
         'show_youku_url', 'show_get_youku_video_info_url')
     list_editable = ['title_cn']
     readonly_fields = ('publishedAt',)
     list_per_page = 10
     search_fields = ('title', 'title_cn')
+
+    def show_thumbnail(self, obj):
+        return '<img src="%s"/>' % obj.thumbnail
+
+    show_thumbnail.allow_tags = True
+    show_thumbnail.short_description = 'Thumbnail'
 
     def show_youtube_url(self, obj):
         youtube_url = 'https://www.youtube.com/watch?v=%s' % obj.video_id
@@ -71,6 +77,47 @@ class YoukuAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Video, VideoAdmin)
+class CategoryAdmin(admin.ModelAdmin):
+    pass
 
+
+class YT_channelAdmin(admin.ModelAdmin):
+    list_display = ('title', 'show_channel_url', 'show_thumbnail', 'description', 'category', 'is_download',
+                    'remark')
+    list_editable = ('is_download', 'category')
+    list_per_page = 10
+    search_fields = ('title',)
+
+    def show_channel_url(self, obj):
+        return "<a href='%s' target='_blank'>频道Url</a>" % obj.url
+
+    show_channel_url.allow_tags = True
+    show_channel_url.short_description = 'Url'
+
+    def show_thumbnail(self, obj):
+        return '<img src="%s"/>' % obj.thumbnail
+
+    show_thumbnail.allow_tags = True
+    show_thumbnail.short_description = 'Thumbnail'
+
+    # def show_category_url(self, obj):
+    #     if obj.category_id:
+    #         # 如果已经有 category_id 视频的信息，则显示访问 Category model的链接
+    #         category = YT_channel.objects.get(category_id=obj.category_id)
+    #         if category:
+    #             # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
+    #             category_change_url = reverse('admin:video_category_change', args=[obj.category_id])
+    #             return "<a href='%s' target='_blank'>%s</a>" % (category_change_url, category.title)
+    #     else:
+    #         # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
+    #         category_change_url = reverse('admin:video_category_changelist')
+    #         return "<a href='%s' target='_blank'></a>" % category_change_url
+    #
+    # show_category_url.allow_tags = True
+    # show_category_url.short_description = 'Category'
+
+
+admin.site.register(Video, VideoAdmin)
 admin.site.register(Youku, YoukuAdmin)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(YT_channel, YT_channelAdmin)

@@ -25,6 +25,9 @@ def youku_upload_view(request, video_id):
     if video.description is None:
         video.description = ''
 
+    # 参数 http://cloud.youku.com/docs?id=110
+    # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
+    # category：string 可选参数 视频分类，详细分类定义见schemas/video/category
     video_info = {
         'title': video.title_cn,
         'tags': 'Google,IO',
@@ -52,11 +55,11 @@ def get_youku_video_info_view(request, video_id):
 
     published = datetime.strptime(video_info['published'], "%Y-%m-%d %H:%M:%S")
     youku, created = Youku.objects.update_or_create(video_id=video_id,
-                                defaults={'title': video_info['title'],
-                                          'tags': video_info['tags'],
-                                          'description': video_info['description'],
-                                          'category': video_info['category'],
-                                          'published': published}
-                                )
+                                                    defaults={'title': video_info['title'],
+                                                              'tags': video_info['tags'],
+                                                              'description': video_info['description'],
+                                                              'category': video_info['category'],
+                                                              'published': published}
+                                                    )
 
     return render_to_response('result.html', {'dict_items': video_info})

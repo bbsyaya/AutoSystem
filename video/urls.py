@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
 
-from video.views_dir import youtube_view, youku_view
+from video.views_dir import youtube_view, youtube_subscription_view, youku_view
 
 __author__ = 'GoTop'
 
@@ -16,8 +16,11 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/search?q=gta&max_results=10
     url(r'search/(?P<q>\w+)/(?P<max_results>\d+)$', views.search_view, name='search'),
 
-    # http://127.0.0.1:8000/video/my_subscription
-    url(r'my_subscription$', views.my_subscription_view, name='my_subscription'),
+    #####################
+    # YouTube 订阅链接
+    #####################
+    # http://127.0.0.1:8000/video/get_my_subscription
+    url(r'get_my_subscription$', youtube_subscription_view.get_my_subscription_view, name='my_subscription'),
 
     # http://127.0.0.1:8000/video/my_homepage_subscription/50
     url(r'my_homepage_subscription/(?P<max_results>\d+)$', views.my_homepage_subscription_view,
@@ -34,18 +37,20 @@ urlpatterns = [
     url(r'get_subscription_update_video/(?P<max_results>\d+)$', youtube_view.get_subscription_update_video_view,
         name='my_youtube_homepage'),
 
+    # 下载num个已对标题进行翻译的youtube视频
     # http://127.0.0.1:8000/video/download_youtube_video/1
     url(r'download_multi_youtube_video/(?P<num>\d+)$', youtube_view.download_multi_youtube_video_view),
 
     # http://127.0.0.1:8000/video/download_single_youtube_video/zmZfonO6PkI
-    url(r'download_single_youtube_video/(?P<video_id>\w+)$', youtube_view.download_single_youtube_video_view,
+    # 因为youtube的video id 里可能含有 - 号，所以这样要用 . 来 代替 \w
+    url(r'download_single_youtube_video/(?P<video_id>.+)$', youtube_view.download_single_youtube_video_view,
         name='download_single_youtube_video'),
 
     ###########
     # 优酷
     ###########
     # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
-    url(r'youku_upload/(?P<video_id>\w+)/$', youku_view.youku_upload_view, name='youku_upload'),
+    url(r'youku_upload/(?P<video_id>.+)/$', youku_view.youku_upload_view, name='youku_upload'),
 
     # http://127.0.0.1:8000/video/get_youku_video/XMTQyOTQ3NzgyOA==
     # 因为优酷的video id 里可能含有 = 号，所以这样要用 . 来 代替 \w

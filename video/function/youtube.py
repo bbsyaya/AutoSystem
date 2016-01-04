@@ -36,6 +36,7 @@ def download_multi_youtube_video_main(num):
     下载num个已对标题进行翻译的youtube视频
     :return:
     """
+    # 选择出前num个已经翻译过标题的youtube视频
     tran_video_list = Video.objects.filter(title_cn__isnull=False).order_by('publishedAt', 'title')[:num]
 
     video_filepath_list = []

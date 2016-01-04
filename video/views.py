@@ -89,24 +89,7 @@ def search_view(request, q, max_results):
     return render_to_response('result.html', {'list': videos})
 
 
-def my_subscription_view(request):
-    """
-    获取认证用户订阅的频道的信息
-    同一个google账号有两个用户名的，选择不同的用户名，返回的订阅信息也不一样
-    :param request:
-    :return:
-    """
-    youtube = get_authenticated_service(request)
-    response = youtube.subscriptions().list(part='snippet',
-                                            mine=True,
-                                            maxResults=10).execute()
-    subscriptions_list = []
 
-    for result in response.get("items", []):
-        subscriptions_list.append(result['snippet']["title"])
-    return render_to_response('result.html',
-                              {'list': subscriptions_list,
-                               'text': response["pageInfo"]["totalResults"]})
 
 
 def my_homepage_subscription_view(request, max_results):
