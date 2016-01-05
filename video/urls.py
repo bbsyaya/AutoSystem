@@ -56,4 +56,8 @@ urlpatterns = [
     # 因为优酷的video id 里可能含有 = 号，所以这样要用 . 来 代替 \w
     url(r'get_youku_video_info/(?P<video_id>.+)$', youku_view.get_youku_video_info_view, name='get_youku_video_info'),
 
+    # http://127.0.0.1:8000/video/get_my_playlists
+    url(r'get_my_playlists$', youku_view.get_my_playlists_view, name='youku_upload'),
+
+
 ]

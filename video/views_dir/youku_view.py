@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 from django.shortcuts import render, render_to_response
-from youku import YoukuVideos, YoukuUpload
+from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
 from AutoSystem import settings
 from oauth2_authentication.function.youku import youku_get_authenticate
 from video.models import Video, Youku
@@ -63,3 +63,10 @@ def get_youku_video_info_view(request, video_id):
                                                     )
 
     return render_to_response('result.html', {'dict_items': video_info})
+
+
+def get_my_playlists_view(request):
+    youku_access_token = youku_get_authenticate()
+    youku_service = YoukuPlaylists(CLIENT_ID)
+    playlists_json = youku_service.find_playlists_by_me(youku_access_token)
+    return render_to_response('result.html', {'text': playlists_json})

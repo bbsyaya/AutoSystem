@@ -18,8 +18,10 @@ class VideoAdmin(admin.ModelAdmin):
     list_per_page = 10
     search_fields = ('title', 'title_cn')
 
+    ordering = ('-publishedAt', 'title')
+
     def show_thumbnail(self, obj):
-        return '<img src="%s"/>' % obj.thumbnail
+        return '<img src="%s" width="50" height="50"/>' % obj.thumbnail
 
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
@@ -85,8 +87,9 @@ class YT_channelAdmin(admin.ModelAdmin):
     list_display = ('title', 'show_channel_url', 'show_thumbnail', 'description', 'category', 'is_download',
                     'remark')
     list_editable = ('is_download', 'category')
-    list_per_page = 10
+    list_per_page = 50
     search_fields = ('title',)
+    list_filter = ('is_download', 'category')
 
     def show_channel_url(self, obj):
         return "<a href='%s' target='_blank'>频道Url</a>" % obj.url
@@ -95,7 +98,7 @@ class YT_channelAdmin(admin.ModelAdmin):
     show_channel_url.short_description = 'Url'
 
     def show_thumbnail(self, obj):
-        return '<img src="%s"/>' % obj.thumbnail
+        return '<img src="%s" width="50" height="50"/>' % obj.thumbnail
 
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
