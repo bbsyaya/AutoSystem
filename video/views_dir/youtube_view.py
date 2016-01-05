@@ -46,7 +46,7 @@ def get_subscription_update_video_view(request, max_results):
     for result in res.get("items", []):
         channel = YT_channel.objects.filter(channel_id=result['snippet']["channelId"]).first()
         if channel and channel.is_download:
-            # 如果该视频所属的频道被设置需要下载，才进行下载
+            # 如果该视频所属的频道 is_download 属性被设置为True，才进行下载
             # todo 待测试
             if result['snippet']["type"] == 'upload':
                 video = {'video_id': result['contentDetails']["upload"]["videoId"],
@@ -60,11 +60,12 @@ def get_subscription_update_video_view(request, max_results):
                 # publishedAt 为ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ)格式，类似2008-09-26T01:51:42.000Z
                 d = dateutil.parser.parse(video['publishedAt'])
 
-                Video.objects.get_or_create(video_id=video['video_id'],
-                                            title=video['title'],
-                                            publishedAt=d,
-                                            thumbnail=video['thumbnail']
-                                            )
+                youtube_video, created = Video.objects.update_or_create(video_id=video['video_id'],
+                                                                        defaults={'title': video['title'],
+                                                                                  'publishedAt': d,
+                                                                                  'thumbnail': video['thumbnail']
+                                                                                  }
+                                                                        )
 
                 video_list.append(video)
             else:
