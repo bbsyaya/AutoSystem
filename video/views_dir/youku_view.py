@@ -25,6 +25,14 @@ def youku_upload_view(request, video_id):
     if video.description is None:
         video.description = ''
 
+    if video.youku:
+
+        video_info = {
+            'title': video.title_cn,
+            'tags': 'Google,IO',
+            'description': video.description
+        }
+
     # 参数 http://cloud.youku.com/docs?id=110
     # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
     # category：string 可选参数 视频分类，详细分类定义见schemas/video/category

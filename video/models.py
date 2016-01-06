@@ -16,11 +16,12 @@ class Video(models.Model):
     subtile_en = models.CharField(max_length=50, null=True, blank=True)
     subtile_cn = models.CharField(max_length=50, null=True, blank=True)
     file = models.CharField(max_length=100, null=True, blank=True)
-    youku = models.ForeignKey('Youku', null=True, blank=True)
-    baiduy_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
+    # youku = models.ForeignKey('Youku', null=True, blank=True)
+    youku = models.OneToOneField('Youku', on_delete=models.CASCADE, null=True, blank=True)
+    baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, null=True, blank=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.title
 
     def thumbnail_image(self):
@@ -70,7 +71,7 @@ class YouTube(models.Model):
 
 
 class Youku(models.Model):
-    video_id = models.CharField(max_length=50, primary_key=True)
+    video_id = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
     tags = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=300, null=True, blank=True)
@@ -82,8 +83,9 @@ class Youku(models.Model):
         url = 'http://v.youku.com/v_show/id_' + self.video_id + '.html'
         return url
 
-    def __str__(self):
-        return self.title
+    def __unicode__(self):
+        return self.video_id
+
 
 
 class BaiduYun(models.Model):

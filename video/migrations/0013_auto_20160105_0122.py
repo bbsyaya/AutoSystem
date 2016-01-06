@@ -28,6 +28,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='yt_channel',
             name='category',
-            field=models.ForeignKey(blank=True, to='video.category', null=True),
+            field=models.ForeignKey(blank=True, to='video.Category', null=True),
         ),
     ]

@@ -54,5 +54,5 @@ AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 
 解决video admin的list display页面无法翻页的错误 check 2016-1-4
 
-
+todo：video和youku模块为OneToOne的关系,在video 的list display页面无法直接添加youku对象，但是用foriegnkey就可以
 
