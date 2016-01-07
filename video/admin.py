@@ -1,18 +1,56 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from adminbrowse import AutoBrowseModelAdmin, link_to_url, link_to_changelist, link_to_change
+from django import forms
 from django.core import urlresolvers
 from django.core.urlresolvers import reverse
+from django.db import models
+from django.forms import ModelForm
+
 from django.utils.html import format_html
 from django.contrib import admin
 from .models import Video, Youku, YT_channel, Category, BaiduYun
 
 
+class YoukuForm(forms.ModelForm):
+    class Meta:
+        model = Youku
+
+        # 覆盖默认的widget
+        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+        widgets = {
+            'title': forms.TextInput(attrs={'size': 100}),
+            'tags': forms.TextInput(attrs={'size': 100}),
+        }
+        fields = '__all__'  # Register your models here.
+
+
+class YoukuAdmin(admin.ModelAdmin):
+    form = YoukuForm
+    pass
+
+
 class YoukuInline(admin.StackedInline):
     model = Youku
+    # add a custom inline admin widget in Django
+    # http://stackoverflow.com/questions/433251/how-do-i-add-a-custom-inline-admin-widget-in-django
+    form = YoukuForm
 
 
-# Register your models here.
+class VideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+
+        # 覆盖默认的widget
+        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+        widgets = {
+            'title': forms.TextInput(attrs={'size': 100}),
+            'title_cn': forms.TextInput(attrs={'size': 100}),
+
+        }
+        fields = '__all__'  # Register your models here.
+
+
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'title_cn', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'youtube_url',
@@ -24,6 +62,7 @@ class VideoAdmin(admin.ModelAdmin):
     inlines = [
         YoukuInline,
     ]
+    form = VideoForm
 
     ordering = ('-publishedAt', 'title')
 
@@ -135,10 +174,6 @@ class YT_channelAdmin(admin.ModelAdmin):
     #
     # show_category_url.allow_tags = True
     # show_category_url.short_description = 'Category'
-
-
-class YoukuAdmin(admin.ModelAdmin):
-    pass
 
 
 class BaiduYunAdmin(admin.ModelAdmin):

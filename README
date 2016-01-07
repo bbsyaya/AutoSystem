@@ -26,6 +26,8 @@ todo:
 
 可以根据用户选择视频的分类，上传到优酷上不同的专辑下 doing...
 
+设置django自动运行某些命令
+
 设置输入优酷tag的功能
 
 可以把youtube加入不同的list，根据list将视频上传到优酷上不同的专辑下
@@ -54,7 +56,7 @@ AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 
 在Video Model中设置一个字段，用于控制是否发布视频，选择不发布的视频，之后可以不显示在list diaplay中
 
-解决video admin的list display页面无法翻页的错误 check 2016-1-4
+在威客网站上找人制作视频的片头和片尾，宣传网站、微博、微信账号，或者要求用户订阅
 
-video和youku模块为OneToOne的关系,在video 的list display页面无法直接添加youku对象，但是用foriegnkey就可以 check 2016-1-7
+自动将片头、片尾合并合并到视频中
 

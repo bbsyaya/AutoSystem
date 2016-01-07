@@ -12,6 +12,12 @@ CLIENT_ID = settings.YOUKU_CLIENT_ID
 
 
 def youku_upload_view(request, video_id):
+    """
+    将youtube上下载的视频上传到优酷
+    :param request:
+    :param video_id: YouTube的video_id
+    :return:
+    """
     youku_access_token = youku_get_authenticate()
 
     video = Video.objects.get(video_id=video_id)
@@ -23,11 +29,12 @@ def youku_upload_view(request, video_id):
     if video.description is None:
         video.description = ''
 
-    if video.youku:
+    if hasattr(video, 'youku'):
         video_info = {
-            'title': video.title_cn,
-            'tags': 'Google,IO',
-            'description': video.description
+            'title': video.youku.title,
+            'category': video.youku.category,
+            'tags': video.youku.tags,
+            'description': video.youku.description
         }
 
     # 参数 http://cloud.youku.com/docs?id=110
