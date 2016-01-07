@@ -1,6 +1,5 @@
 # coding=utf-8
 from __future__ import unicode_literals
-
 from django.db import models
 
 
@@ -17,11 +16,11 @@ class Video(models.Model):
     subtile_cn = models.CharField(max_length=50, null=True, blank=True)
     file = models.CharField(max_length=100, null=True, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
-    youku = models.OneToOneField('Youku', on_delete=models.CASCADE, null=True, blank=True)
+
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def thumbnail_image(self):
@@ -71,21 +70,24 @@ class YouTube(models.Model):
 
 
 class Youku(models.Model):
-    video_id = models.CharField(max_length=50, null=True, blank=True)
+    youku_video_id = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
     tags = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=300, null=True, blank=True)
     category = models.CharField(max_length=50, null=True, blank=True)
     published = models.DateTimeField(null=True, blank=True)
+    # on_delete=models.SET_NULL 表示如果对应的Video被删除，Youku只将个属性设置为null，不会删除youku对象
+    # OneToOneField要设置在 要被显示在inline的model里
+    # 参考 http://stackoverflow.com/questions/1744203/django-admin-onetoone-relation-as-an-inline
+    video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def url(self):
         url = 'http://v.youku.com/v_show/id_' + self.video_id + '.html'
         return url
 
-    def __unicode__(self):
-        return self.video_id
-
+    def __str__(self):
+        return self.youku_video_id
 
 
 class BaiduYun(models.Model):

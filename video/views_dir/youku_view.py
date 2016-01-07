@@ -62,7 +62,7 @@ def get_youku_video_info_view(request, video_id):
     video_info = youku_service.find_video_by_id(video_id)
 
     published = datetime.strptime(video_info['published'], "%Y-%m-%d %H:%M:%S")
-    youku, created = Youku.objects.update_or_create(video_id=video_id,
+    youku, created = Youku.objects.update_or_create(youku_video_id=video_id,
                                                     defaults={'title': video_info['title'],
                                                               'tags': video_info['tags'],
                                                               'description': video_info['description'],

@@ -8,15 +8,22 @@ from django.contrib import admin
 from .models import Video, Youku, YT_channel, Category, BaiduYun
 
 
+class YoukuInline(admin.StackedInline):
+    model = Youku
+
+
 # Register your models here.
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'title_cn', 'show_thumbnail', 'publishedAt', 'show_download_youtube_url', 'show_youtube_url',
-        'show_youku_url', 'show_get_youku_video_info_url', 'edit_youku_url')
+        'title', 'title_cn', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'youtube_url',
+        'youku_url', 'get_youku_video_info_url', 'edit_youku_url')
     list_editable = ['title_cn']
     readonly_fields = ('publishedAt',)
     list_per_page = 10
     search_fields = ('title', 'title_cn')
+    inlines = [
+        YoukuInline,
+    ]
 
     ordering = ('-publishedAt', 'title')
 
@@ -26,57 +33,59 @@ class VideoAdmin(admin.ModelAdmin):
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
 
-    def show_youtube_url(self, obj):
+    def youtube_url(self, obj):
         youtube_url = 'https://www.youtube.com/watch?v=%s' % obj.video_id
         return "<a href='%s' target='_blank'>YouTube链接</a>" % youtube_url
 
-    show_youtube_url.allow_tags = True
-    show_youtube_url.short_description = 'YouTube'
+    youtube_url.allow_tags = True
+    youtube_url.short_description = 'YouTube'
 
-    def show_download_youtube_url(self, obj):
+    def download_youtube_url(self, obj):
         if obj.file:
             return obj.file
         else:
             download_youtube_url = reverse('video:download_single_youtube_video', args=[obj.video_id])
             return "<a href='%s' target='_blank'>下载</a>" % download_youtube_url
 
-    show_download_youtube_url.allow_tags = True
-    show_download_youtube_url.short_description = 'Download YouTube'
+    download_youtube_url.allow_tags = True
+    download_youtube_url.short_description = 'Download YouTube'
 
-    def show_youku_url(self, obj):
-        if obj.youku:
-            youku_url = 'http://v.youku.com/v_show/id_%s.html' % obj.youku.video_id
+    def youku_url(self, obj):
+        # To check if the (OneToOne) relation exists or not, you can use the hasattr function:
+        # http: // stackoverflow.com / questions / 3463240 / check - if -onetoonefield - is -none - in -django
+        if hasattr(obj, 'youku'):
+            youku_url = 'http://v.youku.com/v_show/id_%s.html' % obj.youku.youku_video_id
             return "<a href='%s' target='_blank'>优酷链接</a>" % youku_url
         else:
             publish_youku_url = reverse('video:youku_upload', args=[obj.video_id])
             return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
 
-    show_youku_url.allow_tags = True
-    show_youku_url.short_description = '优酷'
+    youku_url.allow_tags = True
+    youku_url.short_description = '优酷'
 
-    def show_get_youku_video_info_url(self, obj):
-        if obj.youku:
+    def get_youku_video_info_url(self, obj):
+        if hasattr(obj, 'youku'):
             # 如果已经有youku 视频的信息，则显示访问youku model的链接
-            youku = Youku.objects.get(video_id=obj.youku.video_id)
+            youku = obj.youku
             if youku.published == None:
                 # 如果没有youku 视频published的信息，则显示获取优酷视频信息的链接
-                get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.video_id])
+                get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.youku_video_id])
                 return "<a href='%s' target='_blank'>获取信息</a>" % get_youku_video_info_url
             else:
                 # 有发布优酷视频的信息，说明之前已经获取过，则显示访问youku model的链接
                 # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
-                youku_video_info_change_url = reverse('admin:video_youku_change', args=[obj.youku])
+                youku_video_info_change_url = reverse('admin:video_youku_change', args=[obj.youku.id])
                 return "<a href='%s' target='_blank'>查看优酷视频信息</a>" % youku_video_info_change_url
         else:
             # 如果还没有上传到优酷，则说明都不显示
             return "-"
 
-    show_get_youku_video_info_url.allow_tags = True
-    show_get_youku_video_info_url.short_description = '获取优酷视频信息'
+    get_youku_video_info_url.allow_tags = True
+    get_youku_video_info_url.short_description = '获取优酷视频信息'
 
     def edit_youku_url(self, obj):
-        if obj.youku:
-            edit_youku_url = reverse('admin:video_youku_change', args=(obj.youku_id,))
+        if hasattr(obj, 'youku'):
+            edit_youku_url = reverse('admin:video_youku_change', args=(obj.youku.id,))
             return '<a href="%s">Edit Youku</a>' % edit_youku_url
         else:
             edit_youku_url = reverse('admin:video_youku_add', )
@@ -85,10 +94,6 @@ class VideoAdmin(admin.ModelAdmin):
 
     edit_youku_url.allow_tags = True
     edit_youku_url.short_description = '修改优酷信息'
-
-
-class YoukuAdmin(admin.ModelAdmin):
-    pass
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -132,15 +137,16 @@ class YT_channelAdmin(admin.ModelAdmin):
     # show_category_url.short_description = 'Category'
 
 
-admin.site.register(Video, VideoAdmin)
-admin.site.register(Youku, YoukuAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(YT_channel, YT_channelAdmin)
+class YoukuAdmin(admin.ModelAdmin):
+    pass
 
 
 class BaiduYunAdmin(admin.ModelAdmin):
     pass
 
 
+admin.site.register(Video, VideoAdmin)
+admin.site.register(Youku, YoukuAdmin)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(YT_channel, YT_channelAdmin)
 admin.site.register(BaiduYun, BaiduYunAdmin)
-
