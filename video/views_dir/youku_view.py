@@ -6,6 +6,7 @@ from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
 from AutoSystem import settings
 from oauth2_authentication.function.youku import youku_get_authenticate
+from video.function.youku import set_youku_category, youku_upload
 from video.models import Video, Youku
 
 CLIENT_ID = settings.YOUKU_CLIENT_ID
@@ -88,3 +89,38 @@ def get_my_playlists_view(request):
     youku_service = YoukuPlaylists(CLIENT_ID)
     playlists_json = youku_service.find_playlists_by_me(youku_access_token)
     return render_to_response('result.html', {'text': playlists_json})
+
+
+def auto_set_youku_category_view(request):
+    '''
+    查找youku model中所有填写了title但是没有设置category的视频
+    根据youku模块中的对应的youtube模块，查找其channel，再获取channel的category，
+    根据category模块中设置的对应优酷categroy，设置youku模块中的category
+    :param request:
+    :return:
+    '''
+    youku_list = Youku.objects.filter(title__isnull=False).filter(category__isnull=True)
+
+    youku_setted_list = []
+    for youku in youku_list:
+        youku_setted = set_youku_category(youku.id)
+        youku_setted_list.append(youku_setted)
+
+    return render_to_response('result.html', {'dict_in_list': youku_setted_list})
+
+
+def auto_youku_upload_view(request):
+    """
+    查找youku model中所有填写了title和category,并且对应video的file不是null（已经下载到本地）的视频
+    将其上传到优酷网上
+    :param request:
+    :return:
+    """
+    youku_list = Youku.objects.filter(title__isnull=False).filter(category__isnull=False).filter(
+        video__file__isnull=False)
+    youku_uploaded_list = []
+    for youku in youku_list:
+        youku_uploaded = youku_upload(youku.video_id)
+        youku_uploaded_list.append(youku_uploaded)
+
+    return render_to_response('result.html', {'dict_in_list': youku_uploaded_list})

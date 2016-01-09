@@ -60,4 +60,11 @@ urlpatterns = [
     url(r'get_my_playlists$', youku_view.get_my_playlists_view, name='youku_upload'),
 
 
+    # http://127.0.0.1:8000/video/auto_set_youku_category
+    url(r'auto_set_youku_category', youku_view.auto_set_youku_category_view),
+
+    # http://127.0.0.1:8000/video/auto_youku_upload
+    url(r'auto_youku_upload', youku_view.auto_youku_upload_view),
+
+
 ]

@@ -22,4 +22,5 @@ class Migration(migrations.Migration):
             name='description',
             field=models.TextField(max_length=300, null=True, blank=True),
         ),
+
     ]

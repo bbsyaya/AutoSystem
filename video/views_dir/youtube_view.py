@@ -52,7 +52,8 @@ def get_subscription_update_video_view(request, max_results):
                 video = {'video_id': result['contentDetails']["upload"]["videoId"],
                          'title': result['snippet']["title"],
                          'publishedAt': result['snippet']["publishedAt"],
-                         'thumbnail': result['snippet']['thumbnails']["default"]["url"]
+                         'thumbnail': result['snippet']['thumbnails']["default"]["url"],
+                         'channel': result['snippet']["channelId"]
                          }
 
                 import datetime, dateutil.parser
@@ -63,7 +64,8 @@ def get_subscription_update_video_view(request, max_results):
                 youtube_video, created = Video.objects.update_or_create(video_id=video['video_id'],
                                                                         defaults={'title': video['title'],
                                                                                   'publishedAt': d,
-                                                                                  'thumbnail': video['thumbnail']
+                                                                                  'thumbnail': video['thumbnail'],
+                                                                                  'channel': channel
                                                                                   }
                                                                         )
 

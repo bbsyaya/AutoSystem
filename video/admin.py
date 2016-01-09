@@ -26,6 +26,7 @@ class YoukuForm(forms.ModelForm):
 
 
 class YoukuAdmin(admin.ModelAdmin):
+    list_display = ('title', 'tags', 'published',)
     form = YoukuForm
     pass
 
@@ -62,9 +63,24 @@ class VideoAdmin(admin.ModelAdmin):
     inlines = [
         YoukuInline,
     ]
-    form = VideoForm
 
+    form = VideoForm
     ordering = ('-publishedAt', 'title')
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     # Proper kwargs are form, fields, exclude, formfield_callback
+    #     if obj: # obj is not None, so this is a change page
+    #         kwargs['exclude'] = []
+    #     else: # obj is None, so this is an add page
+    #         kwargs['exclude'] = ['subtile_en', 'subtile_cn',]
+    #     return super(VideoAdmin, self).get_form(request, obj, **kwargs)
+
+
+    # 在changeform页面，不显示'subtile_en', 'subtile_cn'两个字段
+    # http://stackoverflow.com/a/31791675/1314124
+    def changeform_view(self, request, object_id, form_url='', extra_content=None):
+        self.exclude = ('subtile_en', 'subtile_cn', 'title_cn')
+        return super(VideoAdmin, self).changeform_view(request, object_id)
 
     def show_thumbnail(self, obj):
         return '<img src="%s" width="50" height="50"/>' % obj.thumbnail
@@ -108,7 +124,7 @@ class VideoAdmin(admin.ModelAdmin):
             youku = obj.youku
             if youku.published == None:
                 # 如果没有youku 视频published的信息，则显示获取优酷视频信息的链接
-                get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.youku_video_id])
+                get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.id])
                 return "<a href='%s' target='_blank'>获取信息</a>" % get_youku_video_info_url
             else:
                 # 有发布优酷视频的信息，说明之前已经获取过，则显示访问youku model的链接

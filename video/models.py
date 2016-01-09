@@ -103,8 +103,7 @@ class Youku(models.Model):
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开"
                             )
     description = models.TextField(max_length=300, null=True, blank=True, default='')
-    category = models.CharField(max_length=50, null=True, blank=True, choices=YOUKU_PALYLIST_CATEGORY,
-                                default="Others")
+    category = models.CharField(max_length=50, null=True, blank=True, choices=YOUKU_PALYLIST_CATEGORY)
     published = models.DateTimeField(null=True, blank=True)
     # on_delete=models.SET_NULL 表示如果对应的Video被删除，Youku只将个属性设置为null，不会删除youku对象
     # OneToOneField要设置在 要被显示在inline的model里
