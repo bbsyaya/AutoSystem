@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 import time
 from datetime import datetime
+
+from django.db.models import Q
 from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
 from AutoSystem import settings
@@ -104,23 +106,24 @@ def auto_set_youku_category_view(request):
     youku_setted_list = []
     for youku in youku_list:
         youku_setted = set_youku_category(youku.id)
-        youku_setted_list.append(youku_setted)
+        youku_setted_list.append(youku_setted.title)
 
-    return render_to_response('result.html', {'dict_in_list': youku_setted_list})
+    return render_to_response('result.html', {'list': youku_setted_list})
 
 
-def auto_youku_upload_view(request):
+def auto_youku_upload_view(request, num):
     """
-    查找youku model中所有填写了title和category,并且对应video的file不是null（已经下载到本地）的视频
+    查找对应video的file不是null（已经下载到本地）, youku_video_id为''(还没上传到优酷)
+    title和category的youku model
     将其上传到优酷网上
     :param request:
     :return:
     """
-    youku_list = Youku.objects.filter(title__isnull=False).filter(category__isnull=False).filter(
-        video__file__isnull=False)
+    youku_list = Youku.objects.filter(~Q(video__file="")).filter(youku_video_id='').filter(~Q(title='')).filter(
+            ~Q(category=''))[:num]
     youku_uploaded_list = []
     for youku in youku_list:
         youku_uploaded = youku_upload(youku.video_id)
-        youku_uploaded_list.append(youku_uploaded)
+        youku_uploaded_list.append(youku_uploaded.title)
 
-    return render_to_response('result.html', {'dict_in_list': youku_uploaded_list})
+    return render_to_response('result.html', {'list': youku_uploaded_list})

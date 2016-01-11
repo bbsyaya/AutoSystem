@@ -46,9 +46,12 @@ urlpatterns = [
     url(r'download_single_youtube_video/(?P<video_id>.+)$', youtube_view.download_single_youtube_video_view,
         name='download_single_youtube_video'),
 
-    ###########
+    # http://127.0.0.1:8000/video/auto_youtube_download/1
+    url(r'auto_youtube_download/(?P<num>\d+)$', youtube_view.auto_youtube_download_view),
+
+    ############################################
     # 优酷
-    ###########
+    ############################################
     # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
     url(r'youku_upload/(?P<video_id>.+)/$', youku_view.youku_upload_view, name='youku_upload'),
 
@@ -63,8 +66,8 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_set_youku_category
     url(r'auto_set_youku_category', youku_view.auto_set_youku_category_view),
 
-    # http://127.0.0.1:8000/video/auto_youku_upload
-    url(r'auto_youku_upload', youku_view.auto_youku_upload_view),
+    # http://127.0.0.1:8000/video/auto_youku_upload/1
+    url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 
 
 ]

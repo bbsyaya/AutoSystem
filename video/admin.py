@@ -109,10 +109,17 @@ class VideoAdmin(admin.ModelAdmin):
         # To check if the (OneToOne) relation exists or not, you can use the hasattr function:
         # http: // stackoverflow.com / questions / 3463240 / check - if -onetoonefield - is -none - in -django
         if hasattr(obj, 'youku'):
-            youku_url = 'http://v.youku.com/v_show/id_%s.html' % obj.youku.youku_video_id
-            return "<a href='%s' target='_blank'>优酷链接</a>" % youku_url
+            if obj.youku.youku_video_id is not None:
+                # 显示已经上传到优酷网站的视频链接
+                youku_url = 'http://v.youku.com/v_show/id_%s.html' % obj.youku.youku_video_id
+                return "<a href='%s' target='_blank'>优酷链接</a>" % youku_url
+            else:
+                # 显示上传video到优酷网站的链接
+                publish_youku_url = reverse('video:youku_upload', args=[obj.video_id])
+                return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
         else:
-            publish_youku_url = reverse('video:youku_upload', args=[obj.video_id])
+            # 显示为video添加youku信息的链接
+            publish_youku_url = reverse('admin:video_youku_add', )
             return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
 
     youku_url.allow_tags = True

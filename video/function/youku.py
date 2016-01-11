@@ -29,7 +29,11 @@ def youku_upload(video_id):
     if video.description is None:
         video.description = ''
 
+    # 当video 实例设置了对应的youku实例，才上传数据
     if hasattr(video, 'youku'):
+        # 参数 http://cloud.youku.com/docs?id=110
+        # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
+        # category：string 可选参数 视频分类，详细分类定义见 http://cloud.youku.com/docs?id=90
         video_info = {
             'title': video.youku.title,
             'category': video.youku.category,
@@ -37,24 +41,16 @@ def youku_upload(video_id):
             'description': video.youku.description
         }
 
-    # 参数 http://cloud.youku.com/docs?id=110
-    # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
-    # category：string 可选参数 视频分类，详细分类定义见 http://cloud.youku.com/docs?id=90
+        youku_video_id = service.upload(video_info)
+        return youku_video_id
+    else:
+        return False
 
-    video_info = {
-        'title': video.title_cn,
-        'tags': 'Google,IO',
-        'description': video.description
-    }
-    youku_video_id = service.upload(video_info)
-
-    #todo 以下应该可以忽略
-    # youku, created = Youku.objects.get_or_create(video_id=youku_video_id)
-    #
-    # video.youku = youku
-    # video.save()
-
-    return youku_video_id
+        # todo 以下应该可以忽略
+        # youku, created = Youku.objects.get_or_create(video_id=youku_video_id)
+        #
+        # video.youku = youku
+        # video.save()
 
 
 def set_youku_category(youku_id):

@@ -95,3 +95,20 @@ def download_single_youtube_video_view(request, video_id):
     return render_to_response('result.html',
                               {'text': '视频已下载'}
                               )
+
+
+def auto_youtube_download_view(request, num):
+    """
+    自动下载num个设置了youku title属性的video视频到本地
+    :return:
+    """
+    # 按publishedAt 倒序查找前num个，file 属性是null（即没下载过视频到本地），
+    # 对应的youku.title不为''（设置过中文title）的video视频
+    video_list = Video.objects.filter(file='').filter(youku__title__isnull=False).order_by('-publishedAt')[
+                 :num]
+    youtube_downlaoded_list = []
+    for video in video_list:
+        youtube_downlaoded = download_single_youtube_video_main(video.video_id)
+        youtube_downlaoded_list.append(youtube_downlaoded.title)
+
+    return render_to_response('result.html', {'list': youtube_downlaoded_list})
