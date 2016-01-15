@@ -5,7 +5,7 @@ from oauth2_authentication.function.youku import youku_get_authenticate
 import os
 import django
 from AutoSystem import settings
-from youku import YoukuUpload
+from youku import YoukuUpload, YoukuVideos
 
 CLIENT_ID = settings.YOUKU_CLIENT_ID
 
@@ -51,6 +51,27 @@ def youku_upload(video_id):
         #
         # video.youku = youku
         # video.save()
+
+
+def update_youku_online_info(youku_video_id):
+    """
+    将youku_video_id的本地youku对象的属性，在优酷上进行更新
+
+    :param youku_video_id:
+    :return:
+    """
+    youku = Youku.objects.get(youku_video_id=youku_video_id)
+
+    service = YoukuVideos(CLIENT_ID)
+
+    youku_access_token = youku_get_authenticate()
+
+    updated_youku_video_id = service.update_video(access_token=youku_access_token, video_id=youku_video_id,
+                                                  title=youku.title,
+                                                  tags=youku.tags, category=youku.category, copyright_type=None,
+                                                  public_type=None, watch_password=None,
+                                                  description=youku.description, thumbnail_seq=None)
+    return updated_youku_video_id
 
 
 def set_youku_category(youku_id):

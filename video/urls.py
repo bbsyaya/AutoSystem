@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
 
-from video.views_dir import youtube_view, youtube_subscription_view, youku_view
+from video.views_dir import youtube_view, youtube_subscription_view, youku_view, subtitle_view
 
 __author__ = 'GoTop'
 
@@ -49,6 +49,9 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youtube_download/1
     url(r'auto_youtube_download/(?P<num>\d+)$', youtube_view.auto_youtube_download_view),
 
+    # http://127.0.0.1:8000/video/auto_youtube_download/1
+    url(r'merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view, name='merge_subtitle'),
+
     ############################################
     # 优酷
     ############################################
@@ -60,14 +63,16 @@ urlpatterns = [
     url(r'get_youku_video_info/(?P<video_id>.+)$', youku_view.get_youku_video_info_view, name='get_youku_video_info'),
 
     # http://127.0.0.1:8000/video/get_my_playlists
-    url(r'get_my_playlists$', youku_view.get_my_playlists_view, name='youku_upload'),
+    url(r'get_my_playlists$', youku_view.get_my_playlists_view),
 
+    # http://127.0.0.1:8000/video/update_youku_info/
+    url(r'update_youku_online_info/(?P<youku_video_id>.+)/$', youku_view.update_youku_online_info_view,
+        name='update_youku_online_info'),
 
     # http://127.0.0.1:8000/video/auto_set_youku_category
     url(r'auto_set_youku_category', youku_view.auto_set_youku_category_view),
 
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
-
 
 ]

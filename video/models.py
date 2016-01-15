@@ -105,7 +105,7 @@ YOUKU_PALYLIST_CATEGORY = (
 
 class Youku(models.Model):
     # youku_video_id 是视频上传到优酷的video id
-    youku_video_id = models.CharField(max_length=50, blank=True)
+    youku_video_id = models.CharField(max_length=50, blank=True, unique=True)
     title = models.CharField(max_length=100, blank=True)
     tags = models.CharField(max_length=50, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开"

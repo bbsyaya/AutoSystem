@@ -8,7 +8,7 @@ from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
 from AutoSystem import settings
 from oauth2_authentication.function.youku import youku_get_authenticate
-from video.function.youku import set_youku_category, youku_upload
+from video.function.youku import set_youku_category, youku_upload, update_youku_online_info
 from video.models import Video, Youku
 
 CLIENT_ID = settings.YOUKU_CLIENT_ID
@@ -57,6 +57,13 @@ def youku_upload_view(request, video_id):
     video.save()
 
     return render_to_response('result.html', {'text': '上传成功, 在优酷上的video id为 ' + youku_video_id})
+
+
+def update_youku_online_info_view(request, youku_video_id):
+    updated_youku_video_id = update_youku_online_info(youku_video_id)
+
+    return render_to_response('result.html', {'text': '更新成功, 在优酷上的video id为 ' + updated_youku_video_id})
+
 
 
 def get_youku_video_info_view(request, video_id):
