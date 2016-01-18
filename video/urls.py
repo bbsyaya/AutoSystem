@@ -49,7 +49,7 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youtube_download/1
     url(r'auto_youtube_download/(?P<num>\d+)$', youtube_view.auto_youtube_download_view),
 
-    # http://127.0.0.1:8000/video/auto_youtube_download/1
+    # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
     url(r'merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view, name='merge_subtitle'),
 
     ############################################

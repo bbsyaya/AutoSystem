@@ -15,8 +15,8 @@ class Video(models.Model):
     channel = models.ForeignKey('YT_channel', null=True, blank=True)
 
     title_cn = models.CharField(max_length=100, blank=True)
-    subtile_en = models.CharField(max_length=50, blank=True)
-    subtile_cn = models.CharField(max_length=50, blank=True)
+    subtitle_en = models.CharField(max_length=100, blank=True)
+    subtitle_cn = models.CharField(max_length=100, blank=True)
 
     # The exception is CharFields and TextFields, which in Django are never saved as NULL.
     #  Blank values are stored in the DB as an empty string ('').
@@ -105,7 +105,7 @@ YOUKU_PALYLIST_CATEGORY = (
 
 class Youku(models.Model):
     # youku_video_id 是视频上传到优酷的video id
-    youku_video_id = models.CharField(max_length=50, blank=True, unique=True)
+    youku_video_id = models.CharField(max_length=50, blank=True)
     title = models.CharField(max_length=100, blank=True)
     tags = models.CharField(max_length=50, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开"

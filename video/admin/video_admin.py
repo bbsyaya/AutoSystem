@@ -1,16 +1,28 @@
 # coding=utf-8
 from __future__ import unicode_literals
-from adminbrowse import AutoBrowseModelAdmin, link_to_url, link_to_changelist, link_to_change
-from django import forms
-from django.core import urlresolvers
-from django.core.urlresolvers import reverse
-from django.db import models
-from django.forms import ModelForm
 
-from django.utils.html import format_html
+__author__ = 'GoTop'
+
 from django.contrib import admin
-from .models import Video, Youku, YT_channel, Category, BaiduYun
+from django import forms
+from django.core.urlresolvers import reverse
 
+from video.models import Video,Youku
+
+class VideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+
+        # 覆盖默认的widget
+        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+        widgets = {
+            'title': forms.TextInput(attrs={'size': 100}),
+            'title_cn': forms.TextInput(attrs={'size': 100}),
+            'subtitle_en': forms.TextInput(attrs={'size': 100}),
+            'subtitle_cn': forms.TextInput(attrs={'size': 100}),
+
+        }
+        fields = '__all__'  # Register your models here.
 
 class YoukuForm(forms.ModelForm):
     class Meta:
@@ -25,31 +37,11 @@ class YoukuForm(forms.ModelForm):
         fields = '__all__'  # Register your models here.
 
 
-class YoukuAdmin(admin.ModelAdmin):
-    list_display = ('title', 'tags', 'published',)
-    form = YoukuForm
-    pass
-
-
 class YoukuInline(admin.StackedInline):
     model = Youku
     # add a custom inline admin widget in Django
     # http://stackoverflow.com/questions/433251/how-do-i-add-a-custom-inline-admin-widget-in-django
     form = YoukuForm
-
-
-class VideoForm(forms.ModelForm):
-    class Meta:
-        model = Video
-
-        # 覆盖默认的widget
-        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
-        widgets = {
-            'title': forms.TextInput(attrs={'size': 100}),
-            'title_cn': forms.TextInput(attrs={'size': 100}),
-
-        }
-        fields = '__all__'  # Register your models here.
 
 
 class VideoAdmin(admin.ModelAdmin):
@@ -76,10 +68,10 @@ class VideoAdmin(admin.ModelAdmin):
     #     return super(VideoAdmin, self).get_form(request, obj, **kwargs)
 
 
-    # 在changeform页面，不显示'subtile_en', 'subtile_cn'两个字段
+    # 在changeform页面，不显示'title_cn'属性，一定要在‘title_cn’后加逗号
     # http://stackoverflow.com/a/31791675/1314124
     def changeform_view(self, request, object_id, form_url='', extra_content=None):
-        self.exclude = ('subtile_en', 'subtile_cn', 'title_cn')
+        self.exclude = ('title_cn',)
         return super(VideoAdmin, self).changeform_view(request, object_id)
 
     def show_thumbnail(self, obj):
@@ -176,54 +168,4 @@ class VideoAdmin(admin.ModelAdmin):
     edit_youku_url.allow_tags = True
     edit_youku_url.short_description = '修改优酷信息'
 
-
-class CategoryAdmin(admin.ModelAdmin):
-    pass
-
-
-class YT_channelAdmin(admin.ModelAdmin):
-    list_display = ('title', 'show_channel_url', 'show_thumbnail', 'description', 'category', 'is_download',
-                    'remark')
-    list_editable = ('is_download', 'category')
-    list_per_page = 50
-    search_fields = ('title',)
-    list_filter = ('is_download', 'category')
-
-    def show_channel_url(self, obj):
-        return "<a href='%s' target='_blank'>频道Url</a>" % obj.url
-
-    show_channel_url.allow_tags = True
-    show_channel_url.short_description = 'Url'
-
-    def show_thumbnail(self, obj):
-        return '<img src="%s" width="50" height="50"/>' % obj.thumbnail
-
-    show_thumbnail.allow_tags = True
-    show_thumbnail.short_description = 'Thumbnail'
-
-    # def show_category_url(self, obj):
-    #     if obj.category_id:
-    #         # 如果已经有 category_id 视频的信息，则显示访问 Category model的链接
-    #         category = YT_channel.objects.get(category_id=obj.category_id)
-    #         if category:
-    #             # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
-    #             category_change_url = reverse('admin:video_category_change', args=[obj.category_id])
-    #             return "<a href='%s' target='_blank'>%s</a>" % (category_change_url, category.title)
-    #     else:
-    #         # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
-    #         category_change_url = reverse('admin:video_category_changelist')
-    #         return "<a href='%s' target='_blank'></a>" % category_change_url
-    #
-    # show_category_url.allow_tags = True
-    # show_category_url.short_description = 'Category'
-
-
-class BaiduYunAdmin(admin.ModelAdmin):
-    pass
-
-
 admin.site.register(Video, VideoAdmin)
-admin.site.register(Youku, YoukuAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(YT_channel, YT_channelAdmin)
-admin.site.register(BaiduYun, BaiduYunAdmin)

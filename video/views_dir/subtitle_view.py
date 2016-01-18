@@ -29,13 +29,13 @@ def merge_subtitle_view(request, video_id):
     delta = SubRipTime(milliseconds=500)
     encoding = "utf_8"
 
-    subs_cn = SubRipFile.open(video.subtile_cn, encoding=encoding)
-    subs_en = SubRipFile.open(video.subtile_en, encoding=encoding)
+    subs_cn = SubRipFile.open(video.subtitle_cn, encoding=encoding)
+    subs_en = SubRipFile.open(video.subtitle_en, encoding=encoding)
     merge_subs = merge_subtitle(subs_cn, subs_en, delta)
 
-    merge_subs_filename = '%s-cn-en.srt' % video.title
+    merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (video.title, video.video_id)
 
-    merge_subs_dir = os.path.join(settings.YOUTUBE_DOWNLOAD_DIR + merge_subs_filename)
+    merge_subs_dir = os.path.join(settings.YOUTUBE_DOWNLOAD_DIR, merge_subs_filename)
 
     merge_subs.save(merge_subs_dir, encoding=encoding)
 

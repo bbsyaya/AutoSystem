@@ -10,10 +10,10 @@ class Migration(migrations.Migration):
         ('video', '0023_auto_20160112_0007'),
     ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='youku',
-            name='youku_video_id',
-            field=models.CharField(unique=True, max_length=50, blank=True),
-        ),
-    ]
+    # operations = [
+    #     migrations.AlterField(
+    #         model_name='youku',
+    #         name='youku_video_id',
+    #         field=models.CharField(unique=True, max_length=50, blank=True),
+    #     ),
+    #]
