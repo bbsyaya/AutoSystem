@@ -40,3 +40,4 @@ def merge_subtitle_view(request, video_id):
     merge_subs.save(merge_subs_dir, encoding=encoding)
 
     return render_to_response('result.html', {'text': '合并的字幕文件地址为 ' + merge_subs_dir})
+

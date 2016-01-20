@@ -2,13 +2,14 @@
 from __future__ import unicode_literals, absolute_import
 
 from oauth2_authentication.function.youku import youku_get_authenticate
-import os
-import django
+
 from AutoSystem import settings
 from youku import YoukuUpload, YoukuVideos
 
 CLIENT_ID = settings.YOUKU_CLIENT_ID
 
+import os
+import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
 django.setup()
 

@@ -1,6 +1,16 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+import os
+import django
+
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
+django.setup()
+
+from video.models import Video
+
 __author__ = 'GoTop'
 
 import pysrt
@@ -34,8 +44,8 @@ def join_lines(txtsub1, txtsub2):
 
 def find_subtitle(subtitle, from_t, to_t, lo=0):
     i = lo
-    while (i < len(subtitle)):
-        if (subtitle[i].start >= to_t):
+    while i < len(subtitle):
+        if subtitle[i].start >= to_t:
             break
 
         if (subtitle[i].start <= from_t) & (to_t <= subtitle[i].end):
@@ -71,18 +81,36 @@ def merge_subtitle(sub_a, sub_b, delta):
     return out
 
 
+def add_subtitle_to_video(video_id):
+    # FFMPEG_BIN = "ffmpeg" # on Linux ans Mac OS
+    FFMPEG_BIN = "ffmpeg.exe"  # on Windows
+
+    video = Video.objects.get(pk=video_id)
+
+    subtitle_video = os.path.join(YOUTUBE_DOWNLOAD_DIR, 'out.mkv')
+
+    import subprocess
+    command = [FFMPEG_BIN,
+               '-i', video.file,
+               '-i', video.subtitle_cn,
+               '-codec', 'copy',
+               '-map', '0',
+               '-map', '1',
+               subtitle_video]
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = process.communicate()
+    return stdout
+
+
 def main():
     subs_a = SubRipFile.open(sub_cn, encoding=encoding)
     subs_b = SubRipFile.open(sub_en, encoding=encoding)
     out = merge_subtitle(subs_a, subs_b, delta)
     out.save('E:\Media\Video\YouTube\out.srt', encoding=encoding)
-    #print(out)
-
-
-
-
-
+    # print(out)
 
 
 if __name__ == '__main__':
-    main()
+    video_id = '_9coAtC2PZI'
+    stdout = add_subtitle_to_video(video_id)
+    print(stdout)
