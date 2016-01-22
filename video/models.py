@@ -17,6 +17,7 @@ class Video(models.Model):
     title_cn = models.CharField(max_length=100, blank=True)
     subtitle_en = models.CharField(max_length=100, blank=True)
     subtitle_cn = models.CharField(max_length=100, blank=True)
+    subtitle_merge = models.CharField(max_length=100, blank=True,null=True)
 
     # The exception is CharFields and TextFields, which in Django are never saved as NULL.
     #  Blank values are stored in the DB as an empty string ('').
@@ -26,6 +27,7 @@ class Video(models.Model):
     # for "no data"; the Django convention is to use the empty string, not NULL.
     file = models.CharField(max_length=100, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
+    subtitle_video_file = models.CharField(max_length=100, blank=True,null=True)
 
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)

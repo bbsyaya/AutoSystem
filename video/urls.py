@@ -1,7 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
-
 from video.views_dir import youtube_view, youtube_subscription_view, youku_view, subtitle_view
 
 __author__ = 'GoTop'
@@ -41,7 +40,7 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/download_youtube_video/1
     url(r'download_multi_youtube_video/(?P<num>\d+)$', youtube_view.download_multi_youtube_video_view),
 
-    # http://127.0.0.1:8000/video/download_single_youtube_video/zmZfonO6PkI
+    # http://127.0.0.1:8000/video/download_single_youtube_video/_9coAtC2PZI
     # 因为youtube的video id 里可能含有 - 号，所以这样要用 . 来 代替 \w
     url(r'download_single_youtube_video/(?P<video_id>.+)$', youtube_view.download_single_youtube_video_view,
         name='download_single_youtube_video'),
@@ -49,8 +48,16 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youtube_download/1
     url(r'auto_youtube_download/(?P<num>\d+)$', youtube_view.auto_youtube_download_view),
 
+    ############################################
+    # 字幕
+    ############################################
     # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
     url(r'merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view, name='merge_subtitle'),
+
+    # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI/zh-Hans_en
+    url(r'merge_subtitle_to_video/(?P<video_id>.+)/(?P<sub_lang_type>(en|zh-Hansn|zh-Hans_en))$',
+        subtitle_view.merge_subtitle_to_video_view,
+        name='merge_subtitle_to_video'),
 
     ############################################
     # 优酷

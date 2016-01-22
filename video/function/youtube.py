@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 import os
 from AutoSystem import settings
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+from video.function.subtitle import add_subtitle_to_video
 from video.models import Video
 
 __author__ = 'GoTop'
@@ -167,3 +169,8 @@ def search_keyword_in_file(dir, keyword, extend=None):
                     file_list.append(os.path.join(dir, file))
 
     return file_list
+
+
+
+
+

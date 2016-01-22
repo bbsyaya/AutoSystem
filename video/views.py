@@ -1,55 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django.shortcuts import render, render_to_response
-
 # Create your views here.
 from django.template import RequestContext
 from video.models import Video
 from oauth2_authentication.views import get_authenticated_service
-
-
-def check_video_status_view(request, url):
-    """
-    返回视频的状态，是否已经下载到vps，是否已经上传到b百度云等
-    :param request:
-    :param url:
-    :return:
-    """
-
-
-def get_subscription_list_view(request):
-    """
-    获取自己账号的订阅列表
-    :param request:
-    :return:
-    """
-
-
-def get_youtube_list_video_view(request, list_url):
-    """
-    获取youtube的list里的视频链接
-    :param request:
-    :param list_url:
-    :return:
-    """
-
-
-def download_video_view(request, url):
-    """
-    下载youtube的视频到VPS
-    :param request:
-    :param url:
-    :return:
-    """
-
-
-def upload_video_to_baiduyun_view(request, video_id):
-    """
-    上传视频到百度云
-    :param request:
-    :param video_id:
-    :return:
-    """
 
 
 def search_view(request, q, max_results):
@@ -89,9 +44,6 @@ def search_view(request, q, max_results):
     return render_to_response('result.html', {'list': videos})
 
 
-
-
-
 def my_homepage_subscription_view(request, max_results):
     """
     获取认证用户的youtube首页显示的订阅频道信息
@@ -115,7 +67,7 @@ def my_homepage_subscription_view(request, max_results):
         else:
             # https://developers.google.com/youtube/v3/docs/activities
             # https://developers.google.com/youtube/v3/docs/activities#snippet.type
-            #有的type没有title
+            # 有的type没有title
             continue
     return render_to_response('result.html',
                               {'list': homepage_subscription_list})
@@ -173,5 +125,3 @@ def my_watchlater_lists_view(request, max_results):
 
         return render_to_response('result.html',
                                   {'list': res['items']})
-
-

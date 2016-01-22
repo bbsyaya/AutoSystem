@@ -1,10 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals
-
 import os
 import django
-
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
 django.setup()
@@ -27,8 +26,6 @@ https://github.com/byroot/pysrt/issues/17
 
 sub_en = "E:\Media\Video\YouTube\LG K10 and K7 hands-on-_9coAtC2PZI.en.srt"
 sub_cn = "E:\Media\Video\YouTube\LG K10 and K7 hands-on-_9coAtC2PZI.zh-Hans.srt"
-
-subs = pysrt.open(sub_en)
 
 # Settings default values
 delta = SubRipTime(milliseconds=500)
@@ -56,6 +53,15 @@ def find_subtitle(subtitle, from_t, to_t, lo=0):
 
 
 def merge_subtitle(sub_a, sub_b, delta):
+    """
+    合并两种不同言语的字幕
+    参考 https://github.com/byroot/pysrt/issues/15
+    https://github.com/byroot/pysrt/issues/17
+    :param sub_a:
+    :param sub_b:
+    :param delta:
+    :return:
+    """
     out = SubRipFile()
     intervals = [item.start.ordinal for item in sub_a]
     intervals.extend([item.end.ordinal for item in sub_a])
@@ -81,25 +87,69 @@ def merge_subtitle(sub_a, sub_b, delta):
     return out
 
 
-def add_subtitle_to_video(video_id):
+def add_subtitle_to_video(video_file, subtitle, output_video_file):
+    """
+    将video_id对应的视频的字母，软写入到对应的视频中
+
+    :param video_id:
+    :return:
+    """
     # FFMPEG_BIN = "ffmpeg" # on Linux ans Mac OS
     FFMPEG_BIN = "ffmpeg.exe"  # on Windows
 
-    video = Video.objects.get(pk=video_id)
 
     subtitle_video = os.path.join(YOUTUBE_DOWNLOAD_DIR, 'out.mkv')
 
     import subprocess
     command = [FFMPEG_BIN,
-               '-i', video.file,
-               '-i', video.subtitle_cn,
+               '-i', video_file,
+               '-i', subtitle,
                '-codec', 'copy',
                '-map', '0',
                '-map', '1',
-               subtitle_video]
+               output_video_file]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = process.communicate()
-    return stdout
+
+    if stderr:
+        return stderr
+    else:
+        return True
+
+def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
+    """
+    将video_id对应的视频的字母，软写入到对应的视频中
+
+    :param video_id:
+    :param subtitle_type: (en,zh-Hans,zh-Hans_en)
+    :return:
+    """
+    video = Video.objects.get(pk=video_id)
+
+    if sub_lang_type == 'en':
+        subtitle_file = video.subtitle_en
+    elif sub_lang_type == 'zh-Hans':
+        subtitle_file = video.subtitle_cn
+    elif sub_lang_type == 'zh-Hans_en':
+        subtitle_file = video.subtitle_cn_en
+
+    file_name_list = os.path.basename(video.file).split('.')
+    subtitle_video = file_name_list[0] + '.' + sub_lang_type + '.' + file_name_list[1]
+
+    # 加入字幕的视频文件保存到YOUTUBE_DOWNLOAD_DIR 目录下
+    subtitle_video = os.path.join(YOUTUBE_DOWNLOAD_DIR, subtitle_video)
+
+    result = add_subtitle_to_video(video.file, sub_lang_type, subtitle_video)
+    if result == True:
+        # 如何将字幕合并到视频成功，则保存视频文件地址到Video module中
+        video.objects.update(subtitle_vidoe_file = subtitle_video)
+
+        video.subtitle_vidoe_file = subtitle_video
+        video.save()
+        return True
+    else:
+        print(result)
+        return False
 
 
 def main():
@@ -111,6 +161,7 @@ def main():
 
 
 if __name__ == '__main__':
+    from video.function.youtube import add_subtitle_to_video_process
     video_id = '_9coAtC2PZI'
-    stdout = add_subtitle_to_video(video_id)
+    stdout = add_subtitle_to_video_process(video_id)
     print(stdout)
