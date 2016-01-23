@@ -1,5 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
+
+import json
 import time
 from datetime import datetime
 
@@ -8,8 +10,8 @@ from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
 from AutoSystem import settings
 from oauth2_authentication.function.youku import youku_get_authenticate
-from video.function.youku import set_youku_category, youku_upload, update_youku_online_info
-from video.models import Video, Youku
+from video.function.youku import set_youku_category, youku_upload, update_youku_online_info, set_youku_playlist
+from video.models import Video, Youku, YoukuPlaylist
 
 CLIENT_ID = settings.YOUKU_CLIENT_ID
 
@@ -59,11 +61,15 @@ def youku_upload_view(request, video_id):
     return render_to_response('result.html', {'text': '上传成功, 在优酷上的video id为 ' + youku_video_id})
 
 
+def set_youku_playlist_view(request, youku_id):
+    result = set_youku_playlist(youku_id)
+    return render_to_response('result.html', {'text': '更新playlist成功, youku_id为 ' + youku_id})
+
+
 def update_youku_online_info_view(request, youku_video_id):
     updated_youku_video_id = update_youku_online_info(youku_video_id)
 
     return render_to_response('result.html', {'text': '更新成功, 在优酷上的video id为 ' + updated_youku_video_id})
-
 
 
 def get_youku_video_info_view(request, video_id):
@@ -96,8 +102,17 @@ def get_my_playlists_view(request):
     """
     youku_access_token = youku_get_authenticate()
     youku_service = YoukuPlaylists(CLIENT_ID)
-    playlists_json = youku_service.find_playlists_by_me(youku_access_token)
-    return render_to_response('result.html', {'text': playlists_json})
+    playlists_dict = youku_service.find_playlists_by_me(youku_access_token)
+    for playlist in playlists_dict['playlists']:
+        YoukuPlaylist.objects.update_or_create(id=playlist['id'],
+                                               defaults={'name': playlist['name'],
+                                                         'duration': playlist['duration'],
+                                                         'link': playlist['link'],
+                                                         'play_link': playlist['play_link'],
+                                                         'view_count': playlist['view_count'],
+                                                         'video_count': playlist['video_count'],}
+                                               )
+    return render_to_response('result.html', {'dict_in_list': playlists_dict})
 
 
 def auto_set_youku_category_view(request):

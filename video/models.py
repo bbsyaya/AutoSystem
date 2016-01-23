@@ -17,7 +17,7 @@ class Video(models.Model):
     title_cn = models.CharField(max_length=100, blank=True)
     subtitle_en = models.CharField(max_length=100, blank=True)
     subtitle_cn = models.CharField(max_length=100, blank=True)
-    subtitle_merge = models.CharField(max_length=100, blank=True,null=True)
+    subtitle_merge = models.CharField(max_length=100, blank=True, null=True)
 
     # The exception is CharFields and TextFields, which in Django are never saved as NULL.
     #  Blank values are stored in the DB as an empty string ('').
@@ -27,7 +27,7 @@ class Video(models.Model):
     # for "no data"; the Django convention is to use the empty string, not NULL.
     file = models.CharField(max_length=100, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
-    subtitle_video_file = models.CharField(max_length=100, blank=True,null=True)
+    subtitle_video_file = models.CharField(max_length=100, blank=True, null=True)
 
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
@@ -120,6 +120,7 @@ class Youku(models.Model):
     # 参考 http://stackoverflow.com/questions/1744203/django-admin-onetoone-relation-as-an-inline
     # 指向video model，所以youku model会有一个video id属性，注意与youku_video_id的区别
     video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True, blank=True)
+    youku_playlist = models.OneToOneField('YoukuPlaylist', on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def url(self):
@@ -128,6 +129,20 @@ class Youku(models.Model):
 
     def __str__(self):
         return self.youku_video_id
+
+
+class YoukuPlaylist(models.Model):
+    id = models.CharField(max_length=8, primary_key=True)
+    duration = models.CharField(max_length=50, blank=True, null=True)
+    link = models.CharField(max_length=100, blank=True, null=True)
+    play_link = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    video_count = models.CharField(max_length=10, blank=True, null=True)
+    view_count = models.CharField(max_length=10, blank=True, null=True)
+
+
+    def __str__(self):
+        return self.name
 
 
 class BaiduYun(models.Model):

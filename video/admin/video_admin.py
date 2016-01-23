@@ -1,6 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
+
 __author__ = 'GoTop'
 
 from django.contrib import admin
@@ -8,36 +11,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 
 from video.models import Video,Youku
-
-class VideoForm(forms.ModelForm):
-    class Meta:
-        model = Video
-
-        # 覆盖默认的widget
-        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
-        widgets = {
-            'title': forms.TextInput(attrs={'size': 100}),
-            'title_cn': forms.TextInput(attrs={'size': 100}),
-            'subtitle_en': forms.TextInput(attrs={'size': 100}),
-            'subtitle_cn': forms.TextInput(attrs={'size': 100}),
-            'subtitle_merge': forms.TextInput(attrs={'size': 100}),
-            'file': forms.TextInput(attrs={'size': 100}),
-            'subtitle_video_file': forms.TextInput(attrs={'size': 100}),
-
-        }
-        fields = '__all__'  # Register your models here.
-
-class YoukuForm(forms.ModelForm):
-    class Meta:
-        model = Youku
-
-        # 覆盖默认的widget
-        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
-        widgets = {
-            'title': forms.TextInput(attrs={'size': 100}),
-            'tags': forms.TextInput(attrs={'size': 100}),
-        }
-        fields = '__all__'  # Register your models here.
+from video.forms import YoukuForm, VideoForm
 
 
 class YoukuInline(admin.StackedInline):

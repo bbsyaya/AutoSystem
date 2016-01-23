@@ -72,6 +72,10 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/get_my_playlists
     url(r'get_my_playlists$', youku_view.get_my_playlists_view),
 
+    # http://127.0.0.1:8000/video/set_youku_playlist/11
+    url(r'set_youku_playlist/(?P<youku_id>.+)$', youku_view.set_youku_playlist_view),
+
+
     # http://127.0.0.1:8000/video/update_youku_info/
     url(r'update_youku_online_info/(?P<youku_video_id>.+)/$', youku_view.update_youku_online_info_view,
         name='update_youku_online_info'),

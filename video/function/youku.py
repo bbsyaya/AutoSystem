@@ -4,12 +4,13 @@ from __future__ import unicode_literals, absolute_import
 from oauth2_authentication.function.youku import youku_get_authenticate
 
 from AutoSystem import settings
-from youku import YoukuUpload, YoukuVideos
+from youku import YoukuUpload, YoukuVideos, YoukuPlaylists
 
 CLIENT_ID = settings.YOUKU_CLIENT_ID
 
 import os
 import django
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
 django.setup()
 
@@ -88,7 +89,36 @@ def set_youku_category(youku_id):
 
 
 def set_youku_playlist(youku_id):
-    pass
+    """
+    根据youku的youkuplaylist属性，在优酷网上将youku对象添加到该playlist中
+    :param youku_id:
+    :return:
+    """
+    youku = Youku.objects.get(pk=youku_id)
+
+    if hasattr(youku, 'video'):
+        service = YoukuPlaylists(CLIENT_ID)
+        youku_access_token = youku_get_authenticate()
+        # http://doc.open.youku.com/?docid=377
+        # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
+        # video_ids=850,860,870,880
+        id = service.add_videos_to_playlist(access_token=youku_access_token, playlist_id=youku.youku_playlist.id,
+                                       video_ids=youku.video.id)
+
+        if id:
+            return True
+    else:
+        return False
+
+
+def get_youku_playlist():
+    service = YoukuPlaylists(CLIENT_ID)
+    youku_access_token = youku_get_authenticate()
+    # http://doc.open.youku.com/?docid=377
+    # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
+    # video_ids=850,860,870,880
+    playlist_json = service.find_playlists_by_me(access_token=youku_access_token,
+                                                 orderby='published', page=1, count=20)
 
 
 if __name__ == '__main__':
