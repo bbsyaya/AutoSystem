@@ -54,8 +54,8 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
     url(r'merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view, name='merge_subtitle'),
 
-    # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI/zh-Hans_en
-    url(r'merge_subtitle_to_video/(?P<video_id>.+)/(?P<sub_lang_type>(en|zh-Hansn|zh-Hans_en))$',
+    # http://127.0.0.1:8000/video/merge_subtitle_to_video/_9coAtC2PZI/zh-Hans_en
+    url(r'^merge_subtitle_to_video/(?P<video_id>.{11})/(?P<sub_lang_type>(en|zh-Hans|zh-Hans_en))$',
         subtitle_view.merge_subtitle_to_video_view,
         name='merge_subtitle_to_video'),
 

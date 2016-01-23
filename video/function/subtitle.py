@@ -131,7 +131,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     elif sub_lang_type == 'zh-Hans':
         subtitle_file = video.subtitle_cn
     elif sub_lang_type == 'zh-Hans_en':
-        subtitle_file = video.subtitle_cn_en
+        subtitle_file = video.subtitle_merge
 
     file_name_list = os.path.basename(video.file).split('.')
     subtitle_video = file_name_list[0] + '.' + sub_lang_type + '.' + file_name_list[1]
@@ -139,12 +139,10 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     # 加入字幕的视频文件保存到YOUTUBE_DOWNLOAD_DIR 目录下
     subtitle_video = os.path.join(YOUTUBE_DOWNLOAD_DIR, subtitle_video)
 
-    result = add_subtitle_to_video(video.file, sub_lang_type, subtitle_video)
+    result = add_subtitle_to_video(video.file, subtitle_file, subtitle_video)
     if result == True:
         # 如何将字幕合并到视频成功，则保存视频文件地址到Video module中
-        video.objects.update(subtitle_vidoe_file = subtitle_video)
-
-        video.subtitle_vidoe_file = subtitle_video
+        video.subtitle_video_file = subtitle_video
         video.save()
         return True
     else:

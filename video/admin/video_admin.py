@@ -20,6 +20,9 @@ class VideoForm(forms.ModelForm):
             'title_cn': forms.TextInput(attrs={'size': 100}),
             'subtitle_en': forms.TextInput(attrs={'size': 100}),
             'subtitle_cn': forms.TextInput(attrs={'size': 100}),
+            'subtitle_merge': forms.TextInput(attrs={'size': 100}),
+            'file': forms.TextInput(attrs={'size': 100}),
+            'subtitle_video_file': forms.TextInput(attrs={'size': 100}),
 
         }
         fields = '__all__'  # Register your models here.
