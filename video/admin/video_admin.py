@@ -10,7 +10,7 @@ from django.contrib import admin
 from django import forms
 from django.core.urlresolvers import reverse
 
-from video.models import Video,Youku
+from video.models import Video, Youku
 from video.forms import YoukuForm, VideoForm
 
 
@@ -89,10 +89,10 @@ class VideoAdmin(admin.ModelAdmin):
             if obj.youku.youku_video_id != '':
                 # 显示已经上传到优酷网站的视频链接
                 youku_url = 'http://v.youku.com/v_show/id_%s.html' % obj.youku.youku_video_id
-                return "<a href='%s' target='_blank'>优酷链接</a>" % youku_url
+                return "<a href='%s' target='_blank'>优酷网视频链接</a>" % youku_url
             else:
                 # 显示上传video到优酷网站的链接
-                publish_youku_url = reverse('video:youku_upload', args=[obj.video_id])
+                publish_youku_url = reverse('video:youku_upload', args=[obj.youku.id])
                 return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
         else:
             # 显示为video添加youku信息的链接
@@ -100,20 +100,20 @@ class VideoAdmin(admin.ModelAdmin):
             return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
 
     youku_url.allow_tags = True
-    youku_url.short_description = '优酷'
+    youku_url.short_description = '优酷网视频链接'
 
     def get_youku_video_info_url(self, obj):
         if hasattr(obj, 'youku'):
             # 如果已经有youku 视频的信息，则显示访问youku model的链接
-            if obj.youku.youku_video_id != '':
-                # 如果 youku 对象的 youku_video_id 存在，则显示获取优酷视频信息的链接
-                get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.youku_video_id])
-                return "<a href='%s' target='_blank'>获取优酷在线信息</a>" % get_youku_video_info_url
-            else:
-                # 有发布优酷视频的信息，说明之前已经获取过，则显示访问youku model的链接
-                # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
-                youku_video_info_change_url = reverse('admin:video_youku_change', args=[obj.youku.id])
-                return "<a href='%s' target='_blank'>查看youku对象信息</a>" % youku_video_info_change_url
+            # if obj.youku.youku_video_id != '':
+            #     # 如果 youku 对象的 youku_video_id 存在，则显示获取优酷视频信息的链接
+            #     get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.id])
+            #     return "<a href='%s' target='_blank'>获取优酷在线信息</a>" % get_youku_video_info_url
+            # else:
+            # 有发布优酷视频的信息，说明之前已经获取过，则显示访问youku model的链接
+            # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
+            youku_video_info_change_url = reverse('admin:video_youku_change', args=[obj.youku.id])
+            return "<a href='%s' target='_blank'>查看本地youku对象信息</a>" % youku_video_info_change_url
         else:
             # 如果还没有上传到优酷，则说明都不显示
             return "-"
@@ -144,5 +144,6 @@ class VideoAdmin(admin.ModelAdmin):
 
     edit_youku_url.allow_tags = True
     edit_youku_url.short_description = '修改优酷信息'
+
 
 admin.site.register(Video, VideoAdmin)

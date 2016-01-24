@@ -7,41 +7,23 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from video.models import Youku, Video
+from video.widget.youku_widget import ButtonWidget, UploadToYoukuWidget, YoukuVideoUrlWidget, UpdateYoukuVideoWidget
 
 __author__ = 'GoTop'
-
-
-class ButtonWidget(forms.Widget):
-    """
-    在youku model的edit page增加一个button widget
-    """
-
-    # def __init__(self, obj, attrs=None):
-    #     self.object = obj
-    #     super(ButtonWidget, self).__init__(attrs)
-
-    #todo 研究如何将使用该form的model传入widget
-    # def __init__(self, *args, **kwargs):
-    #     self.obj = kwargs.pop('obj', None)
-    #     super(ButtonWidget, self).__init__(*args, **kwargs)
-
-    template_name = 'youku_button_widget.html'
-
-    def render(self, name, value, attrs=None):
-        # 显示上传video到优酷网站的链接
-        publish_youku_url = reverse('video:youku_upload', args=[self.obj.video_id])
-
-        context = {
-            'url': '/'
-        }
-        return mark_safe(render_to_string(self.template_name, context))
 
 
 class YoukuForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(YoukuForm, self).__init__(*args, **kwargs)
-        youku = kwargs.pop('instance', None)
-        self.fields['button'].widget.obj = youku
+
+        # http://stackoverflow.com/questions/1226590/django-how-can-i-access-the-form-field-from-inside-a-custom
+        # -widget/2135739#2135739
+        # From inside the Form class you can access the Model instance through self.instance. Remember the instance
+        # will be rather blank when Add/Creating a new object.
+        # 将form model传给 buttom widget
+        self.fields['upload_to_youku'].widget.form_instance = self.instance
+        self.fields['youku_video_url'].widget.form_instance = self.instance
+        self.fields['update_youku_video'].widget.form_instance = self.instance
 
     class Meta:
         model = Youku
@@ -55,7 +37,10 @@ class YoukuForm(forms.ModelForm):
         fields = '__all__'  # Register your models here.
 
     # todo 研究获取将使用该form的model，构造admin url传给widget
-    button = forms.CharField(widget=ButtonWidget(attrs={'instance': 1}))
+    upload_to_youku = forms.CharField(widget=UploadToYoukuWidget(), required=False)
+    youku_video_url = forms.CharField(widget=YoukuVideoUrlWidget(), required=False)
+    update_youku_video = forms.CharField(widget=UpdateYoukuVideoWidget(), required=False)
+
 
 
 class VideoForm(forms.ModelForm):

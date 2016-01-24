@@ -16,48 +16,14 @@ from video.models import Video, Youku, YoukuPlaylist
 CLIENT_ID = settings.YOUKU_CLIENT_ID
 
 
-def youku_upload_view(request, video_id):
+def youku_upload_view(request, youku_id):
     """
     将youtube上下载的视频上传到优酷
     :param request:
     :param video_id: YouTube的video_id
     :return:
     """
-    youku_access_token = youku_get_authenticate()
-
-    video = Video.objects.get(video_id=video_id)
-
-    video_file_path = video.file
-    service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
-
-    # 上传的时候如果video.description为None，youku这个库会提示object of type 'NoneType' has no len()
-    if video.description is None:
-        video.description = ''
-
-    if hasattr(video, 'youku'):
-        video_info = {
-            'title': video.youku.title,
-            'category': video.youku.category,
-            'tags': video.youku.tags,
-            'description': video.youku.description
-        }
-
-    # 参数 http://cloud.youku.com/docs?id=110
-    # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
-    # category：string 可选参数 视频分类，详细分类定义见 http://cloud.youku.com/docs?id=90
-
-    video_info = {
-        'title': video.title_cn,
-        'tags': 'Google,IO',
-        'description': video.description
-    }
-    youku_video_id = service.upload(video_info)
-
-    youku, created = Youku.objects.get_or_create(video_id=youku_video_id)
-
-    video.youku = youku
-    video.save()
-
+    youku_video_id = youku_upload(youku_id)
     return render_to_response('result.html', {'text': '上传成功, 在优酷上的video id为 ' + youku_video_id})
 
 
@@ -68,13 +34,14 @@ def set_youku_playlist_view(request, youku_id):
 
 def update_youku_online_info_view(request, youku_video_id):
     updated_youku_video_id = update_youku_online_info(youku_video_id)
+    updated_youku_playlist_video_id = set_youku_playlist(youku_video_id)
 
     return render_to_response('result.html', {'text': '更新成功, 在优酷上的video id为 ' + updated_youku_video_id})
 
 
 def get_youku_video_info_view(request, video_id):
     """
-    根据优酷的video id，获取视频的相关信息
+    根据优酷的video id，获取优酷网上video视频的相关信息
     :param request:
     :param video_id:
     :return:
@@ -145,7 +112,7 @@ def auto_youku_upload_view(request, num):
             ~Q(category=''))[:num]
     youku_uploaded_list = []
     for youku in youku_list:
-        youku_uploaded = youku_upload(youku.video_id)
+        youku_uploaded = youku_upload(youku.id)
         youku_uploaded_list.append(youku_uploaded.title)
 
     return render_to_response('result.html', {'list': youku_uploaded_list})

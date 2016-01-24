@@ -63,7 +63,7 @@ urlpatterns = [
     # 优酷
     ############################################
     # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
-    url(r'youku_upload/(?P<video_id>.+)/$', youku_view.youku_upload_view, name='youku_upload'),
+    url(r'youku_upload/(?P<youku_id>.+)/$', youku_view.youku_upload_view, name='youku_upload'),
 
     # http://127.0.0.1:8000/video/get_youku_video/XMTQyOTQ3NzgyOA==
     # 因为优酷的video id 里可能含有 = 号，所以这样要用 . 来 代替 \w
@@ -72,8 +72,8 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/get_my_playlists
     url(r'get_my_playlists$', youku_view.get_my_playlists_view),
 
-    # http://127.0.0.1:8000/video/set_youku_playlist/11
-    url(r'set_youku_playlist/(?P<youku_id>.+)$', youku_view.set_youku_playlist_view),
+    # http://127.0.0.1:8000/video/set_youku_playlist/XMTQyOTQ3NzgyOA==
+    url(r'set_youku_playlist/(?P<youku_video_id>.+)$', youku_view.set_youku_playlist_view),
 
 
     # http://127.0.0.1:8000/video/update_youku_info/
