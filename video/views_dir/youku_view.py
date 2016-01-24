@@ -28,7 +28,8 @@ def youku_upload_view(request, youku_id):
 
 
 def set_youku_playlist_view(request, youku_id):
-    result = set_youku_playlist(youku_id)
+    youku = Youku.objects.get(pk=youku_id)
+    result = set_youku_playlist(youku.youku_video_id, youku.youku_playlist_id)
     return render_to_response('result.html', {'text': '更新playlist成功, youku_id为 ' + youku_id})
 
 

@@ -77,7 +77,7 @@ urlpatterns = [
 
 
     # http://127.0.0.1:8000/video/update_youku_info/
-    url(r'update_youku_online_info/(?P<youku_video_id>.+)/$', youku_view.update_youku_online_info_view,
+    url(r'update_youku_online_info/(?P<youku_video_id>.+)$', youku_view.update_youku_online_info_view,
         name='update_youku_online_info'),
 
     # http://127.0.0.1:8000/video/auto_set_youku_category

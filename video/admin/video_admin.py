@@ -23,9 +23,9 @@ class YoukuInline(admin.StackedInline):
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'title_cn', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'youtube_url', 'merge_subtitle',
-        'youku_url', 'get_youku_video_info_url', 'update_youku_online_url')
-    list_editable = ['title_cn']
+        'title', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'youtube_url', 'merge_subtitle',
+        'merge_subtitle_to_video', 'youku_url', 'update_youku_online_url')
+    #list_editable = ['title_cn']
     readonly_fields = ('publishedAt',)
     list_per_page = 10
     search_fields = ('title', 'title_cn')
@@ -72,15 +72,29 @@ class VideoAdmin(admin.ModelAdmin):
             return "<a href='%s' target='_blank'>下载</a>" % download_youtube_url
 
     download_youtube_url.allow_tags = True
-    download_youtube_url.short_description = 'Download YouTube'
+    download_youtube_url.short_description = '下载YouTube视频'
 
     def merge_subtitle(self, obj):
-
-        merge_subtitle_url = reverse('video:merge_subtitle', args=[obj.video_id])
-        return "<a href='%s' target='_blank'>合并中英字幕</a>" % merge_subtitle_url
+        if obj.subtitle_merge:
+            return obj.subtitle_merge
+        else:
+            merge_subtitle_url = reverse('video:merge_subtitle', args=[obj.video_id])
+            return "<a href='%s' target='_blank'>合并中英字幕</a>" % merge_subtitle_url
 
     merge_subtitle.allow_tags = True
     merge_subtitle.short_description = '合并中英字幕'
+
+    def merge_subtitle_to_video(self, obj):
+        if obj.subtitle_video_file:
+            return obj.subtitle_video_file
+        elif obj.file:
+            merge_subtitle_to_video_url = reverse('video:merge_subtitle_to_video', args=[obj.video_id, 'zh-Hans_en'])
+            return "<a href='%s' target='_blank'>合并字幕到视频</a>" % merge_subtitle_to_video_url
+        else:
+            return "-"
+
+    merge_subtitle_to_video.allow_tags = True
+    merge_subtitle_to_video.short_description = '合并字幕到视频'
 
     def youku_url(self, obj):
         # To check if the (OneToOne) relation exists or not, you can use the hasattr function:
@@ -102,37 +116,37 @@ class VideoAdmin(admin.ModelAdmin):
     youku_url.allow_tags = True
     youku_url.short_description = '优酷网视频链接'
 
-    def get_youku_video_info_url(self, obj):
-        if hasattr(obj, 'youku'):
-            # 如果已经有youku 视频的信息，则显示访问youku model的链接
-            # if obj.youku.youku_video_id != '':
-            #     # 如果 youku 对象的 youku_video_id 存在，则显示获取优酷视频信息的链接
-            #     get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.id])
-            #     return "<a href='%s' target='_blank'>获取优酷在线信息</a>" % get_youku_video_info_url
-            # else:
-            # 有发布优酷视频的信息，说明之前已经获取过，则显示访问youku model的链接
-            # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
-            youku_video_info_change_url = reverse('admin:video_youku_change', args=[obj.youku.id])
-            return "<a href='%s' target='_blank'>查看本地youku对象信息</a>" % youku_video_info_change_url
-        else:
-            # 如果还没有上传到优酷，则说明都不显示
-            return "-"
-
-    get_youku_video_info_url.allow_tags = True
-    get_youku_video_info_url.short_description = '获取优酷视频信息'
+    # def get_youku_video_info_url(self, obj):
+    #     if hasattr(obj, 'youku'):
+    #         # 如果已经有youku 视频的信息，则显示访问youku model的链接
+    #         # if obj.youku.youku_video_id != '':
+    #         #     # 如果 youku 对象的 youku_video_id 存在，则显示获取优酷视频信息的链接
+    #         #     get_youku_video_info_url = reverse('video:get_youku_video_info', args=[obj.youku.id])
+    #         #     return "<a href='%s' target='_blank'>获取优酷在线信息</a>" % get_youku_video_info_url
+    #         # else:
+    #         # 有发布优酷视频的信息，说明之前已经获取过，则显示访问youku model的链接
+    #         # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#reversing-admin-urls
+    #         youku_video_info_change_url = reverse('admin:video_youku_change', args=[obj.youku.id])
+    #         return "<a href='%s' target='_blank'>本地youku对象信息</a>" % youku_video_info_change_url
+    #     else:
+    #         # 如果还没有上传到优酷，则说明都不显示
+    #         return "-"
+    #
+    # get_youku_video_info_url.allow_tags = True
+    # get_youku_video_info_url.short_description = '获取优酷视频信息'
 
     def update_youku_online_url(self, obj):
         if hasattr(obj, 'youku'):
             if obj.youku.youku_video_id != '':
                 edit_youku_url = reverse('video:update_youku_online_info', args=(obj.youku.youku_video_id,))
-                return "<a href='%s' target='_blank'>更新优酷网信息</a>" % edit_youku_url
+                return "<a href='%s' target='_blank'>在线更新优酷网信息</a>" % edit_youku_url
             else:
                 return "-"
         else:
             return "-"
 
     update_youku_online_url.allow_tags = True
-    update_youku_online_url.short_description = '更新优酷网信息'
+    update_youku_online_url.short_description = '在线更新优酷网信息'
 
     def edit_youku_url(self, obj):
         if hasattr(obj, 'youku'):

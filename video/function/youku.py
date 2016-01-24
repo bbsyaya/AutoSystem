@@ -14,17 +14,23 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
 django.setup()
 
-from video.models import Youku, Video
+from video.models import Youku, Video, YoukuPlaylist
 
 __author__ = 'GoTop'
 
 
 def youku_upload(youku_id):
+    """
+    将youku id的youku对象对应的合并有字幕的video视频的上传到优酷网
+
+    :param youku_id:
+    :return:
+    """
     youku_access_token = youku_get_authenticate()
 
     youku = Youku.objects.get(pk=youku_id)
 
-    video_file_path = youku.video.file
+    video_file_path = youku.video.subtitle_video_file
     service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
 
     # 上传的时候如果video.description为None，youku这个库会提示object of type 'NoneType' has no len()
@@ -88,7 +94,7 @@ def set_youku_category(youku_id):
     return youku
 
 
-def set_youku_playlist(youku_video_id):
+def set_youku_playlist(youku_video_id, playlist_id):
     """
     根据youku的youkuplaylist属性，在优酷网上将youku对象添加到该playlist中
 
@@ -96,19 +102,41 @@ def set_youku_playlist(youku_video_id):
     :param youku_id:
     :return:
     """
-    youku = Youku.objects.get(youku_video_id=youku_video_id)
 
-    if hasattr(youku, 'video'):
-        service = YoukuPlaylists(CLIENT_ID)
-        youku_access_token = youku_get_authenticate()
-        # http://doc.open.youku.com/?docid=377
-        # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
-        # video_ids=850,860,870,880
-        id = service.add_videos_to_playlist(access_token=youku_access_token, playlist_id=youku.youku_playlist.id,
-                                            video_ids=youku_video_id)
+    service = YoukuPlaylists(CLIENT_ID)
+    youku_access_token = youku_get_authenticate()
+    # http://doc.open.youku.com/?docid=377
+    # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
+    # video_ids=850,860,870,880
+    id = service.add_videos_to_playlist(access_token=youku_access_token, playlist_id=playlist_id,
+                                        video_ids=youku_video_id)
 
-        if id:
-            return id
+    if id:
+        return id
+    else:
+        return False
+
+
+def delete_video_from_playlist(youku_video_id, playlist_id):
+    """
+    在playlist_id的优酷playlist中删除youku_video_id视频
+    :param youku_video_id:
+    :param playlist_id:
+    :return:
+    """
+    service = YoukuPlaylists(CLIENT_ID)
+    youku_access_token = youku_get_authenticate()
+
+    try:
+        id = service.del_videos_from_playlist(access_token=youku_access_token, playlist_id=playlist_id,
+                                              video_ids=youku_video_id)
+    except:
+        #如果playlist_id中没有youku_video_id，会提示异常，忽略即可
+        pass
+        return False
+
+    if id:
+        return id
     else:
         return False
 

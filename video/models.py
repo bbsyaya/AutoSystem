@@ -120,7 +120,8 @@ class Youku(models.Model):
     # 参考 http://stackoverflow.com/questions/1744203/django-admin-onetoone-relation-as-an-inline
     # 指向video model，所以youku model会有一个video id属性，注意与youku_video_id的区别
     video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True, blank=True)
-    youku_playlist = models.OneToOneField('YoukuPlaylist', on_delete=models.SET_NULL, null=True, blank=True)
+    youku_playlist = models.ForeignKey('YoukuPlaylist', on_delete=models.SET_NULL, null=True, blank=True)
+
 
     @property
     def url(self):
