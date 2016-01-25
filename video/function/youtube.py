@@ -119,7 +119,8 @@ def download_single_youtube_video_main(video_id):
         'noplaylist': True,  # only download single song, not playlist
         'verbose': True,
         'subtitleslangs': ['zh-Hans', 'en'],  # 要写成list的形式
-        'writeautomaticsub': True,
+        'subtitlesformat': 'srt',
+        'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
         'embedsubtitles': True,
         'merge_output_format': 'mkv',
         'prefer_ffmpeg': True,
@@ -141,9 +142,25 @@ def download_single_youtube_video_main(video_id):
         # 只能查找到一个这样的文件才对
         if (video_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
-            video_filepath = video_filepath.pop()
-            video.file = video_filepath
-            video.save()
+            video.file = video_filepath.pop()
+
+        #只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
+        # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
+        subtitle_en_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
+                                                keyword=video.video_id + ".en",
+                                                extend=options.get('subtitlesformat', None))
+        if (subtitle_en_filepath.__len__()) == 1:
+            # 从list中把唯一的一个数据pop出来
+            video.subtitle_en = subtitle_en_filepath.pop()
+
+        subtitle_cn_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
+                                                          keyword=video.video_id + ".cn",
+                                                          extend=options.get('subtitlesformat', None))
+        if (subtitle_cn_filepath.__len__()) == 1:
+            # 从list中把唯一的一个数据pop出来
+            video.subtitle_cn = subtitle_cn_filepath.pop()
+
+        video.save()
     return video_filepath
 
 
@@ -169,8 +186,3 @@ def search_keyword_in_file(dir, keyword, extend=None):
                     file_list.append(os.path.join(dir, file))
 
     return file_list
-
-
-
-
-
