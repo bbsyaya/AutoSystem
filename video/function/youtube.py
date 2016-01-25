@@ -154,7 +154,7 @@ def download_single_youtube_video_main(video_id):
             video.subtitle_en = subtitle_en_filepath.pop()
 
         subtitle_cn_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
-                                                          keyword=video.video_id + ".cn",
+                                                          keyword=video.video_id + ".zh-Hans",
                                                           extend=options.get('subtitlesformat', None))
         if (subtitle_cn_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来

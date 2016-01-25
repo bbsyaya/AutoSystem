@@ -32,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'tinymce',
+    #'tinymce',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'debug_toolbar',
     'django.contrib.sites',
     'django_settings',# https://github.com/jqb/django-settings
 
@@ -47,7 +48,7 @@ INSTALLED_APPS = (
     'video',
     #'django_youtube',
     'oauth2_authentication',
-    #'debug_toolbar',
+
 
 )
 
