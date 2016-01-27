@@ -103,13 +103,13 @@ def auto_set_youku_category_view(request):
 
 def auto_youku_upload_view(request, num):
     """
-    查找对应video的file不是null（已经下载到本地）, youku_video_id为''(还没上传到优酷)
+    查找对应video的subtitle_video_file不是null（已经下载到本地,并且已经合并了字幕）, youku_video_id为''(还没上传到优酷)
     title和category的youku model
     将其上传到优酷网上
     :param request:
     :return:
     """
-    youku_list = Youku.objects.filter(~Q(video__file="")).filter(youku_video_id='').filter(~Q(title='')).filter(
+    youku_list = Youku.objects.filter(~Q(video__subtitle_video_file="")).filter(youku_video_id='').filter(~Q(title='')).filter(
             ~Q(category=''))[:num]
     youku_uploaded_list = []
     for youku in youku_list:

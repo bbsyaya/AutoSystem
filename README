@@ -32,11 +32,11 @@ todo:
 
 将video app 的admin.py分成几个python文件，放在admin目录下 2016-1-18
 
-制作自动批量合并字幕到视频，然后上传到优酷的功能（修改原来的）。
+制作自动批量合并字幕到视频，然后上传到优酷的功能（修改原来的）。2016-1-25
 
 在linode上部署django的运行环境
 
-设置django自动运行某些命令 用django crontab
+设置django自动运行某些命令 用django crontab 或 celery
 
 =============================================================================================
 
@@ -81,7 +81,11 @@ http://127.0.0.1:8000/video/get_subscription_update_video/50
 http://127.0.0.1:8000/admin/video/video/
 
 3. 自动下载所有填写好youku model中title的video model的视频
-http://127.0.0.1:8000/video/auto_youtube_upload
+http://127.0.0.1:8000/video/download_multi_youtube_video/2
+
+4.自动合并中英字幕
+
+5.自动将中英字幕合并到视频中
 
 4. 自动根据youtube的channel所属的category设置填写了title的youku视频的category
 http://127.0.0.1:8000/video/auto_set_youku_category
