@@ -14,7 +14,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -28,27 +27,27 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = (
-    #'tinymce',
+    # 'tinymce',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'debug_toolbar',
+    # 'debug_toolbar',
     'django.contrib.sites',
-    'django_settings',# https://github.com/jqb/django-settings
+    'django_settings',  # https://github.com/jqb/django-settings
 
+    'kombu.transport.django',
+    'djcelery',
     'manage_rss',
-    #'adminbrowse',
+    # 'adminbrowse',
     'video',
-    #'django_youtube',
+    # 'django_youtube',
     'oauth2_authentication',
-
 
 )
 
@@ -64,7 +63,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'AutoSystem.urls'
 
 WSGI_APPLICATION = 'AutoSystem.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -89,14 +87,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # add 2014-9-14
 # django.contrib.staticfiles 要求设置STATIC_ROOT和MEDIA_ROOT，这样能自动收集所有的静态文件到指定的目录下
 STATIC_ROOT = BASE_DIR + '/static/'
 
 MEDIA_ROOT = 'E:/media/'
-
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -109,8 +104,7 @@ STATICFILES_DIRS = (
 
 SITE_ID = 1
 
-TEMPLATE_DIRS = ( os.path.join(BASE_DIR, 'templates'),)
-
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 
 # http://stackoverflow.com/questions/20873625/pycharm-code-inspection-complains-template-file-not-found-how-to-fix
 TEMPLATE_LOADERS = (
@@ -146,16 +140,51 @@ YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleus
 
 YOUTUBE_DOWNLOAD_DIR = 'E:\media\Video\YouTube'
 
-
-
 YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
 YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"
 
-#访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code&redirect_uri=http://127.0.0.1:8000
-#可获得Authorization Code
-#再用post的方式，用Authorization Code去获取access token
+# 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code&redirect_uri=http
+# ://127.0.0.1:8000
+# 可获得Authorization Code
+# 再用post的方式，用Authorization Code去获取access token
 
 YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
-#https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code
+# https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code
 
 
+# CELERY SETTINGS
+# BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+
+
+
+
+
+
+# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+#
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'Europe/Madrid'
+# BROKER_URL = 'django://'
+# import djcelery
+# djcelery.setup_loader()
+
+
+BROKER_HOST = "localhost"
+BROKER_BACKEND="redis"
+REDIS_PORT=6379
+REDIS_HOST = "localhost"
+BROKER_USER = ""
+BROKER_PASSWORD =""
+BROKER_VHOST = "0"
+REDIS_DB = 0
+REDIS_CONNECT_RETRY = True
+CELERY_SEND_EVENTS=True
+CELERY_RESULT_BACKEND='redis'
+CELERY_TASK_RESULT_EXPIRES =  10
+CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
