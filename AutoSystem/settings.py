@@ -152,39 +152,37 @@ YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
 # https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code
 
 
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Madrid'
+
+# 使用django自带broker的设置
+# 需要自己用命令python manage.py shell启动shell，在里面测试，不能直接用PyCharm的console
+BROKER_URL = 'django://'
+import djcelery
+djcelery.setup_loader()
+
 # CELERY SETTINGS
 # BROKER_URL = 'redis://localhost:6379/0'
 # CELERY_ACCEPT_CONTENT = ['json']
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 
-
-
-
-
-
-# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-#
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = 'Europe/Madrid'
-# BROKER_URL = 'django://'
-# import djcelery
-# djcelery.setup_loader()
-
-
-BROKER_HOST = "localhost"
-BROKER_BACKEND="redis"
-REDIS_PORT=6379
-REDIS_HOST = "localhost"
-BROKER_USER = ""
-BROKER_PASSWORD =""
-BROKER_VHOST = "0"
-REDIS_DB = 0
-REDIS_CONNECT_RETRY = True
-CELERY_SEND_EVENTS=True
-CELERY_RESULT_BACKEND='redis'
-CELERY_TASK_RESULT_EXPIRES =  10
-CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
+# 使用redis的设置
+# BROKER_HOST = "localhost"
+# BROKER_BACKEND="redis"
+# REDIS_PORT=6379
+# REDIS_HOST = "localhost"
+# BROKER_USER = ""
+# BROKER_PASSWORD =""
+# BROKER_VHOST = "0"
+# REDIS_DB = 0
+# REDIS_CONNECT_RETRY = True
+# CELERY_SEND_EVENTS=True
+# CELERY_RESULT_BACKEND='redis'
+# CELERY_TASK_RESULT_EXPIRES =  10
+# CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
