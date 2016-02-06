@@ -1,36 +1,83 @@
 # coding=utf-8
 from __future__ import unicode_literals
-import os
+
 from AutoSystem import settings
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.function.subtitle import add_subtitle_to_video
-from video.models import Video
-
-__author__ = 'GoTop'
-
-# import youtube_upload, pafy
+from video.models import Video, YT_channel
 
 import youtube_dl
 
+from oauth2_authentication.views import get_authenticated_service
+from video.utils.file import search_keyword_in_file
 
-class MyLogger(object):
-    def debug(self, msg):
-        pass
+__author__ = 'GoTop'
 
-    def warning(self, msg):
-        pass
+def get_subscription_update_video(user, max_results):
+    """
+    获取认证用户的youtube首页显示的订阅频道的视频信息，保存到本地数据库
+    https://developers.google.com/youtube/v3/docs/activities/list#errors
+    :param request:
+    :return:
+    """
+    youtube = get_authenticated_service(user)  # home: This parameter can only be used in a properly authorized request. Set this
+    # parameter's value to true to retrieve the activity feed that displays on
+    # the YouTube home page for the currently authenticated user.
+    res = youtube.activities().list(part='snippet, contentDetails',
+                                    home=True,
+                                    maxResults=max_results).execute()
 
-    def error(self, msg):
-        print(msg)
+    # 循环获取完所有的结果
+    nextPageToken = res.get('nextPageToken')
+    while ('nextPageToken' in res):
+        nextPage = youtube.activities().list(
+                part='snippet, contentDetails',
+                home=True,
+                maxResults=max_results,
+                pageToken=nextPageToken
+        ).execute()
+        res['items'] = res['items'] + nextPage['items']
 
+        if 'nextPageToken' not in nextPage:
+            res.pop('nextPageToken', None)
+        else:
+            nextPageToken = nextPage['nextPageToken']
 
-def my_hook(d):
-    if d['status'] == 'finished':
-        print(d)
+    # 从返回的对象里找出type为upload的
+    video_list = []
+    for result in res.get("items", []):
+        channel = YT_channel.objects.filter(channel_id=result['snippet']["channelId"]).first()
+        if channel and channel.is_download:
+            # 如果该视频所属的频道 is_download 属性被设置为True，才进行下载
+            # todo 待测试
+            if result['snippet']["type"] == 'upload':
+                video = {'video_id': result['contentDetails']["upload"]["videoId"],
+                         'title': result['snippet']["title"],
+                         'publishedAt': result['snippet']["publishedAt"],
+                         'thumbnail': result['snippet']['thumbnails']["default"]["url"],
+                         'channel': result['snippet']["channelId"]
+                         }
 
+                import datetime, dateutil.parser
 
-def get_translate_title_video(num):
-    tran_video_list = Video.objects.filter(title_cn__isnull=True).order_by('publishedAt', 'title')[:num]
+                # publishedAt 为ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ)格式，类似2008-09-26T01:51:42.000Z
+                d = dateutil.parser.parse(video['publishedAt'])
+
+                youtube_video, created = Video.objects.update_or_create(video_id=video['video_id'],
+                                                                        defaults={'title': video['title'],
+                                                                                  'publishedAt': d,
+                                                                                  'thumbnail': video['thumbnail'],
+                                                                                  'channel': channel
+                                                                                  }
+                                                                        )
+
+                video_list.append(video)
+            else:
+                # https://developers.google.com/youtube/v3/docs/activities
+                # https://developers.google.com/youtube/v3/docs/activities#snippet.type
+                # 有的type没有title
+                continue
+    return video_list
 
 
 def download_multi_youtube_video_main(num):
@@ -39,7 +86,7 @@ def download_multi_youtube_video_main(num):
     :return:
     """
     # 选择出前num个已经翻译过标题的youtube视频
-    tran_video_list = Video.objects.filter(title_cn__isnull=False).order_by('publishedAt', 'title')[:num]
+    tran_video_list = Video.objects.filter(youku__isnull=False).order_by('publishedAt', 'title')[:num]
 
     video_filepath_list = []
     for idx, video in enumerate(tran_video_list):
@@ -47,8 +94,8 @@ def download_multi_youtube_video_main(num):
         video_filepath_list.append(video_filepath)
 
         # 将下载视频的目录保存到Video
-        video.file = video_filepath
-        video.save()
+        #video.file = video_filepath
+        #video.save()
     return video_filepath_list
 
     # # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding-youtube-dl
@@ -144,18 +191,18 @@ def download_single_youtube_video_main(video_id):
             # 从list中把唯一的一个数据pop出来
             video.file = video_filepath.pop()
 
-        #只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
+        # 只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
         # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
         subtitle_en_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
-                                                keyword=video.video_id + ".en",
-                                                extend=options.get('subtitlesformat', None))
+                                                      keyword=video.video_id + ".en",
+                                                      extend=options.get('subtitlesformat', None))
         if (subtitle_en_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
             video.subtitle_en = subtitle_en_filepath.pop()
 
         subtitle_cn_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
-                                                          keyword=video.video_id + ".zh-Hans",
-                                                          extend=options.get('subtitlesformat', None))
+                                                      keyword=video.video_id + ".zh-Hans",
+                                                      extend=options.get('subtitlesformat', None))
         if (subtitle_cn_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
             video.subtitle_cn = subtitle_cn_filepath.pop()
@@ -164,25 +211,4 @@ def download_single_youtube_video_main(video_id):
     return video_filepath
 
 
-def search_keyword_in_file(dir, keyword, extend=None):
-    """
-    查找dir目录下，文件名中包含keyword，后缀为extend的文件
-    :param dir:
-    :param keyword:
-    :param extend:
-    :return:
-    """
-    file_list = []
-    for root, subFolders, files in os.walk(dir):
-        for file in files:
-            if extend is not None:
-                # 如果设置了要查找文件的extend
-                # string.find() 返回的是查找到的文本的位置，查找不成功过则返回-1
-                if file.find(keyword) != -1 and file.endswith(extend):
-                    file_list.append(os.path.join(dir, file))
-            else:
-                # 如果没设置要查找的extend
-                if file.find(keyword) != -1:
-                    file_list.append(os.path.join(dir, file))
 
-    return file_list

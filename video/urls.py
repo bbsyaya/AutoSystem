@@ -86,4 +86,9 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 
+    ############################################
+    # 综合操作
+    ############################################
+    # http://127.0.0.1:8000/video/auto_youku_upload/1
+    url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 ]

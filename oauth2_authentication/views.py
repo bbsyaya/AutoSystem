@@ -33,13 +33,12 @@ YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 
-def get_authenticated_service(request):
+def get_authenticated_service(user):
     """
     让用户到google上进行认证，返回认证后的http服务
     :param request:
     :return:
     """
-    user = request.user
     storage = Storage(CredentialsModel, 'id', user, 'credential')
     credential = storage.get()
 
