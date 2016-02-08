@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
-from video.views_dir import youtube_view, youtube_subscription_view, youku_view, subtitle_view
+from video.views_dir import youtube_view, youtube_subscription_view, youku_view, subtitle_view, video
 
 __author__ = 'GoTop'
 
@@ -9,9 +9,9 @@ from django.conf.urls import patterns, url
 from . import views
 
 urlpatterns = [
-    ###########
+    ############################################################################################
     # YouTube
-    ###########
+    ############################################################################################
     # http://127.0.0.1:8000/video/search?q=gta&max_results=10
     url(r'search/(?P<q>\w+)/(?P<max_results>\d+)$', views.search_view, name='search'),
 
@@ -48,9 +48,15 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youtube_download/1
     url(r'auto_youtube_download/(?P<num>\d+)$', youtube_view.auto_youtube_download_view),
 
-    ############################################
+    # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
+    url(r'download_upload_video/(?P<video_id>.+)$', video.download_upload_video_view, name='download_upload_video'),
+
+    # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
+    url(r'download_subtitle/(?P<video_id>.+)$', youtube_view.download_subtitle_view, name='download_subtitle'),
+
+    ############################################################################################
     # 字幕
-    ############################################
+    ############################################################################################
     # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
     url(r'merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view, name='merge_subtitle'),
 
@@ -59,9 +65,10 @@ urlpatterns = [
         subtitle_view.merge_subtitle_to_video_view,
         name='merge_subtitle_to_video'),
 
-    ############################################
+
+    ############################################################################################
     # 优酷
-    ############################################
+    ############################################################################################
     # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
     url(r'youku_upload/(?P<youku_id>.+)/$', youku_view.youku_upload_view, name='youku_upload'),
 
@@ -75,7 +82,6 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/set_youku_playlist/XMTQyOTQ3NzgyOA==
     url(r'set_youku_playlist/(?P<youku_video_id>.+)$', youku_view.set_youku_playlist_view),
 
-
     # http://127.0.0.1:8000/video/update_youku_info/
     url(r'update_youku_online_info/(?P<youku_video_id>.+)$', youku_view.update_youku_online_info_view,
         name='update_youku_online_info'),
@@ -86,9 +92,9 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 
-    ############################################
+    ############################################################################################
     # 综合操作
-    ############################################
+    ############################################################################################
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 ]

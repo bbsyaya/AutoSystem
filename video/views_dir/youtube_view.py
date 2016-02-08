@@ -1,11 +1,11 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render, render_to_response
 
 # Create your views here.
 from django.template import RequestContext
 from video.function.youtube import download_multi_youtube_video_main, download_single_youtube_video_main, \
-    get_subscription_update_video
+    get_subscription_update_video, download_subtitle
 from video.models import Video, YT_channel
 from oauth2_authentication.views import get_authenticated_service
 
@@ -37,6 +37,15 @@ def download_single_youtube_video_view(request, video_id):
     # todo 添加保存下载信息到数据库的方法
     return render_to_response('result.html',
                               {'text': '视频已下载'}
+                              )
+
+
+def download_subtitle_view(request, video_id):
+    result = download_subtitle(video_id)
+    if result is False:
+        result = []
+    return render_to_response('result.html',
+                              {'list': result}
                               )
 
 

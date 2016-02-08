@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render, render_to_response
 
 from oauth2_authentication.views import get_authenticated_service

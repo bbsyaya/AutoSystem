@@ -3,10 +3,10 @@ from __future__ import unicode_literals, absolute_import
 
 from oauth2_authentication.function.youku import youku_get_authenticate
 
-from AutoSystem import settings
+from AutoSystem.settings.base import YOUKU_CLIENT_ID
 from youku import YoukuUpload, YoukuVideos, YoukuPlaylists
 
-CLIENT_ID = settings.YOUKU_CLIENT_ID
+CLIENT_ID = YOUKU_CLIENT_ID
 
 import os
 import django
@@ -33,6 +33,11 @@ def youku_upload(youku_id):
     video_file_path = youku.video.subtitle_video_file
     service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
 
+    if youku.title == '':
+        title = youku.video.title
+    else:
+        title = youku.title
+
     # 上传的时候如果video.description为None，youku这个库会提示object of type 'NoneType' has no len()
     if youku.description is None:
         description = ''
@@ -49,7 +54,7 @@ def youku_upload(youku_id):
     # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
     # category：string 可选参数 视频分类，详细分类定义见 http://cloud.youku.com/docs?id=90
     video_info = {
-        'title': youku.title,
+        'title': title,
         'category': youku.category,
         'tags': tags,
         'description': description

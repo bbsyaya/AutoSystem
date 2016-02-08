@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import json
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -7,13 +7,13 @@ from django.shortcuts import render_to_response
 __author__ = 'GoTop'
 
 from django.contrib.auth.decorators import login_required
-from AutoSystem import settings
+from AutoSystem.settings.base import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
 
 from pyoauth2 import Client
 import django_settings
 
-CLIENT_ID = client_id = settings.YOUKU_CLIENT_ID
-CLIENT_SECRET = settings.YOUKU_CLIENT_SECRET
+CLIENT_ID = YOUKU_CLIENT_ID
+CLIENT_SECRET = YOUKU_CLIENT_SECRET
 REDIRECT_URL = 'http://127.0.0.1:8000/oauth2/youku_oauth2callback'
 SCOPE = ''
 

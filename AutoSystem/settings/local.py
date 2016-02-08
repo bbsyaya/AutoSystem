@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 
 __author__ = 'GoTop'
 
-from AutoSystem.settings.base import *
+from .base import *
 
 DEBUG = True
 INSTALLED_APPS += (

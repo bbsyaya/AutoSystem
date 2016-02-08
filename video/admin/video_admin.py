@@ -23,9 +23,10 @@ class YoukuInline(admin.StackedInline):
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'youtube_url', 'merge_subtitle',
-        'merge_subtitle_to_video', 'youku_url', 'update_youku_online_url')
-    #list_editable = ['title_cn']
+        'title', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'download_subtitle_url', 'youtube_url',
+        'merge_subtitle',
+        'merge_subtitle_to_video', 'youku_url', 'update_youku_online_url', 'download_upload_video_url')
+    # list_editable = ['title_cn']
     readonly_fields = ('publishedAt',)
     list_per_page = 10
     search_fields = ('title', 'title_cn')
@@ -73,6 +74,18 @@ class VideoAdmin(admin.ModelAdmin):
 
     download_youtube_url.allow_tags = True
     download_youtube_url.short_description = '下载YouTube视频'
+
+    def download_subtitle_url(self, obj):
+        if obj.subtitle_en:
+            return obj.subtitle_en
+        else:
+            download_subtitle_url = reverse('video:download_subtitle', args=[obj.video_id])
+            return "<a href='%s' target='_blank'>下载字幕</a>" % download_subtitle_url
+
+    download_subtitle_url.allow_tags = True
+    download_subtitle_url.short_description = '下载字幕'
+
+
 
     def merge_subtitle(self, obj):
         if obj.subtitle_merge:
@@ -138,7 +151,7 @@ class VideoAdmin(admin.ModelAdmin):
     def update_youku_online_url(self, obj):
         if hasattr(obj, 'youku'):
             if obj.youku.youku_video_id != '':
-                edit_youku_url = reverse('video:update_youku_online_info', args=(obj.youku.youku_video_id,))
+                edit_youku_url = reverse('video:update_youku_online_info', args=[obj.youku.youku_video_id])
                 return "<a href='%s' target='_blank'>在线更新优酷网信息</a>" % edit_youku_url
             else:
                 return "-"
@@ -150,7 +163,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     def edit_youku_url(self, obj):
         if hasattr(obj, 'youku'):
-            edit_youku_url = reverse('admin:video_youku_change', args=(obj.youku.id,))
+            edit_youku_url = reverse('admin:video_youku_change', args=[obj.youku.id])
             return "<a href='%s' target='_blank'>Edit Youku</a>" % edit_youku_url
         else:
             edit_youku_url = reverse('admin:video_youku_add', )
@@ -158,6 +171,20 @@ class VideoAdmin(admin.ModelAdmin):
 
     edit_youku_url.allow_tags = True
     edit_youku_url.short_description = '修改优酷信息'
+
+    def download_upload_video_url(self, obj):
+        if hasattr(obj, 'youku'):
+            # 如果已有youku_video_id，说明视频已经上传到优酷
+            if obj.youku.youku_video_id != '':
+                return "-"
+            else:
+                return "-"
+        else:
+            download_upload_video_url = reverse('video:download_upload_video', args=[obj.video_id, ])
+            return "<a href='%s' target='_blank'>下载+上传视频</a>" % download_upload_video_url
+
+    download_upload_video_url.allow_tags = True
+    download_upload_video_url.short_description = '下载+上传视频'
 
 
 admin.site.register(Video, VideoAdmin)

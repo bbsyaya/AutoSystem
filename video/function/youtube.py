@@ -1,17 +1,18 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 from AutoSystem import settings
-from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
 from video.function.subtitle import add_subtitle_to_video
 from video.models import Video, YT_channel
 
 import youtube_dl
 
 from oauth2_authentication.views import get_authenticated_service
-from video.utils.file import search_keyword_in_file
+from video.function.file import search_keyword_in_file
 
 __author__ = 'GoTop'
+
 
 def get_subscription_update_video(user, max_results):
     """
@@ -20,7 +21,8 @@ def get_subscription_update_video(user, max_results):
     :param request:
     :return:
     """
-    youtube = get_authenticated_service(user)  # home: This parameter can only be used in a properly authorized request. Set this
+    youtube = get_authenticated_service(
+            user)  # home: This parameter can only be used in a properly authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on
     # the YouTube home page for the currently authenticated user.
     res = youtube.activities().list(part='snippet, contentDetails',
@@ -94,8 +96,8 @@ def download_multi_youtube_video_main(num):
         video_filepath_list.append(video_filepath)
 
         # 将下载视频的目录保存到Video
-        #video.file = video_filepath
-        #video.save()
+        # video.file = video_filepath
+        # video.save()
     return video_filepath_list
 
     # # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding-youtube-dl
@@ -162,13 +164,14 @@ def download_single_youtube_video_main(video_id):
         'format': '160+250',  # choice of quality
         # 'extractaudio': True,  # only keep the audio
         # 'audioformat': "mp3",  # convert to mp3
-        'outtmpl': settings.YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
+        'restrictfilenames': True,
         'noplaylist': True,  # only download single song, not playlist
-        'verbose': True,
+        'verbose': True,  # Print various debugging information
         'subtitleslangs': ['zh-Hans', 'en'],  # 要写成list的形式
         'subtitlesformat': 'srt',
         'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
-        'embedsubtitles': True,
+        'embedsubtitles': False,  # Embed subtitles in the video (only for mkv and mp4 videos
         'merge_output_format': 'mkv',
         'prefer_ffmpeg': True,
         'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin"
@@ -183,7 +186,7 @@ def download_single_youtube_video_main(video_id):
         # youtube-dl下载成功后并不会返回下载视频文件的信息
         # todo 所以要自己查看下载目录下是否有相关video id的视频，以此来判断是否下载成功
         # 并将视频文件的地址保存到对应的字段
-        video_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
+        video_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                 keyword=video.video_id,
                                                 extend=options.get('merge_output_format', None))
         # 只能查找到一个这样的文件才对
@@ -193,14 +196,14 @@ def download_single_youtube_video_main(video_id):
 
         # 只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
         # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
-        subtitle_en_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
+        subtitle_en_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                       keyword=video.video_id + ".en",
                                                       extend=options.get('subtitlesformat', None))
         if (subtitle_en_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
             video.subtitle_en = subtitle_en_filepath.pop()
 
-        subtitle_cn_filepath = search_keyword_in_file(dir=settings.YOUTUBE_DOWNLOAD_DIR,
+        subtitle_cn_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                       keyword=video.video_id + ".zh-Hans",
                                                       extend=options.get('subtitlesformat', None))
         if (subtitle_cn_filepath.__len__()) == 1:
@@ -211,4 +214,52 @@ def download_single_youtube_video_main(video_id):
     return video_filepath
 
 
+def download_subtitle(video_id):
+    """
+    下载video的中英字幕并保存到video model中
 
+    :param video_id:
+    :return:
+    """
+    video = Video.objects.get(video_id=video_id)
+    options = {
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
+        'verbose': True,  # Print various debugging information
+        'restrictfilenames': True,
+        'subtitleslangs': ['en', 'zh-Hans'],  # 要写成list的形式
+        'convertsubtitles': 'srt',
+        'subtitlesformat': 'vtt',
+        'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
+        'skip_download': True,
+        'prefer_ffmpeg': True,
+        'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin"
+    }
+
+    with youtube_dl.YoutubeDL(options) as ydl:
+        ydl.download([video.youtube_url])
+
+        # 只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
+        # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
+        subtitle_en_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
+                                                      keyword=video.video_id + ".en",
+                                                      extend=options.get('subtitlesformat', None))
+
+        result = []
+        if (subtitle_en_filepath.__len__()) == 1:
+            # 从list中把唯一的一个数据pop出来
+            video.subtitle_en = subtitle_en_filepath.pop()
+            result.append(video.subtitle_en)
+
+        subtitle_cn_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
+                                                      keyword=video.video_id + ".zh-Hans",
+                                                      extend=options.get('subtitlesformat', None))
+        if (subtitle_cn_filepath.__len__()) == 1:
+            # 从list中把唯一的一个数据pop出来
+            video.subtitle_cn = subtitle_cn_filepath.pop()
+            result.append(video.subtitle_en)
+
+        video.save()
+
+    if result == []:
+        result = False
+    return result

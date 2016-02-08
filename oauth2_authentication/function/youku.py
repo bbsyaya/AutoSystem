@@ -1,16 +1,16 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from django.core.urlresolvers import reverse
 
 from django.http import HttpResponseRedirect
 import django_settings
 from pyoauth2 import Client
-from AutoSystem import settings
+from AutoSystem.settings.base import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
 
 __author__ = 'GoTop'
 
-CLIENT_ID = settings.YOUKU_CLIENT_ID
-CLIENT_SECRET = settings.YOUKU_CLIENT_SECRET
+CLIENT_ID = YOUKU_CLIENT_ID
+CLIENT_SECRET = YOUKU_CLIENT_SECRET
 REDIRECT_URL = 'http://127.0.0.1:8000/oauth2/youku_oauth2callback'
 SCOPE = ''
 
@@ -33,4 +33,3 @@ def youku_get_authenticate():
         return HttpResponseRedirect(reverse('oauth2_authentication:youku_authenticate'))
     else:
         return youku_access_token
-

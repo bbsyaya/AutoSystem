@@ -1,12 +1,14 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import os
 import django
-from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+
+from django.utils.text import slugify, get_valid_filename
+from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
 from video.libs.subtitle import merge_subtitle
 from video.models import Video
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.local")
 django.setup()
 
 __author__ = 'GoTop'
@@ -18,6 +20,7 @@ from pysrt import SubRipFile, SubRipTime
 参考 https://github.com/byroot/pysrt/issues/15
 https://github.com/byroot/pysrt/issues/17
 """
+
 
 def merge_video_subtitle(video_id):
     """
@@ -35,7 +38,10 @@ def merge_video_subtitle(video_id):
     subs_en = SubRipFile.open(video.subtitle_en, encoding=encoding)
     merge_subs = merge_subtitle(subs_cn, subs_en, delta)
 
-    merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (video.title, video.video_id)
+    # 某些youtube视频的title有非ASCII的字符，或者/等不能出现在文件名中的字符
+    # 所以使用django utils自带的get_valid_filename()转化一下
+    # 注意:与youtube-dl自带的restrictfilenames获得的文件名不一样
+    merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (get_valid_filename(video.title), video.video_id)
 
     merge_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, merge_subs_filename)
 

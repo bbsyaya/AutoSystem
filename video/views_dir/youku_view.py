@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 import time
@@ -8,12 +8,12 @@ from datetime import datetime
 from django.db.models import Q
 from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
-from AutoSystem import settings
+from AutoSystem.settings.base import YOUKU_CLIENT_ID
 from oauth2_authentication.function.youku import youku_get_authenticate
 from video.function.youku import set_youku_category, youku_upload, update_youku_online_info, set_youku_playlist
 from video.models import Video, Youku, YoukuPlaylist
 
-CLIENT_ID = settings.YOUKU_CLIENT_ID
+CLIENT_ID = YOUKU_CLIENT_ID
 
 
 def youku_upload_view(request, youku_id):
@@ -109,7 +109,8 @@ def auto_youku_upload_view(request, num):
     :param request:
     :return:
     """
-    youku_list = Youku.objects.filter(~Q(video__subtitle_video_file="")).filter(youku_video_id='').filter(~Q(title='')).filter(
+    youku_list = Youku.objects.filter(~Q(video__subtitle_video_file="")).filter(youku_video_id='').filter(
+        ~Q(title='')).filter(
             ~Q(category=''))[:num]
     youku_uploaded_list = []
     for youku in youku_list:

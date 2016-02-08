@@ -1,21 +1,18 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import os
 
 from django.shortcuts import render_to_response
 
 from AutoSystem import settings
-from video.function.subtitle import merge_subtitle, add_subtitle_to_video_process
+from video.function.subtitle import merge_subtitle, add_subtitle_to_video_process, merge_video_subtitle
 from video.models import Video
 
 __author__ = 'GoTop'
 
 import pysrt
 from pysrt import SubRipFile, SubRipItem, SubRipTime
-
-
-
 
 
 def merge_subtitle_view(request, video_id):
