@@ -46,6 +46,7 @@ def youku_oauth2callback_view(request):
     :param request:
     :return:
     """
+    # 获取 http://127.0.0.1:8000/oauth2/youku_authenticate 授权后返回的auth code
     code = request.GET.get('code')
     code = code.strip()
     client = Client(CLIENT_ID, CLIENT_SECRET,
@@ -61,4 +62,5 @@ def youku_oauth2callback_view(request):
     # 由youku认证页面转来的，没有request.META.HTTP_REFERER变量
     # 所以无法设置其返回前面的页面
     # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    return render_to_response('result.html', {'text': access_token_string})
+    return render_to_response('result.html',
+                              {'text': "Access Token: %s , 已保存到django setting 数据库里" % access_token_string})

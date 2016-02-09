@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 
 from video.function.subtitle import merge_video_subtitle, add_subtitle_to_video_process
 from video.function.youku import set_youku_category, youku_upload
-from video.function.youtube import get_subscription_update_video, download_single_youtube_video_main
+from video.function.youtube import get_subscription_update_video, download_single_youtube_video_main, download_subtitle
 from video.models import Video
 
 __author__ = 'GoTop'
@@ -30,11 +30,13 @@ def download_upload_video(video_id):
     :return:
     """
     download_single_youtube_video_main(video_id)
-    merge_video_subtitle(video_id)
+    download_subtitle(video_id)
 
-    add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans_en')
+    merge_subtitle_result = merge_video_subtitle(video_id)
+    if merge_subtitle_result:
+        add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans_en')
 
-    video = Video.object.get(pk=video_id)
-    set_youku_category(video.youku_id)
+    video = Video.objects.get(pk=video_id)
+    set_youku_category(video.youku.id)
 
-    youku_upload(video.youku_id)
+    youku_upload(video.youku.id)

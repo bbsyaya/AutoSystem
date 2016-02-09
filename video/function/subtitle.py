@@ -34,22 +34,26 @@ def merge_video_subtitle(video_id):
     delta = SubRipTime(milliseconds=500)
     encoding = "utf_8"
 
-    subs_cn = SubRipFile.open(video.subtitle_cn, encoding=encoding)
-    subs_en = SubRipFile.open(video.subtitle_en, encoding=encoding)
-    merge_subs = merge_subtitle(subs_cn, subs_en, delta)
+    if (video.subtitle_cn != '') & (video.subtitle_en != ''):
+        subs_cn = SubRipFile.open(video.subtitle_cn, encoding=encoding)
+        subs_en = SubRipFile.open(video.subtitle_en, encoding=encoding)
+        merge_subs = merge_subtitle(subs_cn, subs_en, delta)
 
-    # 某些youtube视频的title有非ASCII的字符，或者/等不能出现在文件名中的字符
-    # 所以使用django utils自带的get_valid_filename()转化一下
-    # 注意:与youtube-dl自带的restrictfilenames获得的文件名不一样
-    merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (get_valid_filename(video.title), video.video_id)
+        # 某些youtube视频的title有非ASCII的字符，或者/等不能出现在文件名中的字符
+        # 所以使用django utils自带的get_valid_filename()转化一下
+        # 注意:与youtube-dl自带的restrictfilenames获得的文件名不一样
+        # 标题中的 . 依然会保留
+        merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (get_valid_filename(video.title), video.video_id)
 
-    merge_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, merge_subs_filename)
+        merge_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, merge_subs_filename)
 
-    merge_subs.save(merge_subs_dir, encoding=encoding)
+        merge_subs.save(merge_subs_dir, encoding=encoding)
 
-    video.subtitle_merge = merge_subs_dir
-    video.save()
-    return merge_subs_dir
+        video.subtitle_merge = merge_subs_dir
+        video.save()
+        return merge_subs_dir
+    else:
+        return False
 
 
 def add_subtitle_to_video(video_file, subtitle, output_video_file):
@@ -98,8 +102,11 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     elif sub_lang_type == 'zh-Hans_en':
         subtitle_file = video.subtitle_merge
 
-    file_name_list = os.path.basename(video.file).split('.')
-    subtitle_video = file_name_list[0] + '.' + sub_lang_type + '.' + file_name_list[1]
+    # 获取到文件名称
+    file_basename = os.path.basename(video.file)
+    # 将文件名称分割为名称和后缀
+    file_basename_list = os.path.splitext(file_basename)
+    subtitle_video = file_basename_list[0] + '.' + sub_lang_type + file_basename_list[1]
 
     # 加入字幕的视频文件保存到YOUTUBE_DOWNLOAD_DIR 目录下
     subtitle_video = os.path.join(YOUTUBE_DOWNLOAD_DIR, subtitle_video)

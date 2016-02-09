@@ -77,7 +77,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     def download_subtitle_url(self, obj):
         if obj.subtitle_en:
-            return obj.subtitle_en
+            return "<a href='%s' target='_blank'>字幕</a>" % obj.subtitle_en
         else:
             download_subtitle_url = reverse('video:download_subtitle', args=[obj.video_id])
             return "<a href='%s' target='_blank'>下载字幕</a>" % download_subtitle_url
@@ -89,7 +89,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle(self, obj):
         if obj.subtitle_merge:
-            return obj.subtitle_merge
+            return "<a href='%s' target='_blank'>中英字幕</a>" % obj.subtitle_merge
         else:
             merge_subtitle_url = reverse('video:merge_subtitle', args=[obj.video_id])
             return "<a href='%s' target='_blank'>合并中英字幕</a>" % merge_subtitle_url
@@ -99,7 +99,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle_to_video(self, obj):
         if obj.subtitle_video_file:
-            return obj.subtitle_video_file
+            return "<a href='%s' target='_blank'>字幕视频</a>" % obj.subtitle_video_file
         elif obj.file:
             merge_subtitle_to_video_url = reverse('video:merge_subtitle_to_video', args=[obj.video_id, 'zh-Hans_en'])
             return "<a href='%s' target='_blank'>合并字幕到视频</a>" % merge_subtitle_to_video_url

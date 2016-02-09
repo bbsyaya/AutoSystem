@@ -28,7 +28,7 @@ class ButtonWidget(forms.Widget):
         else:
             #如果youku_video_id为空，说明尚未上传到优酷，则显示上传到优酷网站操作链接
             # 显示上传video到优酷网站的链接
-            publish_youku_url = reverse('video:youku_upload', args=[youku.video_id])
+            publish_youku_url = reverse('video:youku_upload', args=[youku.id])
 
             context = {
                 'url': publish_youku_url,
@@ -38,7 +38,7 @@ class ButtonWidget(forms.Widget):
 
 class UploadToYoukuWidget(forms.Widget):
     """
-    在youku model的edit page增加一个button widget
+    在youku model的edit page增加一个button widget，显示将视频上传到优酷网的链接
     """
     template_name = 'youku_button_widget.html'
 
@@ -47,7 +47,7 @@ class UploadToYoukuWidget(forms.Widget):
 
         if youku.youku_video_id == '':
             #如果youku_video_id为空，说明尚未上传到优酷，则显示上传到优酷网站操作链接
-            publish_youku_url = reverse('video:youku_upload', args=[youku.video_id])
+            publish_youku_url = reverse('video:youku_upload', args=[youku.id])
             context = {
                 'url': publish_youku_url,
                 'text': '上传视频到Youku'
@@ -58,7 +58,7 @@ class UploadToYoukuWidget(forms.Widget):
 
 class UpdateYoukuVideoWidget(forms.Widget):
     """
-    在youku model的edit page增加一个button widget
+    在youku model的edit page增加一个button widget,显示更新优酷网视频信息的链接
     """
     template_name = 'youku_button_widget.html'
 
@@ -79,7 +79,7 @@ class UpdateYoukuVideoWidget(forms.Widget):
 
 class YoukuVideoUrlWidget(forms.Widget):
     """
-    在youku model的edit page增加一个button widget
+    在youku model的edit page增加一个button widget，显示优酷网视频链接
     """
     template_name = 'youku_button_widget.html'
 

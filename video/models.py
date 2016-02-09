@@ -14,10 +14,10 @@ class Video(models.Model):
     thumbnail = models.URLField(max_length=300, blank=True)
     channel = models.ForeignKey('YT_channel', null=True, blank=True)
 
-    title_cn = models.CharField(max_length=100, blank=True)
-    subtitle_en = models.CharField(max_length=100, blank=True)
-    subtitle_cn = models.CharField(max_length=100, blank=True)
-    subtitle_merge = models.CharField(max_length=100, blank=True, null=True)
+    title_cn = models.CharField(max_length=150, blank=True)
+    subtitle_en = models.CharField(max_length=200, blank=True)
+    subtitle_cn = models.CharField(max_length=200, blank=True)
+    subtitle_merge = models.CharField(max_length=200, blank=True, null=True)
 
     # The exception is CharFields and TextFields, which in Django are never saved as NULL.
     #  Blank values are stored in the DB as an empty string ('').
@@ -25,9 +25,9 @@ class Video(models.Model):
     #  be stored as empty strings, not as NULL. If a string-based field has null=True, that means it has two possible
     #  values for "no data": NULL, and the empty string. In most cases, it’s redundant to have two possible values
     # for "no data"; the Django convention is to use the empty string, not NULL.
-    file = models.CharField(max_length=100, blank=True)
+    file = models.CharField(max_length=200, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
-    subtitle_video_file = models.CharField(max_length=100, blank=True, null=True)
+    subtitle_video_file = models.CharField(max_length=200, blank=True, null=True)
 
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
@@ -106,13 +106,15 @@ YOUKU_PALYLIST_CATEGORY = (
 
 
 class Youku(models.Model):
+    # 主键的名称为 id
     # youku_video_id 是视频上传到优酷的video id
     youku_video_id = models.CharField(max_length=50, blank=True)
-    title = models.CharField(max_length=100, blank=True)
+    # 说明 doc.open.youku.com/?docid=393
+    title = models.CharField(max_length=100, blank=True, help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.CharField(max_length=50, blank=True,
-                            help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开"
+                            help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开，上传时必选"
                             )
-    description = models.TextField(max_length=300, blank=True, default='')
+    description = models.TextField(max_length=300, blank=True, default='', help_text='视频描述，最多能写2000个字')
     category = models.CharField(max_length=50, blank=True, choices=YOUKU_PALYLIST_CATEGORY)
     published = models.DateTimeField(null=True, blank=True)
     # on_delete=models.SET_NULL 表示如果对应的Video被删除，Youku只将个属性设置为null，不会删除youku对象
@@ -121,7 +123,6 @@ class Youku(models.Model):
     # 指向video model，所以youku model会有一个video id属性，注意与youku_video_id的区别
     video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True, blank=True)
     youku_playlist = models.ForeignKey('YoukuPlaylist', on_delete=models.SET_NULL, null=True, blank=True)
-
 
     @property
     def url(self):
@@ -140,7 +141,6 @@ class YoukuPlaylist(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     video_count = models.CharField(max_length=10, blank=True, null=True)
     view_count = models.CharField(max_length=10, blank=True, null=True)
-
 
     def __str__(self):
         return self.name

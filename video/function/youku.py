@@ -30,9 +30,15 @@ def youku_upload(youku_id):
 
     youku = Youku.objects.get(pk=youku_id)
 
-    video_file_path = youku.video.subtitle_video_file
+    #如果没有在将字幕合并到视频中，则使用原版的视频
+    if youku.video.subtitle_video_file == '':
+        video_file_path = youku.video.file
+    else:
+        video_file_path = youku.video.subtitle_video_file
+
     service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
 
+    #如果没有在vidoe对应的youku model中设置中文title，则使用video中的title
     if youku.title == '':
         title = youku.video.title
     else:
