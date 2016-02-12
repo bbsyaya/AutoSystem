@@ -30,17 +30,22 @@ todo:
 
 将中文和英文的字幕一起合成到视频中 check 2016-1-20
 
-将video app 的admin.py分成几个python文件，放在admin目录下 2016-1-18
+将video app 的admin.py分成几个python文件，放在admin目录下 check 2016-1-18
 
-制作自动批量合并字幕到视频，然后上传到优酷的功能（修改原来的）。2016-1-25
+制作自动批量合并字幕到视频，然后上传到优酷的功能（修改原来的）。 check 2016-1-25
 
-在linode上部署django的运行环境
+在linode上部署django的运行环境 check
 
 设置django自动运行某些命令 用django crontab 或 celery
 
-编写一个只下载指定youtube视频字幕的功能
+编写一个只下载指定youtube视频字幕的功能 check 2016-2-8
 
-处理某些视频无法下载字幕，无法合并字幕到视频后上传的问题
+处理某些视频无法下载字幕，无法合并字幕到视频后上传的问题 check 2016-2-9
+
+在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist
+之后使用celery延时设置playlist即可
+
+解决mkv视频上传到优酷没有声音的问题
 
 =============================================================================================
 
@@ -48,7 +53,6 @@ todo:
 
 在youtube上建立一些playlist，浏览youtube是可以把需要下载的视频加入这些list，
 AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
-
 
 制作调整字幕大小，字体的功能
 
@@ -74,6 +78,11 @@ AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 在威客网站上翻译文章的信息管理
 
 在Video Model中设置一个字段，用于控制是否发布视频，选择不发布的视频，之后可以不显示在list diaplay中
+
+制作网站，翻译国外评测文章
+
+经营微博、微信
+
 
 ==============================================================
 流程

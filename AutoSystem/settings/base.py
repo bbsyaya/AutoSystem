@@ -47,7 +47,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django_settings',  # https://github.com/jqb/django-settings
 
-    'kombu.transport.django',
+    'kombu.transport.django',# Django-based broker, for use mainly during development.
     'djcelery',
     'manage_rss',
     # 'adminbrowse',
