@@ -41,7 +41,7 @@ class Video(models.Model):
     #baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
 
-    object = models.Manager()
+    objects = models.Manager()
     set_youku = SetYoukuInfoManager()
     downloaded = DownloadedManager()
 

@@ -5,6 +5,17 @@ from django import forms
 from django.db import models
 
 
+class NeedUploadToYouManager(models.Manager):
+    def get_queryset(self):
+        return super(NeedUploadToYouManager, self).get_queryset().filter(youku__isnull=False,
+                                                                      youku__youku_video_id='')
+
+
+class DownloadedManager(models.Manager):
+    def get_queryset(self):
+        return super(DownloadedManager, self).get_queryset().filter(file__isnull=False)
+
+
 # Create your models here.
 class Video(models.Model):
     video_id = models.CharField(max_length=50, primary_key=True)
@@ -31,6 +42,10 @@ class Video(models.Model):
 
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
+
+    objects = models.Manager()
+    need_upload_to_youku = NeedUploadToYouManager()
+    downloaded = DownloadedManager()
 
     def __str__(self):
         return self.title

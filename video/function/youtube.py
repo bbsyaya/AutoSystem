@@ -114,7 +114,8 @@ def download_single_youtube_video_main(video_id):
     # 参考 http://willdrevo.com/downloading-youtube-and-soundcloud-audio-with-python-and-pandas/
     # 支持参数列表 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/options.py
     options = {
-        'format': '160+250',  # choice of quality
+        #'format': '160+250',  # choice of quality
+        'format': 'best',
         # 'extractaudio': True,  # only keep the audio
         # 'audioformat': "mp3",  # convert to mp3
         'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video

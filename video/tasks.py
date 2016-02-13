@@ -23,18 +23,26 @@ from video.models import Video
 def add(x, y):
     return x + y
 
-
+@task
 def auto_process(num):
     """
     定期使用celery执行该命令，将下载、设置、上传视频等工作分配到worker
     不需要等待下载和上传完成
     :return:
     """
-    tran_video_list = Video.set_youku.order_by('publishedAt', 'title')[:num]
+    tran_video_list = Video.need_upload_to_youku.order_by('publishedAt', 'title')[:num]
     for idx, video in enumerate(tran_video_list):
         download_upload_video(video.video_id)
 
 
+
+if __name__ == '__main__':
+    import os
+    import django
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.base")
+    django.setup()
+
+    auto_process(1)
 
 
 
