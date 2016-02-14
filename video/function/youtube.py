@@ -1,13 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 
+import json
+
 from AutoSystem import settings
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
 from video.function.subtitle import add_subtitle_to_video
 from video.models import Video, YT_channel
-
 import youtube_dl
-
 from oauth2_authentication.views import get_authenticated_service
 from video.function.file import search_keyword_in_file
 
@@ -22,7 +22,7 @@ def get_subscription_update_video(user, max_results):
     :return:
     """
     youtube = get_authenticated_service(
-            user)  # home: This parameter can only be used in a properly authorized request. Set this
+        user)  # home: This parameter can only be used in a properly authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on
     # the YouTube home page for the currently authenticated user.
     res = youtube.activities().list(part='snippet, contentDetails',
@@ -33,10 +33,10 @@ def get_subscription_update_video(user, max_results):
     nextPageToken = res.get('nextPageToken')
     while ('nextPageToken' in res):
         nextPage = youtube.activities().list(
-                part='snippet, contentDetails',
-                home=True,
-                maxResults=max_results,
-                pageToken=nextPageToken
+            part='snippet, contentDetails',
+            home=True,
+            maxResults=max_results,
+            pageToken=nextPageToken
         ).execute()
         res['items'] = res['items'] + nextPage['items']
 
@@ -48,30 +48,34 @@ def get_subscription_update_video(user, max_results):
     # 从返回的对象里找出type为upload的
     video_list = []
     for result in res.get("items", []):
-        channel = YT_channel.objects.filter(channel_id=result['snippet']["channelId"]).first()
+        channel = YT_channel.objects.filter(
+            channel_id=result['snippet']["channelId"]).first()
         if channel and channel.is_download:
             # 如果该视频所属的频道 is_download 属性被设置为True，才进行下载
             # todo 待测试
             if result['snippet']["type"] == 'upload':
-                video = {'video_id': result['contentDetails']["upload"]["videoId"],
-                         'title': result['snippet']["title"],
-                         'publishedAt': result['snippet']["publishedAt"],
-                         'thumbnail': result['snippet']['thumbnails']["default"]["url"],
-                         'channel': result['snippet']["channelId"]
-                         }
+                video = {
+                    'video_id': result['contentDetails']["upload"]["videoId"],
+                    'title': result['snippet']["title"],
+                    'publishedAt': result['snippet']["publishedAt"],
+                    'thumbnail': result['snippet']['thumbnails']["default"][
+                        "url"],
+                    'channel': result['snippet']["channelId"]
+                }
 
                 import datetime, dateutil.parser
 
                 # publishedAt 为ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ)格式，类似2008-09-26T01:51:42.000Z
                 d = dateutil.parser.parse(video['publishedAt'])
 
-                youtube_video, created = Video.objects.update_or_create(video_id=video['video_id'],
-                                                                        defaults={'title': video['title'],
-                                                                                  'publishedAt': d,
-                                                                                  'thumbnail': video['thumbnail'],
-                                                                                  'channel': channel
-                                                                                  }
-                                                                        )
+                youtube_video, created = Video.objects.update_or_create(
+                    video_id=video['video_id'],
+                    defaults={'title': video['title'],
+                              'publishedAt': d,
+                              'thumbnail': video['thumbnail'],
+                              'channel': channel
+                              }
+                )
 
                 video_list.append(video)
             else:
@@ -88,7 +92,8 @@ def download_multi_youtube_video_main(num):
     :return:
     """
     # 选择出前num个已经翻译过标题的youtube视频
-    tran_video_list = Video.objects.filter(youku__isnull=False).order_by('publishedAt', 'title')[:num]
+    tran_video_list = Video.objects.filter(youku__isnull=False).order_by(
+        'publishedAt', 'title')[:num]
 
     video_filepath_list = []
     for idx, video in enumerate(tran_video_list):
@@ -114,11 +119,12 @@ def download_single_youtube_video_main(video_id):
     # 参考 http://willdrevo.com/downloading-youtube-and-soundcloud-audio-with-python-and-pandas/
     # 支持参数列表 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/options.py
     options = {
-        #'format': '160+250',  # choice of quality
-        'format': 'best',
+        # 'format': '160+250',  # choice of quality
+        'format': 'bestvideo+bestaudio/best',
         # 'extractaudio': True,  # only keep the audio
         # 'audioformat': "mp3",  # convert to mp3
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',
+        # name the file the ID of the video
         'restrictfilenames': True,
         'noplaylist': True,  # only download single song, not playlist
         'verbose': True,  # Print various debugging information
@@ -142,7 +148,9 @@ def download_single_youtube_video_main(video_id):
         # 并将视频文件的地址保存到对应的字段
         video_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                 keyword=video.video_id,
-                                                extend=options.get('merge_output_format', None))
+                                                extend=options.get(
+                                                    'merge_output_format',
+                                                    None))
         # 只能查找到一个这样的文件才对
         if (video_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
@@ -152,7 +160,9 @@ def download_single_youtube_video_main(video_id):
         # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
         subtitle_en_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                       keyword=video.video_id + ".en",
-                                                      extend=options.get('subtitlesformat', None))
+                                                      extend=options.get(
+                                                          'subtitlesformat',
+                                                          None))
 
         video.save()
     return video_filepath
@@ -167,7 +177,8 @@ def download_subtitle(video_id):
     """
     video = Video.objects.get(video_id=video_id)
     options = {
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',  # name the file the ID of the video
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',
+        # name the file the ID of the video
         'verbose': True,  # Print various debugging information
         'restrictfilenames': True,
         'subtitleslangs': ['en', 'zh-Hans'],  # 要写成list的形式
@@ -184,7 +195,9 @@ def download_subtitle(video_id):
         # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
         subtitle_en_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                       keyword=video.video_id + ".en",
-                                                      extend=options.get('subtitlesformat', None))
+                                                      extend=options.get(
+                                                          'subtitlesformat',
+                                                          None))
 
         result = []
         if (subtitle_en_filepath.__len__()) == 1:
@@ -194,7 +207,9 @@ def download_subtitle(video_id):
 
         subtitle_cn_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                       keyword=video.video_id + ".zh-Hans",
-                                                      extend=options.get('subtitlesformat', None))
+                                                      extend=options.get(
+                                                          'subtitlesformat',
+                                                          None))
         if (subtitle_cn_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
             video.subtitle_cn = subtitle_cn_filepath.pop()
@@ -205,3 +220,25 @@ def download_subtitle(video_id):
     if result == []:
         result = False
     return result
+
+
+def get_video_info(video_id):
+    video = Video.objects.get(video_id=video_id)
+    options = {
+        # name the file the ID of the video
+        # 'format': 'bestvideo+bestaudio/best',
+        'verbose': True,  # Print various debugging information
+        'skip_download': True,
+    }
+
+    with youtube_dl.YoutubeDL(options) as ydl:
+        info_dict = ydl.extract_info(video.youtube_url, download=False)
+
+        from pprint import pprint
+        pprint(info_dict)
+
+        video.objects.update(format_id=info_dict['format_id'],
+                             like_count=info_dict['like_count'],
+                             tags=info_dict['tags'],
+                             view_count=info_dict['view_count']
+                             )

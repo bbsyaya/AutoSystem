@@ -1,13 +1,12 @@
 # coding=utf-8
 from __future__ import unicode_literals
-
 from django import forms
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-
 from video.models import Youku, Video
-from video.widget.youku_widget import ButtonWidget, UploadToYoukuWidget, YoukuVideoUrlWidget, UpdateYoukuVideoWidget
+from video.widget.youku_widget import ButtonWidget, UploadToYoukuWidget, \
+    YoukuVideoUrlWidget, UpdateYoukuVideoWidget
 
 __author__ = 'GoTop'
 
@@ -16,8 +15,7 @@ class YoukuForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(YoukuForm, self).__init__(*args, **kwargs)
 
-        # http://stackoverflow.com/questions/1226590/django-how-can-i-access-the-form-field-from-inside-a-custom
-        # -widget/2135739#2135739
+        # http://stackoverflow.com/questions/1226590/django-how-can-i-access-the-form-field-from-inside-a-custom-widget/2135739#2135739
         # From inside the Form class you can access the Model instance through self.instance. Remember the instance
         # will be rather blank when Add/Creating a new object.
         # 将form model传给 buttom widget
@@ -31,16 +29,18 @@ class YoukuForm(forms.ModelForm):
         # 覆盖默认的widget
         # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
         widgets = {
-            'title': forms.TextInput(attrs={'size': 100}),
-            'tags': forms.TextInput(attrs={'size': 100}),
+            'title': forms.TextInput(attrs={'size': 180}),
+            'tags': forms.TextInput(attrs={'size': 180}),
         }
         fields = '__all__'  # Register your models here.
 
     # todo 研究获取将使用该form的model，构造admin url传给widget
-    upload_to_youku = forms.CharField(widget=UploadToYoukuWidget(), required=False)
-    youku_video_url = forms.CharField(widget=YoukuVideoUrlWidget(), required=False)
-    update_youku_video = forms.CharField(widget=UpdateYoukuVideoWidget(), required=False)
-
+    upload_to_youku = forms.CharField(widget=UploadToYoukuWidget(),
+                                      required=False)
+    youku_video_url = forms.CharField(widget=YoukuVideoUrlWidget(),
+                                      required=False)
+    update_youku_video = forms.CharField(widget=UpdateYoukuVideoWidget(),
+                                         required=False)
 
 
 class VideoForm(forms.ModelForm):
@@ -50,12 +50,12 @@ class VideoForm(forms.ModelForm):
         # 覆盖默认的widget
         # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
         widgets = {
-            'title': forms.TextInput(attrs={'size': 100}),
-            'title_cn': forms.TextInput(attrs={'size': 100}),
-            'subtitle_en': forms.TextInput(attrs={'size': 100}),
-            'subtitle_cn': forms.TextInput(attrs={'size': 100}),
-            'subtitle_merge': forms.TextInput(attrs={'size': 100}),
-            'file': forms.TextInput(attrs={'size': 100}),
-            'subtitle_video_file': forms.TextInput(attrs={'size': 100}),
+            'title': forms.TextInput(attrs={'size': 180}),
+            'title_cn': forms.TextInput(attrs={'size': 180}),
+            'subtitle_en': forms.TextInput(attrs={'size': 180}),
+            'subtitle_cn': forms.TextInput(attrs={'size': 180}),
+            'subtitle_merge': forms.TextInput(attrs={'size': 180}),
+            'file': forms.TextInput(attrs={'size': 180}),
+            'subtitle_video_file': forms.TextInput(attrs={'size': 180}),
         }
         fields = '__all__'  # Register your models here.

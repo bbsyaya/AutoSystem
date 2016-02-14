@@ -131,7 +131,7 @@ class VideoAdmin(admin.ModelAdmin):
                                             args=[obj.youku.id])
                 return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
         else:
-            # 显示为video添加youku信息的链接
+            # 显示为video添加youku信息的链接，但是要手动设置youku对应的video，不实用
             publish_youku_url = reverse('admin:video_youku_add', )
             return "<a href='%s' target='_blank'>添加优酷信息</a>" % publish_youku_url
 

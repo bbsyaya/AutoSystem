@@ -8,6 +8,8 @@ class NeedUploadToYouManager(models.Manager):
     def get_queryset(self):
         need_upload_to_youku_queryset = super(NeedUploadToYouManager,
                                               self).get_queryset().filter(
+            # 在SQLite数据库中，django model BooleanField True对应1，False对应0
+            # 不知道在Django1.7之后的版本是否修改该bug
             allow_upload_youku=1,
             youku__isnull=False,
             youku__youku_video_id='')
@@ -45,7 +47,6 @@ class Video(models.Model):
     # youku = models.ForeignKey('Youku', null=True, blank=True)
     subtitle_video_file = models.CharField(max_length=200, blank=True,
                                            null=True)
-
     allow_upload_youku = models.BooleanField(blank=True, default='True',
                                              help_text='是否可以上传到优酷，默认为True')
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
