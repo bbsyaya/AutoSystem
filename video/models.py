@@ -1,19 +1,24 @@
 # coding=utf-8
 from __future__ import unicode_literals
-
 from django import forms
 from django.db import models
 
 
 class NeedUploadToYouManager(models.Manager):
     def get_queryset(self):
-        return super(NeedUploadToYouManager, self).get_queryset().filter(youku__isnull=False,
-                                                                      youku__youku_video_id='')
+        need_upload_to_youku_queryset = super(NeedUploadToYouManager,
+                                              self).get_queryset().filter(
+            allow_upload_youku=1,
+            youku__isnull=False,
+            youku__youku_video_id='')
+
+        return need_upload_to_youku_queryset
 
 
 class DownloadedManager(models.Manager):
     def get_queryset(self):
-        return super(DownloadedManager, self).get_queryset().filter(file__isnull=False)
+        return super(DownloadedManager, self).get_queryset().filter(
+            file__isnull=False)
 
 
 # Create your models here.
@@ -38,8 +43,11 @@ class Video(models.Model):
     # for "no data"; the Django convention is to use the empty string, not NULL.
     file = models.CharField(max_length=200, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
-    subtitle_video_file = models.CharField(max_length=200, blank=True, null=True)
+    subtitle_video_file = models.CharField(max_length=200, blank=True,
+                                           null=True)
 
+    allow_upload_youku = models.BooleanField(blank=True, default='True',
+                                             help_text='是否可以上传到优酷，默认为True')
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
 
@@ -125,19 +133,25 @@ class Youku(models.Model):
     # youku_video_id 是视频上传到优酷的video id
     youku_video_id = models.CharField(max_length=50, blank=True)
     # 说明 doc.open.youku.com/?docid=393
-    title = models.CharField(max_length=100, blank=True, help_text='视频标题，能填写2-50个字符,上传时必选')
+    title = models.CharField(max_length=100, blank=True,
+                             help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.CharField(max_length=50, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开，上传时必选"
                             )
-    description = models.TextField(max_length=300, blank=True, default='', help_text='视频描述，最多能写2000个字')
-    category = models.CharField(max_length=50, blank=True, choices=YOUKU_PALYLIST_CATEGORY)
+    description = models.TextField(max_length=300, blank=True, default='',
+                                   help_text='视频描述，最多能写2000个字')
+    category = models.CharField(max_length=50, blank=True,
+                                choices=YOUKU_PALYLIST_CATEGORY)
     published = models.DateTimeField(null=True, blank=True)
     # on_delete=models.SET_NULL 表示如果对应的Video被删除，Youku只将个属性设置为null，不会删除youku对象
     # OneToOneField要设置在 要被显示在inline的model里
     # 参考 http://stackoverflow.com/questions/1744203/django-admin-onetoone-relation-as-an-inline
     # 指向video model，所以youku model会有一个video id属性，注意与youku_video_id的区别
-    video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True, blank=True)
-    youku_playlist = models.ForeignKey('YoukuPlaylist', on_delete=models.SET_NULL, null=True, blank=True)
+    video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True,
+                                 blank=True)
+    youku_playlist = models.ForeignKey('YoukuPlaylist',
+                                       on_delete=models.SET_NULL, null=True,
+                                       blank=True)
 
     @property
     def url(self):
@@ -167,7 +181,8 @@ class BaiduYun(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=50, blank=True)
-    youku_playlist_category = models.CharField(max_length=50, blank=True, choices=YOUKU_PALYLIST_CATEGORY,
+    youku_playlist_category = models.CharField(max_length=50, blank=True,
+                                               choices=YOUKU_PALYLIST_CATEGORY,
                                                default="Others")
     description = models.CharField(max_length=100, blank=True)
 

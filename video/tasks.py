@@ -42,7 +42,7 @@ if __name__ == '__main__':
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.base")
     django.setup()
 
-    auto_process(1)
+    auto_process(10)
 
 
 

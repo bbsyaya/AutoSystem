@@ -1,6 +1,5 @@
 # coding=utf-8
 from __future__ import unicode_literals
-
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
@@ -9,7 +8,6 @@ __author__ = 'GoTop'
 from django.contrib import admin
 from django import forms
 from django.core.urlresolvers import reverse
-
 from video.models import Video, Youku
 from video.forms import YoukuForm, VideoForm
 
@@ -23,10 +21,13 @@ class YoukuInline(admin.StackedInline):
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'show_thumbnail', 'publishedAt', 'download_youtube_url', 'download_subtitle_url', 'youtube_url',
+        'title', 'show_thumbnail', 'publishedAt', 'allow_upload_youku',
+        'download_youtube_url', 'download_subtitle_url',
+        'youtube_url',
         'merge_subtitle',
-        'merge_subtitle_to_video', 'youku_url', 'update_youku_online_url', 'download_upload_video_url')
-    # list_editable = ['title_cn']
+        'merge_subtitle_to_video', 'youku_url',
+        'update_youku_online_url', 'download_upload_video_url')
+    list_editable = ['allow_upload_youku']
     readonly_fields = ('publishedAt',)
     list_per_page = 10
     search_fields = ('title', 'title_cn')
@@ -48,9 +49,11 @@ class VideoAdmin(admin.ModelAdmin):
 
     # 在changeform页面，不显示'title_cn'属性，一定要在‘title_cn’后加逗号
     # http://stackoverflow.com/a/31791675/1314124
-    def changeform_view(self, request, object_id, form_url='', extra_content=None):
+    def changeform_view(self, request, object_id, form_url='',
+                        extra_content=None):
         self.exclude = ('title_cn',)
-        return super(VideoAdmin, self).changeform_view(request, object_id)
+        return super(VideoAdmin, self).changeform_view(request,
+                                                       object_id)
 
     def show_thumbnail(self, obj):
         return '<img src="%s" width="50" height="50"/>' % obj.thumbnail
@@ -67,9 +70,11 @@ class VideoAdmin(admin.ModelAdmin):
 
     def download_youtube_url(self, obj):
         if obj.file:
-            return obj.file
+            return "<a href='%s' target='_blank'>文件地址</a>" % obj.file
         else:
-            download_youtube_url = reverse('video:download_single_youtube_video', args=[obj.video_id])
+            download_youtube_url = reverse(
+                'video:download_single_youtube_video',
+                args=[obj.video_id])
             return "<a href='%s' target='_blank'>下载</a>" % download_youtube_url
 
     download_youtube_url.allow_tags = True
@@ -77,21 +82,21 @@ class VideoAdmin(admin.ModelAdmin):
 
     def download_subtitle_url(self, obj):
         if obj.subtitle_en:
-            return "<a href='%s' target='_blank'>字幕</a>" % obj.subtitle_en
+            return "<a href='%s' target='_blank'>字幕地址</a>" % obj.subtitle_en
         else:
-            download_subtitle_url = reverse('video:download_subtitle', args=[obj.video_id])
+            download_subtitle_url = reverse('video:download_subtitle',
+                                            args=[obj.video_id])
             return "<a href='%s' target='_blank'>下载字幕</a>" % download_subtitle_url
 
     download_subtitle_url.allow_tags = True
     download_subtitle_url.short_description = '下载字幕'
 
-
-
     def merge_subtitle(self, obj):
         if obj.subtitle_merge:
             return "<a href='%s' target='_blank'>中英字幕</a>" % obj.subtitle_merge
         else:
-            merge_subtitle_url = reverse('video:merge_subtitle', args=[obj.video_id])
+            merge_subtitle_url = reverse('video:merge_subtitle',
+                                         args=[obj.video_id])
             return "<a href='%s' target='_blank'>合并中英字幕</a>" % merge_subtitle_url
 
     merge_subtitle.allow_tags = True
@@ -99,9 +104,12 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle_to_video(self, obj):
         if obj.subtitle_video_file:
-            return "<a href='%s' target='_blank'>字幕视频</a>" % obj.subtitle_video_file
+            return "<a href='%s' target='_blank'>字幕视频地址</a>" % \
+                   obj.subtitle_video_file
         elif obj.file:
-            merge_subtitle_to_video_url = reverse('video:merge_subtitle_to_video', args=[obj.video_id, 'zh-Hans_en'])
+            merge_subtitle_to_video_url = reverse(
+                'video:merge_subtitle_to_video',
+                args=[obj.video_id, 'zh-Hans_en'])
             return "<a href='%s' target='_blank'>合并字幕到视频</a>" % merge_subtitle_to_video_url
         else:
             return "-"
@@ -111,7 +119,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     def youku_url(self, obj):
         # To check if the (OneToOne) relation exists or not, you can use the hasattr function:
-        # http: // stackoverflow.com / questions / 3463240 / check - if -onetoonefield - is -none - in -django
+        # http://stackoverflow.com/questions/3463240/check-if-onetoonefield-is-none-in-django
         if hasattr(obj, 'youku'):
             if obj.youku.youku_video_id != '':
                 # 显示已经上传到优酷网站的视频链接
@@ -119,7 +127,8 @@ class VideoAdmin(admin.ModelAdmin):
                 return "<a href='%s' target='_blank'>优酷网视频链接</a>" % youku_url
             else:
                 # 显示上传video到优酷网站的链接
-                publish_youku_url = reverse('video:youku_upload', args=[obj.youku.id])
+                publish_youku_url = reverse('video:youku_upload',
+                                            args=[obj.youku.id])
                 return "<a href='%s' target='_blank'>上传</a>" % publish_youku_url
         else:
             # 显示为video添加youku信息的链接
@@ -151,7 +160,9 @@ class VideoAdmin(admin.ModelAdmin):
     def update_youku_online_url(self, obj):
         if hasattr(obj, 'youku'):
             if obj.youku.youku_video_id != '':
-                edit_youku_url = reverse('video:update_youku_online_info', args=[obj.youku.youku_video_id])
+                edit_youku_url = reverse(
+                    'video:update_youku_online_info',
+                    args=[obj.youku.youku_video_id])
                 return "<a href='%s' target='_blank'>在线更新优酷网信息</a>" % edit_youku_url
             else:
                 return "-"
@@ -163,7 +174,8 @@ class VideoAdmin(admin.ModelAdmin):
 
     def edit_youku_url(self, obj):
         if hasattr(obj, 'youku'):
-            edit_youku_url = reverse('admin:video_youku_change', args=[obj.youku.id])
+            edit_youku_url = reverse('admin:video_youku_change',
+                                     args=[obj.youku.id])
             return "<a href='%s' target='_blank'>Edit Youku</a>" % edit_youku_url
         else:
             edit_youku_url = reverse('admin:video_youku_add', )
@@ -174,13 +186,18 @@ class VideoAdmin(admin.ModelAdmin):
 
     def download_upload_video_url(self, obj):
         if hasattr(obj, 'youku'):
-            # 如果已有youku_video_id，说明视频已经上传到优酷
+
             if obj.youku.youku_video_id != '':
+                # 如果youku_video_id不是空值，说明视频已经上传到优酷
                 return "-"
             else:
-                return "-"
+                # video设置有对应的youku对象，但是youku.youku_video_id为空，说明没有上传到优酷
+                download_upload_video_url = reverse(
+                    'video:download_upload_video', args=[obj.video_id, ])
+                return "<a href='%s' target='_blank'>下载+上传视频</a>" % download_upload_video_url
         else:
-            download_upload_video_url = reverse('video:download_upload_video', args=[obj.video_id, ])
+            download_upload_video_url = reverse(
+                'video:download_upload_video', args=[obj.video_id, ])
             return "<a href='%s' target='_blank'>下载+上传视频</a>" % download_upload_video_url
 
     download_upload_video_url.allow_tags = True
