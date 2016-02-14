@@ -8,11 +8,11 @@ class NeedUploadToYouManager(models.Manager):
     def get_queryset(self):
         need_upload_to_youku_queryset = super(NeedUploadToYouManager,
                                               self).get_queryset().filter(
-            # 在SQLite数据库中，django model BooleanField True对应1，False对应0
-            # 不知道在Django1.7之后的版本是否修改该bug
-            allow_upload_youku=1,
-            youku__isnull=False,
-            youku__youku_video_id='')
+                # 在SQLite数据库中，django model BooleanField True对应1，False对应0
+                # 不知道在Django1.7之后的版本是否修改该bug
+                allow_upload_youku=1,
+                youku__isnull=False,
+                youku__youku_video_id='')
 
         return need_upload_to_youku_queryset
 
@@ -20,7 +20,7 @@ class NeedUploadToYouManager(models.Manager):
 class DownloadedManager(models.Manager):
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().filter(
-            file__isnull=False)
+                file__isnull=False)
 
 
 # Create your models here.
@@ -37,11 +37,15 @@ class Video(models.Model):
     subtitle_cn = models.CharField(max_length=200, blank=True)
     subtitle_merge = models.CharField(max_length=200, blank=True, null=True)
 
-    # The exception is CharFields and TextFields, which in Django are never saved as NULL.
+    # The exception is CharFields and TextFields, which in Django are never
+    # saved as NULL.
     #  Blank values are stored in the DB as an empty string ('').
-    # Avoid using null on string-based fields such as CharField and TextField because empty string values will always
-    #  be stored as empty strings, not as NULL. If a string-based field has null=True, that means it has two possible
-    #  values for "no data": NULL, and the empty string. In most cases, it’s redundant to have two possible values
+    # Avoid using null on string-based fields such as CharField and TextField
+    #  because empty string values will always
+    #  be stored as empty strings, not as NULL. If a string-based field has
+    # null=True, that means it has two possible
+    #  values for "no data": NULL, and the empty string. In most cases,
+    # it’s redundant to have two possible values
     # for "no data"; the Django convention is to use the empty string, not NULL.
     file = models.CharField(max_length=200, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
@@ -137,7 +141,8 @@ class Youku(models.Model):
     title = models.CharField(max_length=100, blank=True,
                              help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.CharField(max_length=50, blank=True,
-                            help_text="自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开，上传时必选"
+                            help_text="自定义标签不超过10个，单个标签最少2个字符，最多 12 "
+                                      "个字符（6个汉字），多个标签之间用逗号(,)隔开，上传时必选"
                             )
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')
@@ -146,7 +151,8 @@ class Youku(models.Model):
     published = models.DateTimeField(null=True, blank=True)
     # on_delete=models.SET_NULL 表示如果对应的Video被删除，Youku只将个属性设置为null，不会删除youku对象
     # OneToOneField要设置在 要被显示在inline的model里
-    # 参考 http://stackoverflow.com/questions/1744203/django-admin-onetoone-relation-as-an-inline
+    # 参考 http://stackoverflow.com/questions/1744203/django-admin-onetoone
+    # -relation-as-an-inline
     # 指向video model，所以youku model会有一个video id属性，注意与youku_video_id的区别
     video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True,
                                  blank=True)

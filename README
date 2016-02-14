@@ -59,6 +59,9 @@ Video的NeedUploadToYouku Manager也不选择该视频 check 2016-2-14
 
 将youtube playlist是否下载的设置导入production环境
 
+http://127.0.0.1:8000/admin/video/video/QTCJJiZrNYo/?_changelist_filters=p%3D1
+等部分视频下载视频信息时，未关联到对应的yt_channel
+
 =============================================================================================
 
 可以把youtube视频加入不同的list，根据list将视频上传到优酷上不同的专辑下

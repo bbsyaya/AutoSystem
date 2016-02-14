@@ -11,6 +11,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
 django.setup()
 
 
-get_video_info(video_id = 'du4CoNur6S8')
+get_video_info(video_id = 'QTCJJiZrNYo')
 
 
