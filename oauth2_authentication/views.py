@@ -60,7 +60,7 @@ def authenticate_view(request):
     :param request:
     :return:
     """
-    result = get_authenticated_service(request)
+    result = get_authenticated_service(request.user)
 
     if result is None:
 

@@ -7,23 +7,35 @@ from django import forms
 from django.db import models
 
 
-class NeedUploadToYouManager(models.Manager):
+class NeedUploadToYoukuManager(models.Manager):
     def get_queryset(self):
-        need_upload_to_youku_queryset = super(NeedUploadToYouManager,
+        # 返回Video model中 allow_upload_youku为true，设置有对应的youku model，
+        # 并且未上传到优酷网(youku__youku_video_id='')的video
+        need_upload_to_youku_queryset = super(NeedUploadToYoukuManager,
                                               self).get_queryset().filter(
-            # 在SQLite数据库中，django model BooleanField True对应1，False对应0
-            # 不知道在Django1.7之后的版本是否修改该bug
-            allow_upload_youku=1,
-            youku__isnull=False,
-            youku__youku_video_id='')
+                # 在SQLite数据库中，django model BooleanField True对应1，False对应0
+                # 不知道在Django1.7之后的版本是否修改该bug
+                allow_upload_youku=1,
+                youku__isnull=False,
+                youku__youku_video_id='')
 
         return need_upload_to_youku_queryset
+
+
+class NeedGetVideoInfoManager(models.Manager):
+    # 返回video model中视频时长为空的video
+    def get_queryset(self):
+        need_get_video_info_queryset = super(NeedGetVideoInfoManager,
+                                             self).get_queryset().filter(
+                duration=None)
+
+        return need_get_video_info_queryset
 
 
 class DownloadedManager(models.Manager):
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().filter(
-            file__isnull=False)
+                file__isnull=False)
 
 
 # Create your models here.
@@ -65,9 +77,7 @@ class Video(models.Model):
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
 
-    objects = models.Manager()
-    need_upload_to_youku = NeedUploadToYouManager()
-    downloaded = DownloadedManager()
+
 
     def __str__(self):
         return self.title
@@ -81,7 +91,7 @@ class Video(models.Model):
 
     @property
     def tags_readable(self):
-        #将list格式的tags转化为用逗号分隔形式是string
+        # 将list格式的tags转化为用逗号分隔形式是string
         if self.tags:
             jsonDec = json.decoder.JSONDecoder()
             tags_list = jsonDec.decode(self.tags)
@@ -91,7 +101,7 @@ class Video(models.Model):
 
     @property
     def duration_readable(self):
-        #以分，秒的形式，返回视频时长
+        # 以分，秒的形式，返回视频时长
         if self.duration:
             m, s = divmod(self.duration, 60)
             if m:
@@ -100,6 +110,11 @@ class Video(models.Model):
                 return "%s秒" % s
         else:
             return self.duration
+
+    objects = models.Manager()
+    need_upload_to_youku = NeedUploadToYoukuManager()
+    downloaded = DownloadedManager()
+    need_get_video_info= NeedGetVideoInfoManager()
 
 
 class YT_channel(models.Model):

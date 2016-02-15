@@ -4,8 +4,10 @@ from django.shortcuts import render, render_to_response
 
 # Create your views here.
 from django.template import RequestContext
-from video.function.youtube import download_multi_youtube_video_main, download_single_youtube_video_main, \
-    get_subscription_update_video, download_subtitle
+from video.function.youtube import download_multi_youtube_video_main, \
+    download_single_youtube_video_main, \
+    get_subscription_update_video, download_subtitle, \
+    get_multi_youtube_video_info
 from video.models import Video, YT_channel
 from oauth2_authentication.views import get_authenticated_service
 
@@ -49,6 +51,13 @@ def download_subtitle_view(request, video_id):
                               )
 
 
+def get_multi_youtube_video_info_view(request):
+    youtube_video_id_list = get_multi_youtube_video_info(request.user)
+    return render_to_response('result.html',
+                              {'list': youtube_video_id_list}
+                              )
+
+
 def auto_youtube_download_view(request, num):
     """
     自动下载num个设置了youku title属性的video视频到本地
@@ -56,7 +65,8 @@ def auto_youtube_download_view(request, num):
     """
     # 按publishedAt 倒序查找前num个，file 属性是null（即没下载过视频到本地），
     # 对应的youku.title不为''（设置过中文title）的video视频
-    video_list = Video.objects.filter(file='').filter(youku__title__isnull=False).order_by('-publishedAt')[
+    video_list = Video.objects.filter(file='').filter(
+        youku__title__isnull=False).order_by('-publishedAt')[
                  :num]
     youtube_downlaoded_list = []
     for video in video_list:

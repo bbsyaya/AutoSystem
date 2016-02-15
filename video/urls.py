@@ -1,7 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
-from video.views_dir import youtube_view, youtube_subscription_view, youku_view, \
+from video.views_dir import youtube_view, youtube_subscription_view, \
+    youku_view, \
     subtitle_view, video
 
 __author__ = 'GoTop'
@@ -36,7 +37,8 @@ urlpatterns = [
         name='my_watchlater_lists'),
 
     # http://127.0.0.1:8000/video/get_subscription_update_video/50
-    # 1 如果没登陆django admin就访问这个页面，会被转到 http://127.0.0.1:8000/accounts/login/?next=/oauth2/authenticate
+    # 1 如果没登陆django admin就访问这个页面，会被转到
+    # http://127.0.0.1:8000/accounts/login/?next=/oauth2/authenticate
     # 提示Page not found (404)
     # 2 如果没访问 127.0.0.1:8000/oauth2/authenticate 进行认证就直接访问该页面，会提示 int 错误
     url(r'get_subscription_update_video/(?P<max_results>\d+)$',
@@ -66,6 +68,11 @@ urlpatterns = [
     url(r'download_subtitle/(?P<video_id>.+)$',
         youtube_view.download_subtitle_view, name='download_subtitle'),
 
+    # http://127.0.0.1:8000/video/get_multi_youtube_video_info/50
+    url(r'get_multi_youtube_video_info$',
+        youtube_view.get_multi_youtube_video_info_view,
+        name=' get_multi_youtube_video_info'),
+
     ############################################################################################
     # 字幕
     ############################################################################################
@@ -75,9 +82,10 @@ urlpatterns = [
 
     # http://127.0.0.1:8000/video/merge_subtitle_to_video/_9coAtC2PZI/zh-Hans_en
     url(
-        r'^merge_subtitle_to_video/(?P<video_id>.{11})/(?P<sub_lang_type>(en|zh-Hans|zh-Hans_en))$',
-        subtitle_view.merge_subtitle_to_video_view,
-        name='merge_subtitle_to_video'),
+            r'^merge_subtitle_to_video/(?P<video_id>.{11})/('
+            r'?P<sub_lang_type>(en|zh-Hans|zh-Hans_en))$',
+            subtitle_view.merge_subtitle_to_video_view,
+            name='merge_subtitle_to_video'),
 
     ############################################################################################
     # 优酷
@@ -87,9 +95,9 @@ urlpatterns = [
         name='youku_upload'),
 
     # http://127.0.0.1:8000/video/youku_upload/1
-    url(r'delete_youku_video/(?P<youku_video_id>.+)/$', youku_view.delete_youku_video_view,
+    url(r'delete_youku_video/(?P<youku_video_id>.+)/$',
+        youku_view.delete_youku_video_view,
         name='delete_youku_video'),
-
 
     # http://127.0.0.1:8000/video/get_youku_video/XMTQyOTQ3NzgyOA==
     # 因为优酷的video id 里可能含有 = 号，所以这样要用 . 来 代替 \w

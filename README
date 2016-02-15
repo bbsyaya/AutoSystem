@@ -52,6 +52,10 @@ Video的NeedUploadToYouku Manager也不选择该视频 check 2016-2-14
 
 设置自动获取已下载视频信息，但未下载的youtube视频的时长，格式，文件大小等信息的功能。使用celery后台获取 check 2016-2-15
 
+解决youtube认证的问题 check 2016-2-15
+
+批量获取youtube视频时长
+
 =============================================================================================
 
 在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist
