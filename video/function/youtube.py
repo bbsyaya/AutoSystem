@@ -1,8 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
-
 import json
-
+import simplejson
 from AutoSystem import settings
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
 from video.function.subtitle import add_subtitle_to_video
@@ -22,7 +21,7 @@ def get_subscription_update_video(user, max_results):
     :return:
     """
     youtube = get_authenticated_service(
-            user)  # home: This parameter can only be used in a properly
+        user)  # home: This parameter can only be used in a properly
     # authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on
     # the YouTube home page for the currently authenticated user.
@@ -34,10 +33,10 @@ def get_subscription_update_video(user, max_results):
     nextPageToken = res.get('nextPageToken')
     while ('nextPageToken' in res):
         nextPage = youtube.activities().list(
-                part='snippet, contentDetails',
-                home=True,
-                maxResults=max_results,
-                pageToken=nextPageToken
+            part='snippet, contentDetails',
+            home=True,
+            maxResults=max_results,
+            pageToken=nextPageToken
         ).execute()
         res['items'] = res['items'] + nextPage['items']
 
@@ -50,7 +49,7 @@ def get_subscription_update_video(user, max_results):
     video_list = []
     for result in res.get("items", []):
         channel = YT_channel.objects.filter(
-                channel_id=result['snippet']["channelId"]).first()
+            channel_id=result['snippet']["channelId"]).first()
         if channel and channel.is_download:
             # 如果该视频所属的频道 is_download 属性被设置为True，才进行下载
             # todo 待测试
@@ -71,12 +70,12 @@ def get_subscription_update_video(user, max_results):
                 d = dateutil.parser.parse(video['publishedAt'])
 
                 youtube_video, created = Video.objects.update_or_create(
-                        video_id=video['video_id'],
-                        defaults={'title': video['title'],
-                                  'publishedAt': d,
-                                  'thumbnail': video['thumbnail'],
-                                  'channel': channel
-                                  }
+                    video_id=video['video_id'],
+                    defaults={'title': video['title'],
+                              'publishedAt': d,
+                              'thumbnail': video['thumbnail'],
+                              'channel': channel
+                              }
                 )
 
                 video_list.append(video)
@@ -96,7 +95,7 @@ def download_multi_youtube_video_main(num):
     """
     # 选择出前num个已经翻译过标题的youtube视频
     tran_video_list = Video.objects.filter(youku__isnull=False).order_by(
-            'publishedAt', 'title')[:num]
+        'publishedAt', 'title')[:num]
 
     video_filepath_list = []
     for idx, video in enumerate(tran_video_list):
@@ -126,7 +125,9 @@ def download_single_youtube_video_main(video_id):
     # 支持参数列表 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/options.py
     options = {
         # 'format': '160+250',  # 质量最低的视频，可以节约带宽，用于测试
-        'format': '137+140',  # 质量最高的视频
+        # 'format': '137+140',  # 质量最高的视频，且上传到优酷有声音
+
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         # 'format': 'bestvideo+bestaudio/best',
         # 'extractaudio': True,  # only keep the audio
         # 'audioformat': "mp3",  # convert to mp3
@@ -157,8 +158,8 @@ def download_single_youtube_video_main(video_id):
         video_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                 keyword=video.video_id,
                                                 extend=options.get(
-                                                        'merge_output_format',
-                                                        None))
+                                                    'merge_output_format',
+                                                    None))
         # 只能查找到一个这样的文件才对
         if (video_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
@@ -170,8 +171,8 @@ def download_single_youtube_video_main(video_id):
                                                       keyword=video.video_id
                                                               + ".en",
                                                       extend=options.get(
-                                                              'subtitlesformat',
-                                                              None))
+                                                          'subtitlesformat',
+                                                          None))
 
         video.save()
     return video_filepath
@@ -206,8 +207,8 @@ def download_subtitle(video_id):
                                                       keyword=video.video_id
                                                               + ".en",
                                                       extend=options.get(
-                                                              'subtitlesformat',
-                                                              None))
+                                                          'subtitlesformat',
+                                                          None))
 
         result = []
         if (subtitle_en_filepath.__len__()) == 1:
@@ -219,8 +220,8 @@ def download_subtitle(video_id):
                                                       keyword=video.video_id
                                                               + ".zh-Hans",
                                                       extend=options.get(
-                                                              'subtitlesformat',
-                                                              None))
+                                                          'subtitlesformat',
+                                                          None))
         if (subtitle_cn_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
             video.subtitle_cn = subtitle_cn_filepath.pop()
@@ -248,9 +249,9 @@ def get_video_info(video_id):
         from pprint import pprint
         pprint(info_dict)
 
-        # video.objects.update(format_id=info_dict['format_id'],
-        #                      like_count=info_dict['like_count'],
-        #                      tags=info_dict['tags'],
-        #                      view_count=info_dict['view_count'],
-        #                      duration = info_dict['duration']
-        #                      )
+        video.view_count=info_dict['view_count']
+        video.like_count=info_dict['like_count']
+        video.tags=json.dumps(info_dict['tags'])#将list转成json的格式保存到数据库中
+        video.duration=info_dict['duration']
+        video.save()
+

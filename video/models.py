@@ -1,5 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals
+
+import json
+
 from django import forms
 from django.db import models
 
@@ -8,11 +11,11 @@ class NeedUploadToYouManager(models.Manager):
     def get_queryset(self):
         need_upload_to_youku_queryset = super(NeedUploadToYouManager,
                                               self).get_queryset().filter(
-                # 在SQLite数据库中，django model BooleanField True对应1，False对应0
-                # 不知道在Django1.7之后的版本是否修改该bug
-                allow_upload_youku=1,
-                youku__isnull=False,
-                youku__youku_video_id='')
+            # 在SQLite数据库中，django model BooleanField True对应1，False对应0
+            # 不知道在Django1.7之后的版本是否修改该bug
+            allow_upload_youku=1,
+            youku__isnull=False,
+            youku__youku_video_id='')
 
         return need_upload_to_youku_queryset
 
@@ -20,7 +23,7 @@ class NeedUploadToYouManager(models.Manager):
 class DownloadedManager(models.Manager):
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().filter(
-                file__isnull=False)
+            file__isnull=False)
 
 
 # Create your models here.
@@ -31,6 +34,12 @@ class Video(models.Model):
     publishedAt = models.DateTimeField(null=True, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
     channel = models.ForeignKey('YT_channel', null=True, blank=True)
+
+    view_count = models.CharField(max_length=10, blank=True)
+    like_count = models.CharField(max_length=10, blank=True)
+    tags = models.CharField(max_length=100, blank=True)
+    duration = models.IntegerField(max_length=10, blank=True, null=True,
+                                   help_text='视频时长，单位是s')
 
     title_cn = models.CharField(max_length=150, blank=True)
     subtitle_en = models.CharField(max_length=200, blank=True)
@@ -70,7 +79,27 @@ class Video(models.Model):
     def youtube_url(self):
         return 'https://www.youtube.com/watch?v=%s' % self.video_id
 
-        # youtube_url = property(_youtube_url)
+    @property
+    def tags_readable(self):
+        #将list格式的tags转化为用逗号分隔形式是string
+        if self.tags:
+            jsonDec = json.decoder.JSONDecoder()
+            tags_list = jsonDec.decode(self.tags)
+            return ', '.join(tags_list)
+        else:
+            return self.tags
+
+    @property
+    def duration_readable(self):
+        #以分，秒的形式，返回视频时长
+        if self.duration:
+            m, s = divmod(self.duration, 60)
+            if m:
+                return "%s分%s秒" % (m, s)
+            else:
+                return "%s秒" % s
+        else:
+            return self.duration
 
 
 class YT_channel(models.Model):

@@ -22,7 +22,8 @@ class YoukuInline(admin.StackedInline):
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'show_thumbnail', 'publishedAt', 'youtube_url',
+        'title', 'show_thumbnail', 'publishedAt',
+        'duration_readable', 'youtube_url',
         'allow_upload_youku',
         'download_youtube_url', 'download_subtitle_url',
         'merge_subtitle',
@@ -30,7 +31,11 @@ class VideoAdmin(admin.ModelAdmin):
         'update_youku_online_url', 'delete_youku_video_url',
         'download_upload_video_url')
     list_editable = ['allow_upload_youku']
-    readonly_fields = ('publishedAt', 'youtube_url')
+
+    readonly_fields = ('title','description','thumbnail',
+        'publishedAt', 'youtube_url', 'duration_readable',
+        'view_count','channel',
+        'like_count', 'tags_readable')
     list_per_page = 10
     search_fields = ('title', 'channel')
     inlines = [YoukuInline, ]
@@ -40,7 +45,11 @@ class VideoAdmin(admin.ModelAdmin):
         ('Main', {
             # 'classes': ('wide',),
             'fields': (
-                'title', 'publishedAt', 'description', 'thumbnail', 'channel')
+                'title', 'youtube_url', 'publishedAt',
+                'duration_readable',
+                'tags_readable',
+                'description',
+                'thumbnail', 'channel', 'view_count', 'like_count',)
         }),
         ('Options', {
             # 'classes': ('wide',),
@@ -93,6 +102,10 @@ class VideoAdmin(admin.ModelAdmin):
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
 
+    # def duration_readable(self, obj):
+    #     if obj.duration:
+    #         m, s = divmod(obj.duration, 60)
+
     def youtube_url(self, obj):
         youtube_url = 'https://www.youtube.com/watch?v=%s' % obj.video_id
         return "<a href='%s' target='_blank'>YouTube链接</a>" % youtube_url
@@ -126,7 +139,8 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle(self, obj):
         if obj.subtitle_merge:
-            obj.subtitle_merge
+            return "<a href='%s' target='_blank'>合并字幕-地址</a>" % \
+                   obj.subtitle_merge
         else:
             merge_subtitle_url = reverse('video:merge_subtitle',
                                          args=[obj.video_id])
@@ -138,7 +152,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle_to_video(self, obj):
         if obj.subtitle_video_file:
-            return "<a href='%s' target='_blank'>字幕视频-地址</a>" % \
+            return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % \
                    obj.subtitle_video_file
         elif obj.file:
             merge_subtitle_to_video_url = reverse(
