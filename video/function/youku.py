@@ -1,8 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
-
 from oauth2_authentication.function.youku import youku_get_authenticate
-
 from AutoSystem.settings.base import YOUKU_CLIENT_ID
 from youku import YoukuUpload, YoukuVideos, YoukuPlaylists
 
@@ -30,7 +28,7 @@ def youku_upload(youku_id):
 
     youku = Youku.objects.get(pk=youku_id)
 
-    #如果没有在将字幕合并到视频中，则使用原版的视频
+    # 如果没有在将字幕合并到视频中，则使用原版的视频
     if youku.video.subtitle_video_file == '':
         video_file_path = youku.video.file
     else:
@@ -38,7 +36,7 @@ def youku_upload(youku_id):
 
     service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
 
-    #如果没有在vidoe对应的youku model中设置中文title，则使用video中的title
+    # 如果没有在vidoe对应的youku model中设置中文title，则使用video中的title
     if youku.title == '':
         title = youku.video.title
     else:
@@ -72,6 +70,26 @@ def youku_upload(youku_id):
     return youku_video_id
 
 
+def delete_youku_video(youku_video_id):
+    """
+    在优酷网上删除youku_video_id的视频,成功的话将数据库youku.youku_video_id清零
+    :param youku_video_id:
+    :return:
+    """
+    service = YoukuVideos(CLIENT_ID)
+    youku_access_token = youku_get_authenticate()
+    delete_youku_video_id = service.destroy_video(
+        access_token=youku_access_token,
+        video_id=youku_video_id)
+
+    if delete_youku_video_id == youku_video_id:
+        # 在优酷网上成功删除视频后，在本地将youku.youku_video_id清空
+        youku = Youku.objects.get(youku_video_id=youku_video_id)
+        youku.youku_video_id = ''
+        youku.save()
+    return delete_youku_video_id
+
+
 def update_youku_online_info(youku_video_id):
     """
     将youku_video_id的本地youku对象的属性，在优酷上进行更新
@@ -85,11 +103,12 @@ def update_youku_online_info(youku_video_id):
 
     youku_access_token = youku_get_authenticate()
 
-    updated_youku_video_id = service.update_video(access_token=youku_access_token, video_id=youku_video_id,
-                                                  title=youku.title,
-                                                  tags=youku.tags, category=youku.category, copyright_type=None,
-                                                  public_type=None, watch_password=None,
-                                                  description=youku.description, thumbnail_seq=None)
+    updated_youku_video_id = service.update_video(
+        access_token=youku_access_token, video_id=youku_video_id,
+        title=youku.title,
+        tags=youku.tags, category=youku.category, copyright_type=None,
+        public_type=None, watch_password=None,
+        description=youku.description, thumbnail_seq=None)
     return updated_youku_video_id
 
 
@@ -119,7 +138,8 @@ def set_youku_playlist(youku_video_id, playlist_id):
     # http://doc.open.youku.com/?docid=377
     # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
     # video_ids=850,860,870,880
-    id = service.add_videos_to_playlist(access_token=youku_access_token, playlist_id=playlist_id,
+    id = service.add_videos_to_playlist(access_token=youku_access_token,
+                                        playlist_id=playlist_id,
                                         video_ids=youku_video_id)
 
     if id:
@@ -139,10 +159,11 @@ def delete_video_from_playlist(youku_video_id, playlist_id):
     youku_access_token = youku_get_authenticate()
 
     try:
-        id = service.del_videos_from_playlist(access_token=youku_access_token, playlist_id=playlist_id,
+        id = service.del_videos_from_playlist(access_token=youku_access_token,
+                                              playlist_id=playlist_id,
                                               video_ids=youku_video_id)
     except:
-        #如果playlist_id中没有youku_video_id，会提示异常，忽略即可
+        # 如果playlist_id中没有youku_video_id，会提示异常，忽略即可
         pass
         return False
 
@@ -158,8 +179,9 @@ def get_youku_playlist():
     # http://doc.open.youku.com/?docid=377
     # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
     # video_ids=850,860,870,880
-    playlist_json = service.find_playlists_by_me(access_token=youku_access_token,
-                                                 orderby='published', page=1, count=20)
+    playlist_json = service.find_playlists_by_me(
+        access_token=youku_access_token,
+        orderby='published', page=1, count=20)
 
 
 if __name__ == '__main__':

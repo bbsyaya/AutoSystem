@@ -82,9 +82,14 @@ urlpatterns = [
     ############################################################################################
     # 优酷
     ############################################################################################
-    # http://127.0.0.1:8000/video/youku_upload/z0zvQfLOcLM
+    # http://127.0.0.1:8000/video/youku_upload/1
     url(r'youku_upload/(?P<youku_id>.+)/$', youku_view.youku_upload_view,
         name='youku_upload'),
+
+    # http://127.0.0.1:8000/video/youku_upload/1
+    url(r'delete_youku_video/(?P<youku_video_id>.+)/$', youku_view.delete_youku_video_view,
+        name='delete_youku_video'),
+
 
     # http://127.0.0.1:8000/video/get_youku_video/XMTQyOTQ3NzgyOA==
     # 因为优酷的video id 里可能含有 = 号，所以这样要用 . 来 代替 \w

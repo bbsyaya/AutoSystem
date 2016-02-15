@@ -27,7 +27,8 @@ class VideoAdmin(admin.ModelAdmin):
         'download_youtube_url', 'download_subtitle_url',
         'merge_subtitle',
         'merge_subtitle_to_video', 'youku_url',
-        'update_youku_online_url', 'download_upload_video_url')
+        'update_youku_online_url', 'delete_youku_video_url',
+        'download_upload_video_url')
     list_editable = ['allow_upload_youku']
     readonly_fields = ('publishedAt', 'youtube_url')
     list_per_page = 10
@@ -37,23 +38,23 @@ class VideoAdmin(admin.ModelAdmin):
     # 在change和edit页面显示哪些field
     fieldsets = (
         ('Main', {
-            #'classes': ('wide',),
+            # 'classes': ('wide',),
             'fields': (
                 'title', 'publishedAt', 'description', 'thumbnail', 'channel')
         }),
         ('Options', {
-            #'classes': ('wide',),
+            # 'classes': ('wide',),
             'fields': (
                 'allow_upload_youku',)
         }),
         ('Subtitles', {
-            #'classes': ('wide',),
+            # 'classes': ('wide',),
             'fields': (
                 'subtitle_en', 'subtitle_cn', 'subtitle_merge')
 
         }),
         ('Files', {
-            #'classes': ('wide',),
+            # 'classes': ('wide',),
             'fields': (
                 'file', 'subtitle_video_file',)
         }),
@@ -104,8 +105,8 @@ class VideoAdmin(admin.ModelAdmin):
             return "<a href='%s' target='_blank'>文件-地址</a>" % obj.file
         else:
             download_youtube_url = reverse(
-                    'video:download_single_youtube_video',
-                    args=[obj.video_id])
+                'video:download_single_youtube_video',
+                args=[obj.video_id])
             return "<a href='%s' target='_blank'>下载</a>" % download_youtube_url
 
     download_youtube_url.allow_tags = True
@@ -141,8 +142,8 @@ class VideoAdmin(admin.ModelAdmin):
                    obj.subtitle_video_file
         elif obj.file:
             merge_subtitle_to_video_url = reverse(
-                    'video:merge_subtitle_to_video',
-                    args=[obj.video_id, 'zh-Hans_en'])
+                'video:merge_subtitle_to_video',
+                args=[obj.video_id, 'zh-Hans_en'])
             return "<a href='%s' target='_blank'>合并-字幕到视频</a>" % \
                    merge_subtitle_to_video_url
         else:
@@ -204,8 +205,8 @@ class VideoAdmin(admin.ModelAdmin):
         if hasattr(obj, 'youku'):
             if obj.youku.youku_video_id != '':
                 edit_youku_url = reverse(
-                        'video:update_youku_online_info',
-                        args=[obj.youku.youku_video_id])
+                    'video:update_youku_online_info',
+                    args=[obj.youku.youku_video_id])
                 return "<a href='%s' target='_blank'>更新-在线优酷网信息</a>" % \
                        edit_youku_url
             else:
@@ -215,6 +216,22 @@ class VideoAdmin(admin.ModelAdmin):
 
     update_youku_online_url.allow_tags = True
     update_youku_online_url.short_description = '更新-在线优酷网信息'
+
+    def delete_youku_video_url(self, obj):
+        if hasattr(obj, 'youku'):
+            if obj.youku.youku_video_id != '':
+                delete_youku_video_url = reverse('video:delete_youku_video',
+                                                 args=[
+                                                     obj.youku.youku_video_id, ])
+                return "<a href='%s' target='_blank'>Delete Youku</a>" % \
+                       delete_youku_video_url
+            else:
+                return "-"
+        else:
+            return "-"
+
+    delete_youku_video_url.allow_tags = True
+    delete_youku_video_url.short_description = '在线删除-优酷视频'
 
     def edit_youku_url(self, obj):
         if hasattr(obj, 'youku'):
@@ -238,12 +255,12 @@ class VideoAdmin(admin.ModelAdmin):
             else:
                 # video设置有对应的youku对象，但是youku.youku_video_id为空，说明没有上传到优酷
                 download_upload_video_url = reverse(
-                        'video:download_upload_video', args=[obj.video_id, ])
+                    'video:download_upload_video', args=[obj.video_id, ])
                 return "<a href='%s' target='_blank'>下载+上传-视频</a>" % \
                        download_upload_video_url
         else:
             download_upload_video_url = reverse(
-                    'video:download_upload_video', args=[obj.video_id, ])
+                'video:download_upload_video', args=[obj.video_id, ])
             return "<a href='%s' target='_blank'>下载+上传-视频</a>" % \
                    download_upload_video_url
 

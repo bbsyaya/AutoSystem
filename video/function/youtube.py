@@ -126,7 +126,7 @@ def download_single_youtube_video_main(video_id):
     # 支持参数列表 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/options.py
     options = {
         # 'format': '160+250',  # 质量最低的视频，可以节约带宽，用于测试
-        'format': '137+251',  # 质量最高的视频
+        'format': '137+140',  # 质量最高的视频
         # 'format': 'bestvideo+bestaudio/best',
         # 'extractaudio': True,  # only keep the audio
         # 'audioformat': "mp3",  # convert to mp3
