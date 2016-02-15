@@ -24,7 +24,7 @@ def add(x, y):
     return x + y
 
 @task
-def auto_process(num):
+def auto_download_upload_video(num):
     """
     定期使用celery执行该命令，将下载、设置、上传视频等工作分配到worker
     不需要等待下载和上传完成
@@ -34,6 +34,8 @@ def auto_process(num):
     for idx, video in enumerate(tran_video_list):
         download_upload_video(video.video_id)
 
+def get_info():
+    pass
 
 
 if __name__ == '__main__':
@@ -42,7 +44,7 @@ if __name__ == '__main__':
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.base")
     django.setup()
 
-    auto_process(10)
+    auto_download_upload_video(10)
 
 
 

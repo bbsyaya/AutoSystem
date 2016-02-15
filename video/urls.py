@@ -38,7 +38,7 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/get_subscription_update_video/50
     # 1 如果没登陆django admin就访问这个页面，会被转到 http://127.0.0.1:8000/accounts/login/?next=/oauth2/authenticate
     # 提示Page not found (404)
-    # 2 如果没访问 127.0.0.1:8000/oauth2/authenticate 进行认真就直接访问该页面，会提示 int 错误
+    # 2 如果没访问 127.0.0.1:8000/oauth2/authenticate 进行认证就直接访问该页面，会提示 int 错误
     url(r'get_subscription_update_video/(?P<max_results>\d+)$',
         youtube_view.get_subscription_update_video_view,
         name='my_youtube_homepage'),
