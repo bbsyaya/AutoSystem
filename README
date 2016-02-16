@@ -54,7 +54,11 @@ Video的NeedUploadToYouku Manager也不选择该视频 check 2016-2-14
 
 解决youtube认证的问题 check 2016-2-15
 
-批量获取youtube视频时长
+批量获取youtube视频时长 check 2016-2-15
+
+研究Fabic部署
+http://tutos.readthedocs.org/en/latest/source/ndg.html
+
 
 =============================================================================================
 
@@ -74,6 +78,7 @@ http://127.0.0.1:8000/admin/video/video/QTCJJiZrNYo/?_changelist_filters=p%3D1
 AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 
 制作调整字幕大小，字体的功能
+http://pythonhosted.org/pysubs2/tutorial.html
 
 获取视频标题的google翻译
 
