@@ -53,10 +53,11 @@ class Video(models.Model):
     duration = models.IntegerField(max_length=10, blank=True, null=True,
                                    help_text='视频时长，单位是s')
 
-    title_cn = models.CharField(max_length=150, blank=True)
-    subtitle_en = models.CharField(max_length=200, blank=True)
-    subtitle_cn = models.CharField(max_length=200, blank=True)
-    subtitle_merge = models.CharField(max_length=200, blank=True, null=True)
+    # title_cn = models.CharField(max_length=150, blank=True)
+
+    subtitle_en = models.FileField(max_length=200, blank=True, default='')
+    subtitle_cn = models.FileField(max_length=200, blank=True, default='')
+    subtitle_merge = models.FileField(max_length=200, blank=True, default='')
 
     # The exception is CharFields and TextFields, which in Django are never
     # saved as NULL.
@@ -68,10 +69,9 @@ class Video(models.Model):
     #  values for "no data": NULL, and the empty string. In most cases,
     # it’s redundant to have two possible values
     # for "no data"; the Django convention is to use the empty string, not NULL.
-    file = models.FileField(max_length=200, blank=True)
-    # youku = models.ForeignKey('Youku', null=True, blank=True)
-    subtitle_video_file = models.CharField(max_length=200, blank=True,
-                                           null=True)
+    file = models.FileField(max_length=200, blank=True, default='')
+    subtitle_video_file = models.FileField(max_length=200, blank=True,
+                                           default='')
     allow_upload_youku = models.BooleanField(blank=True, default='True',
                                              help_text='是否可以上传到优酷，默认为True')
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
@@ -109,8 +109,17 @@ class Video(models.Model):
         else:
             return self.duration
 
-    def delete_video(self):
-        pass
+    def delete_associate_video(self):
+        """
+        在硬盘上删除该video所有相关的视频，字幕文件
+        并将video的相关field清零
+        :return:
+        """
+        self.file.delete()
+        self.subtitle_en.delete()
+        self.subtitle_cn.delete()
+        self.subtitle_merge.delete()
+        self.subtitle_video_file.delete()
 
     objects = models.Manager()
     need_upload_to_youku = NeedUploadToYoukuManager()

@@ -62,5 +62,10 @@ def clean_media_root(max_size, num):
         last_video = Video.downloaded.order_by('-publishedAt')[:num]
         for video in last_video:
             print(video.video_id)
-            video.file.delete()
+            video.delete_associate_video()
+        # 循环执行本函数，直至size小于max_size
+        # 测试期间先注释掉,否则会删掉很多视频
+        # clean_media_root(max_size, num)
+
+    return True
 

@@ -16,6 +16,11 @@ def work():
     local("git reset --hard origin/master")
     local("pip install -r requirements.txt")
 
+def makem():
+    local("python manage.py makemigrations")
+
+def migrate():
+    local("python manage.py migrate")
 
 
 @hosts('localhost:8000')

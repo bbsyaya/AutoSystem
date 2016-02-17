@@ -30,9 +30,9 @@ def youku_upload(youku_id):
 
     # 如果没有在将字幕合并到视频中，则使用原版的视频
     if youku.video.subtitle_video_file == '':
-        video_file_path = youku.video.file
+        video_file_path = youku.video.file.path
     else:
-        video_file_path = youku.video.subtitle_video_file
+        video_file_path = youku.video.subtitle_video_file.path
 
     service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
 

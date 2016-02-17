@@ -60,8 +60,11 @@ Video的NeedUploadToYouku Manager也不选择该视频 check 2016-2-14
 http://tutos.readthedocs.org/en/latest/source/ndg.html
 
 定期获取download文件夹大小，超过一定值时删除早起下载的视频，字幕文件，同时在video model中将对应file字段清空
+check 2016-2-18
 
+编写test
 
+开始部署到VPS上
 =============================================================================================
 
 在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist

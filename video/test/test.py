@@ -2,6 +2,7 @@
 #from __future__ import unicode_literals
 import base64
 import os
+import platform
 import subprocess
 
 __author__ = 'GoTop'
@@ -16,8 +17,9 @@ __author__ = 'GoTop'
 # print(filename_list)
 
 
-name = 'E:\\media\\Video\\YouTube\\LG K10 and K7 hands-on-_9coAtC2PZI.mkv'
-#name = 'E:\\media\\Video\\YouTube\\out.mkv'
-os.remove(name)
+# name = 'E:\\media\\Video\\YouTube\\LG K10 and K7 hands-on-_9coAtC2PZI.mkv'
+# #name = 'E:\\media\\Video\\YouTube\\out.mkv'
+# os.remove(name)
 
+print platform.system()
 
