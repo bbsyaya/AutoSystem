@@ -34,8 +34,8 @@ class NeedGetVideoInfoManager(models.Manager):
 
 class DownloadedManager(models.Manager):
     def get_queryset(self):
-        return super(DownloadedManager, self).get_queryset().filter(
-                file__isnull=False)
+        return super(DownloadedManager, self).get_queryset().exclude(
+                file='')
 
 
 # Create your models here.
@@ -77,8 +77,6 @@ class Video(models.Model):
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(max_length=300, blank=True)
 
-
-
     def __str__(self):
         return self.title
 
@@ -114,12 +112,10 @@ class Video(models.Model):
     def delete_video(self):
         pass
 
-
-
     objects = models.Manager()
     need_upload_to_youku = NeedUploadToYoukuManager()
     downloaded = DownloadedManager()
-    need_get_video_info= NeedGetVideoInfoManager()
+    need_get_video_info = NeedGetVideoInfoManager()
 
 
 class YT_channel(models.Model):

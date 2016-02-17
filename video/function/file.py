@@ -48,7 +48,7 @@ def get_size(start_path='.'):
 
 def clean_media_root(max_size, num):
     """
-    查看 YOUTUBE_DOWNLOAD_DIR 目录的大家
+    查看 YOUTUBE_DOWNLOAD_DIR 目录的大小
     如果超过max_size则删除num个就的视频文件
 
     :param max_size:
@@ -59,7 +59,7 @@ def clean_media_root(max_size, num):
     size = get_size(settings.YOUTUBE_DOWNLOAD_DIR)
 
     if size > max_size:
-        last_video = Video.objects.order_by('-publishedAt')[:num]
+        last_video = Video.downloaded.order_by('-publishedAt')[:num]
         for video in last_video:
             print(video.video_id)
             video.file.delete()
