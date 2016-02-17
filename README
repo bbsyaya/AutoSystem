@@ -59,6 +59,8 @@ Video的NeedUploadToYouku Manager也不选择该视频 check 2016-2-14
 研究Fabic部署
 http://tutos.readthedocs.org/en/latest/source/ndg.html
 
+定期获取download文件夹大小，超过一定值时删除早起下载的视频，字幕文件，同时在video model中将对应file字段清空
+
 
 =============================================================================================
 

@@ -37,7 +37,7 @@ class VideoAdmin(admin.ModelAdmin):
         'view_count','channel',
         'like_count', 'tags_readable')
     list_per_page = 10
-    search_fields = ('title', 'channel')
+    search_fields = ('title') # 只能是model中的text field
     inlines = [YoukuInline, ]
 
     # 在change和edit页面显示哪些field

@@ -68,7 +68,7 @@ class Video(models.Model):
     #  values for "no data": NULL, and the empty string. In most cases,
     # it’s redundant to have two possible values
     # for "no data"; the Django convention is to use the empty string, not NULL.
-    file = models.CharField(max_length=200, blank=True)
+    file = models.FileField(max_length=200, blank=True)
     # youku = models.ForeignKey('Youku', null=True, blank=True)
     subtitle_video_file = models.CharField(max_length=200, blank=True,
                                            null=True)
@@ -110,6 +110,11 @@ class Video(models.Model):
                 return "%s秒" % s
         else:
             return self.duration
+
+    def delete_video(self):
+        pass
+
+
 
     objects = models.Manager()
     need_upload_to_youku = NeedUploadToYoukuManager()

@@ -1,15 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render, render_to_response
-
 # Create your views here.
-from django.template import RequestContext
-from video.function.youtube import download_multi_youtube_video_main, \
-    download_single_youtube_video_main, \
-    get_subscription_update_video, download_subtitle, \
-    get_multi_youtube_video_info
-from video.models import Video, YT_channel
-from oauth2_authentication.views import get_authenticated_service
+
+from video.function.youtube_download import download_multi_youtube_video_main
+from video.function.youtube_download import download_single_youtube_video_main
+from video.function.youtube_video_info import get_multi_youtube_video_info
+from video.function.youtube_subtitle import download_subtitle
+from video.function.youtube_subsription import get_subscription_update_video
 
 
 def get_subscription_update_video_view(request, max_results):

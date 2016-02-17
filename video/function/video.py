@@ -3,7 +3,9 @@ from __future__ import unicode_literals, absolute_import
 
 from video.function.subtitle import merge_video_subtitle, add_subtitle_to_video_process
 from video.function.youku import set_youku_category, youku_upload
-from video.function.youtube import get_subscription_update_video, download_single_youtube_video_main, download_subtitle
+from video.function.youtube_download import download_single_youtube_video_main
+from video.function.youtube_subsription import get_subscription_update_video
+from video.function.youtube_subtitle import download_subtitle
 from video.models import Video
 
 __author__ = 'GoTop'

@@ -49,6 +49,7 @@ INSTALLED_APPS = (
 
     #'kombu.transport.django',# Django-based broker, for use mainly during development.
     'djcelery',
+    'django_cleanup',#automatically deletes files for FileField, ImageField, and subclasses. It will delete old files when a new file is being save and it will delete files on model instance deletion.
     'manage_rss',
     # 'adminbrowse',
     'video',
