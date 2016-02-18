@@ -84,6 +84,8 @@ AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 
 制作调整字幕大小，字体的功能
 http://pythonhosted.org/pysubs2/tutorial.html
+https://nutbread.github.io/ass/
+https://github.com/rfw/python-ass
 
 获取视频标题的google翻译
 
