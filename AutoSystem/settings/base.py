@@ -17,7 +17,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-#BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+# BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_DIR = os.path.dirname(os.path.realpath(os.path.dirname(__file__) + "/.."))
 
 # Quick-start development settings - unsuitable for production
@@ -47,10 +47,14 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django_settings',  # https://github.com/jqb/django-settings
 
-    #'kombu.transport.django',# Django-based broker, for use mainly during development.
+    # 'kombu.transport.django',# Django-based broker, for use mainly during
+    # development.
     'djcelery',
-    'django_cleanup',#automatically deletes files for FileField, ImageField, and subclasses. It will delete old files when a new file is being save and it will delete files on model instance deletion.
-    'manage_rss',
+    'django_cleanup',
+    # automatically deletes files for FileField, ImageField, and subclasses.
+    # It will delete old files when a new file is being save and it will
+    # delete files on model instance deletion.
+    # 'manage_rss',
     # 'adminbrowse',
     'video',
     # 'django_youtube',
@@ -113,7 +117,8 @@ SITE_ID = 1
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 
-# http://stackoverflow.com/questions/20873625/pycharm-code-inspection-complains-template-file-not-found-how-to-fix
+# http://stackoverflow.com/questions/20873625/pycharm-code-inspection
+# -complains-template-file-not-found-how-to-fix
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
@@ -128,7 +133,8 @@ TINYMCE_DEFAULT_CONFIG = {
 
     # Buttons/controls
     # http://www.tinymce.com/wiki.php/TinyMCE3x:Buttons/controls
-    'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,separator,outdent,indent,separator,undo,redo",
+    'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,"
+                               "separator,outdent,indent,separator,undo,redo",
     'theme_advanced_buttons2': "fontsizeselect,formatselect",
     'theme_advanced_buttons3': "",
 
@@ -143,20 +149,23 @@ TINYMCE_DEFAULT_CONFIG = {
 YOUTUBE_AUTH_EMAIL = 'imgotop@gmail.com'
 YOUTUBE_AUTH_PASSWORD = ''
 YOUTUBE_DEVELOPER_KEY = 'AIzaSyAp4Dr7YgwofjNbosQ5VZFXm8G5A1QNIPQ'
-YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps.googleusercontent.com'
+YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps' \
+                    '.googleusercontent.com'
 
 YOUTUBE_DOWNLOAD_DIR = 'E:\media\Video\YouTube'
 
 YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
 YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"
 
-# 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code&redirect_uri=http
+# 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
+# &response_type=code&redirect_uri=http
 # ://127.0.0.1:8000
 # 可获得Authorization Code
 # 再用post的方式，用Authorization Code去获取access token
 
 YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
-# https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9&response_type=code
+# https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
+# &response_type=code
 
 
 # 使用django自带broker的设置
@@ -168,8 +177,6 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Madrid'
-
-
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://localhost:6379/0'

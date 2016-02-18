@@ -1,5 +1,5 @@
 Babel==2.2.0
-Django==1.7.11
+Django==1.8.9
 Fabric==1.10.2
 amqp==1.4.9
 anyjson==0.3.3

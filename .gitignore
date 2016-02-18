@@ -235,3 +235,6 @@ oauth2_authentication/client_secret.json
 __pycache__/
 *.py[cod]
 *.pyc
+
+#static 目录下的也不要加入git
+static/

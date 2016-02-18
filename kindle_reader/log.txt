@@ -1,0 +1,32 @@
+
+***********************************************
+* Amazon.com kindlegen(Windows) V1.1 build 99 *
+* A command line e-book compiler              *
+* Copyright Amazon.com 2010                   *
+***********************************************
+
+opt -o:  output file name
+opt version: try to minimize (default)
+Info(prcgen): Added metadata dc:Title        "GoTop's kindle reader"
+Info(prcgen): Added metadata dc:Date         "2014-10-07T16:19:01Z"
+Info(prcgen): Added metadata dc:Creator      "kindlereader"
+Info(prcgen): Added metadata dc:Publisher    "kindlereader"
+Info(prcgen): Added metadata dc:Subject      "GoTop's kindle reader"
+Info(prcgen): Parsing files  0000001
+Info(prcgen): Resolving hyperlinks
+Info(prcgen): Resolving start reading location
+Info(prcgen): Added metadata Start reading   "D4"
+Info(prcgen): Building table of content     URL: G:\Python\Project\AutoSystem\kindle_reader\data\toc.ncx
+Warning(prcgen): Cover not specified
+Info(prcgen): Computing UNICODE ranges used in the book
+Info(prcgen): Found UNICODE range: Basic Latin [20..7E]
+Info(prcgen): Found UNICODE range: General Punctuation - Windows 1252 [201C..201E]
+Info(prcgen): Found UNICODE range: Latin-1 Supplement [A0..FF]
+Info(prcgen): Found UNICODE range: Currency Symbols [20A0..20CF]
+Info(prcgen): Building MOBI file, record count:   0000018
+Info(prcgen): Compiling HTML Parser restart information
+Info(prcgen): Final stats - text compressed to (in % of original size):  047.17%
+Info(prcgen): The document identifier is: "GoTops_kindle_reader"
+Info(prcgen): The file format version is V6
+Info(prcgen): Saving MOBI file
+Info(prcgen): MOBI File generated with WARNINGS!
