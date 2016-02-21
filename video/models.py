@@ -40,7 +40,7 @@ class DownloadedManager(models.Manager):
 
 # Create your models here.
 class Video(models.Model):
-    #id = models.CharField(max_length=50, null=True, blank=True)
+    # id = models.CharField(max_length=50, null=True, blank=True)
     video_id = models.CharField(max_length=50, primary_key=True)
     title = models.CharField(max_length=200, )
     description = models.TextField(max_length=300, blank=True)
@@ -262,6 +262,7 @@ class Youku(models.Model):
                 # 如果tags的数量大于10，则只取前num个
                 self.tags = self.tags[:num]
             jsonDec = json.decoder.JSONDecoder()
+            #self.tags 用json形式保存
             tags_list = jsonDec.decode(self.tags)
             return tags_list
         else:
@@ -274,8 +275,8 @@ class Youku(models.Model):
         :return:
         """
         origin_tags_list = self.get_tags_list(num=999)
-        origin_tags_list.append(tags_list)
-        self.tags = json.dumps(origin_tags_list)
+
+        self.tags = json.dumps(origin_tags_list + tags_list)
         self.save(update_fields=['tags'])
 
     def __str__(self):
