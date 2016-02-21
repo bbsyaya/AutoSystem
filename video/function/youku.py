@@ -123,8 +123,9 @@ def set_youku_category(youku_id):
     :return:
     """
     youku = Youku.objects.get(pk=youku_id)
-    youku.category = youku.video.channel.category.youku_playlist_category
-    youku.save()
+    youku.category = youku.video.channel.category.get_youku_playlist_category_display()
+
+    youku.save(update_fields=['category'])
     return youku
 
 
