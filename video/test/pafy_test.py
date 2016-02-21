@@ -14,4 +14,4 @@ print(video.title)
 
 plurl = "https://www.youtube.com/playlist?list=PLNWIWf8IRkr9k-2nkMxb08Q2p2Wmbx1Hs"
 playlist = pafy.get_playlist(plurl)
-print(playlist['title'])
+#print(playlist['title'])

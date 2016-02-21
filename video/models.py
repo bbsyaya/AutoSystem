@@ -40,6 +40,7 @@ class DownloadedManager(models.Manager):
 
 # Create your models here.
 class Video(models.Model):
+    #id = models.CharField(max_length=50, null=True, blank=True)
     video_id = models.CharField(max_length=50, primary_key=True)
     title = models.CharField(max_length=200, )
     description = models.TextField(max_length=300, blank=True)
@@ -266,7 +267,7 @@ class Youku(models.Model):
         else:
             return None
 
-    def set_tags(self, tags_list):
+    def add_tags(self, tags_list):
         """
         将list形式的tags,加入到原tags字段中，再转化为json格式保存到tags字段
         :param tags_list:
