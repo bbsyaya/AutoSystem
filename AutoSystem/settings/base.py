@@ -56,9 +56,10 @@ INSTALLED_APPS = (
     # delete files on model instance deletion.
     # 'manage_rss',
     # 'adminbrowse',
-    'video',
+
     # 'django_youtube',
     'oauth2_authentication',
+    'video',
 
 )
 

@@ -1,11 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 
-from video.function.subtitle import merge_video_subtitle, add_subtitle_to_video_process
+from video.function.subtitle import merge_video_subtitle, add_subtitle_to_video_process, \
+    srt_to_ass_process, merge_sub_edit_style
 from video.function.youku import set_youku_category, youku_upload
 from video.function.youtube_download import download_single_youtube_video_main
 from video.function.youtube_subsription import get_subscription_update_video
 from video.function.youtube_subtitle import download_subtitle
+from video.libs.subtitle import edit_two_lang_style, srt_to_ass
 from video.models import Video
 
 __author__ = 'GoTop'
@@ -34,11 +36,8 @@ def download_upload_video(video_id):
     download_single_youtube_video_main(video_id)
     download_subtitle(video_id)
 
-    merge_subtitle_result = merge_video_subtitle(video_id)
-    if merge_subtitle_result:
-        add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans_en')
+    merge_sub_edit_style(video_id)
 
     video = Video.objects.get(pk=video_id)
     set_youku_category(video.youku.id)
-
     youku_upload(video.youku.id)

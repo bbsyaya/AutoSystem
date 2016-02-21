@@ -265,7 +265,6 @@ class VideoAdmin(admin.ModelAdmin):
 
     def download_upload_video_url(self, obj):
         if hasattr(obj, 'youku'):
-
             if obj.youku.youku_video_id != '':
                 # 如果youku_video_id不是空值，说明视频已经上传到优酷
                 return "-"

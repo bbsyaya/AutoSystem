@@ -50,9 +50,12 @@ def youku_upload(youku_id):
 
     if youku.tags == '':
         # 如果未设置tags，则将tags设置为category，因为tags是必选参数，不能为空
-        youku.tags = youku.category
+        if youku.category:
+            youku.tags = youku.category
+        else:
+            youku.tags = youku.video.get_tags(9)
 
-    tags = youku.tags
+    #tags = youku.tags
 
     # 参数 http://cloud.youku.com/docs?id=110
     # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
@@ -60,7 +63,7 @@ def youku_upload(youku_id):
     video_info = {
         'title': title,
         'category': youku.category,
-        'tags': tags,
+        'tags': youku.tags,
         'description': description
     }
     youku_video_id = service.upload(video_info)
@@ -114,7 +117,8 @@ def update_youku_online_info(youku_video_id):
 
 def set_youku_category(youku_id):
     """
-    根据youku_id获取对应的video的channel的category，将它的youku_playlist_category属性的值设置给youku.category
+    根据youku_id获取对应的video的channel的category，
+    将它的youku_playlist_category属性的值设置给youku.category
     :param youku_id:
     :return:
     """

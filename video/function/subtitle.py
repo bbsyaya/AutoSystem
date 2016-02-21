@@ -1,17 +1,14 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 import os
-import platform
 
 import django
 
 from django.utils.text import slugify, get_valid_filename
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
-from video.libs.subtitle import merge_subtitle
+from video.libs.subtitle import merge_subtitle, add_subtitle_to_video, \
+    srt_to_ass, edit_two_lang_style
 from video.models import Video
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.local")
-django.setup()
 
 __author__ = 'GoTop'
 
@@ -43,7 +40,8 @@ def merge_video_subtitle(video_id):
 
         # 某些youtube视频的title有非ASCII的字符，或者/等不能出现在文件名中的字符
         # 所以使用django utils自带的get_valid_filename()转化一下
-        # 注意:与youtube-dl自带的restrictfilenames获得的文件名不一样
+        # 注意:与youtube-dl自带的restrictfilenames获得的文件名不一样,
+        # 也就是merge_subs_filename  与 subtitle_cn， subtitle_cn中名称可能会不一样
         # 标题中的 . 依然会保留
         merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (
             get_valid_filename(video.title), video.video_id)
@@ -57,38 +55,6 @@ def merge_video_subtitle(video_id):
         return merge_subs_dir
     else:
         return False
-
-
-def add_subtitle_to_video(video_file, subtitle, output_video_file):
-    """
-    将video_id对应的视频的字母，软写入到对应的视频中
-
-    :param video_id:
-    :return:
-    """
-
-    if platform.system() == "Windows":
-        FFMPEG_BIN = "ffmpeg.exe"  # on Windows
-    else:
-        FFMPEG_BIN = "ffmpeg" # on Linux ans Mac OS
-
-
-    import subprocess
-    command = [FFMPEG_BIN,
-               '-i', video_file,
-               '-i', subtitle,
-               '-codec', 'copy',
-               '-map', '0',
-               '-map', '1',
-               output_video_file]
-    process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    stdout, stderr = process.communicate()
-
-    if stderr:
-        return stderr
-    else:
-        return True
 
 
 def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
@@ -130,17 +96,41 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
         return False
 
 
-def main():
-    # Settings default values
-    delta = SubRipTime(milliseconds=500)
-    encoding = "utf_8"
+def srt_to_ass_process(video_id, srt_file_dir):
+    """
+    将srt字幕文件转换为ass格式字幕文件
 
-    sub_en = "E:\Media\Video\YouTube\LG K10 and K7 hands-on-_9coAtC2PZI.en.srt"
-    sub_cn = "E:\Media\Video\YouTube\LG K10 and K7 " \
-             "hands-on-_9coAtC2PZI.zh-Hans.srt"
-    subs_a = SubRipFile.open(sub_cn, encoding=encoding)
-    subs_b = SubRipFile.open(sub_en, encoding=encoding)
-    out = merge_subtitle(subs_a, subs_b, delta)
-    out.save('E:\Media\Video\YouTube\out.srt', encoding=encoding)
-    # print(out)
+    :param video_id:
+    :param srt_file_dir:
+    :return:
+    """
+    video = Video.objects.get(video_id=video_id)
+    ass_filename = '%s-%s.zh-Hans.en.ass' % (
+        get_valid_filename(video.title), video_id)
 
+    ass_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, ass_filename)
+
+    srt_to_ass(srt_file_dir, ass_subs_dir)
+
+    # 如果成功生成srt_file_dir文件，则将字幕文件地址返回
+    if os.path.isfile(ass_subs_dir):
+        video.subtitle_merge = ass_subs_dir
+        video.save(update_fields=['subtitle_merge', ])
+        return ass_subs_dir
+    else:
+        return False
+
+
+def merge_sub_edit_style(video_id):
+    """
+    合并srt字幕，然后将srt字幕转换为ass格式，添加双语字幕式样，合并到视频中
+
+    :param video_id:
+    :return:
+    """
+    merge_subtitle_result = merge_video_subtitle(video_id)
+    if merge_subtitle_result:
+        ass_subs_dir = srt_to_ass_process(video_id, merge_subtitle_result)
+
+        edit_two_lang_style(ass_subs_dir)
+        add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans_en')

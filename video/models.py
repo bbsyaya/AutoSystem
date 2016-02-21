@@ -50,7 +50,7 @@ class Video(models.Model):
     view_count = models.CharField(max_length=10, blank=True)
     like_count = models.CharField(max_length=10, blank=True)
     tags = models.CharField(max_length=100, blank=True)
-    duration = models.IntegerField(max_length=10, blank=True, null=True,
+    duration = models.IntegerField(blank=True, null=True,
                                    help_text='视频时长，单位是s')
 
     # title_cn = models.CharField(max_length=150, blank=True)
@@ -109,6 +109,22 @@ class Video(models.Model):
         else:
             return self.duration
 
+    def get_tags(self, num):
+        """
+        返回指定个数num的tags的字符串，用，分割
+        :param num:
+        :return:
+        """
+        if len(self.tags) < 20:
+            num = len(self.tags)
+        # 将list格式的tags转化为用逗号分隔形式是string
+        if self.tags:
+            jsonDec = json.decoder.JSONDecoder()
+            tags_list = jsonDec.decode(self.tags)[:num]
+            return ', '.join(tags_list)
+        else:
+            return self.tags
+
     def delete_associate_video(self):
         """
         在硬盘上删除该video所有相关的视频，字幕文件
@@ -164,7 +180,8 @@ class YouTube(models.Model):
 
 
 # http://cloud.youku.com/docs?id=90
-YOUKU_PALYLIST_CATEGORY = (
+# 优酷上对视频的分类代码
+YOUKU_CATEGORY = (
     ("Games", "游戏"),
     ("Tech", "科技"),
     ("News", "资讯"),
@@ -201,7 +218,7 @@ class Youku(models.Model):
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')
     category = models.CharField(max_length=50, blank=True,
-                                choices=YOUKU_PALYLIST_CATEGORY)
+                                choices=YOUKU_CATEGORY)
     published = models.DateTimeField(null=True, blank=True)
     # on_delete=models.SET_NULL 表示如果对应的Video被删除，Youku只将个属性设置为null，不会删除youku对象
     # OneToOneField要设置在 要被显示在inline的model里
@@ -218,6 +235,47 @@ class Youku(models.Model):
     def url(self):
         url = 'http://v.youku.com/v_show/id_' + self.youku_video_id + '.html'
         return url
+
+    @property
+    def tags_readable(self, num=999):
+        """
+        将list格式的tags转化为用逗号分隔形式是string
+        :param num:
+        :return:
+        """
+        tags_list = self.get_tags_list(num)
+
+        if tags_list:
+            return ', '.join(tags_list)
+        else:
+            return None
+
+    def get_tags_list(self, num=999):
+        """
+        以list的形式，返回指定数量的tags
+        :param num:默认为999，既不设置的时候返回所有的tags
+        :return:
+        """
+        if self.tags:
+            if len(self.tags) > num:
+                # 如果tags的数量大于10，则只取前num个
+                self.tags = self.tags[:num]
+            jsonDec = json.decoder.JSONDecoder()
+            tags_list = jsonDec.decode(self.tags)
+            return tags_list
+        else:
+            return None
+
+    def set_tags(self, tags_list):
+        """
+        将list形式的tags,加入到原tags字段中，再转化为json格式保存到tags字段
+        :param tags_list:
+        :return:
+        """
+        origin_tags_list = self.get_tags_list(num=999)
+        origin_tags_list.append(tags_list)
+        self.tags = json.dumps(origin_tags_list)
+        self.save(update_fields=['tags'])
 
     def __str__(self):
         return self.youku_video_id
@@ -243,8 +301,9 @@ class BaiduYun(models.Model):
 class Category(models.Model):
     title = models.CharField(max_length=50, blank=True)
     youku_playlist_category = models.CharField(max_length=50, blank=True,
-                                               choices=YOUKU_PALYLIST_CATEGORY,
-                                               default="Others")
+                                               choices=YOUKU_CATEGORY,
+                                               default="Others",
+                                               help_text="对应的youku_playlist的分类")
     description = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
