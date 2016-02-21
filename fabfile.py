@@ -25,7 +25,7 @@ def migrate():
 
 @hosts('localhost:8000')
 def commit():
-    local("pip freeze > requirements.txt")
+    #local("pip freeze > requirements.txt")
     message = raw_input("Enter a git commit message:  ")
     local("git add . && git commit -m \"%s\"" % message)
     local("git push origin master")
