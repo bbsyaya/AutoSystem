@@ -139,12 +139,12 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle(self, obj):
         if obj.subtitle_merge:
-            return "<a href='%s' target='_blank'>合并字幕-地址</a>" % \
+            return "<a href='%s' target='_blank'>双语字幕-地址</a>" % \
                    obj.subtitle_merge
         elif obj.subtitle_en and obj.subtitle_cn:
-            merge_subtitle_url = reverse('video:merge_subtitle',
+            merge_subtitle_url = reverse('video:merge_sub_edit_style',
                                          args=[obj.video_id])
-            return "<a href='%s' target='_blank'>合并-中英字幕</a>" % \
+            return "<a href='%s' target='_blank'>合并编辑式样-中英字幕</a>" % \
                    merge_subtitle_url
         else:
             return "-"

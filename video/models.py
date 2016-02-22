@@ -228,9 +228,18 @@ class Youku(models.Model):
     # 指向video model，所以youku model会有一个video id属性，注意与youku_video_id的区别
     video = models.OneToOneField('Video', on_delete=models.SET_NULL, null=True,
                                  blank=True)
+
+    setted_youku_playlist = models.ForeignKey('YoukuPlaylist',
+                                           related_name='setted_youku_playlist',
+                                           on_delete=models.SET_NULL, null=True,
+                                           blank=True, help_text=
+                                           "设置该视频所属的Playlist")
     youku_playlist = models.ForeignKey('YoukuPlaylist',
+                                       related_name='youku_playlist_online',
                                        on_delete=models.SET_NULL, null=True,
-                                       blank=True)
+                                       blank=True,
+                                       help_text=
+                                       "该视频在优酷网上实际上的Playlist")
 
     @property
     def url(self):
@@ -262,7 +271,7 @@ class Youku(models.Model):
                 # 如果tags的数量大于10，则只取前num个
                 self.tags = self.tags[:num]
             jsonDec = json.decoder.JSONDecoder()
-            #self.tags 用json形式保存
+            # self.tags 用json形式保存
             tags_list = jsonDec.decode(self.tags)
             return tags_list
         else:

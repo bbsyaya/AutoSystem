@@ -6,7 +6,9 @@ import os
 from django.shortcuts import render_to_response
 
 from AutoSystem import settings
-from video.function.subtitle import merge_subtitle, add_subtitle_to_video_process, merge_video_subtitle
+from video.function.subtitle import merge_subtitle, \
+    add_subtitle_to_video_process, merge_video_subtitle, \
+    merge_sub_edit_style
 from video.models import Video
 
 __author__ = 'GoTop'
@@ -25,7 +27,15 @@ def merge_subtitle_view(request, video_id):
     """
     merge_subs_dir = merge_video_subtitle(video_id)
 
-    return render_to_response('result.html', {'text': '合并的字幕文件地址为 ' + merge_subs_dir})
+    return render_to_response('result.html',
+                              {'text': '合并的字幕文件地址为 ' + merge_subs_dir})
+
+
+def merge_sub_edit_style_view(request, video_id):
+    merge_sub_file = merge_sub_edit_style(video_id)
+
+    return render_to_response('result.html',
+                              {'text': '合并的字幕文件地址' + merge_sub_file})
 
 
 def merge_subtitle_to_video_view(request, video_id, sub_lang_type):

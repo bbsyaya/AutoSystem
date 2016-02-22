@@ -27,6 +27,9 @@ __author__ = 'GoTop'
 #
 # pysubs2.load()
 
-list2 = [1, 2, 3, 4, 5, 6, 7 ]
-num = 3
-print(list2[:num])
+# list2 = [1, 2, 3, 4, 5, 6, 7 ]
+# num = 3
+# print(list2[:num])
+
+file = 'E:\\media\\Video\\YouTube\\EVIL_KITTY_CAT_Minecraft_Animation-Qnvb_6CG8zM.zh-Hans_en.mkv'
+print(os.path.getsize(file))

@@ -67,7 +67,7 @@ def merge_subtitle(sub_a, sub_b, delta):
     return out
 
 
-def add_subtitle_to_video(video_file, subtitle, output_video_file):
+def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     """
     将video_id对应的视频的字母，软写入到对应的视频中
 
@@ -83,13 +83,26 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file):
     import subprocess
     # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in
     # -subtitles-in-ffmpeg-video-filter
-    command = [FFMPEG_BIN,
-               '-i', video_file,
-               '-i', subtitle,
-               '-codec', 'copy',
-               '-map', '0',
-               '-map', '1',
-               output_video_file]
+    soft_add_subtitle_command = [FFMPEG_BIN,
+                                 '-i', video_file,
+                                 '-i', subtitle,
+                                 '-codec', 'copy',
+                                 '-map', '0',
+                                 '-map', '1',
+                                 output_video_file]
+
+    # ffmpeg -i input.mkv -vf ass=subtitles.ass output.mp4
+    hard_add_subtitle_command = [FFMPEG_BIN,
+                                 '-i', video_file,
+                                 '-vf',
+                                 "ass=%s" % subtitle,
+                                 output_video_file]
+
+    if mode == 'hard':
+        command = hard_add_subtitle_command
+    else:
+        command = soft_add_subtitle_command
+
     process = subprocess.Popen(command, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     stdout, stderr = process.communicate()
@@ -169,3 +182,6 @@ def edit_two_lang_style(subtitle_file):
 
         with open(subtitle_file, "w") as f:
             subtitle.dump_file(f)
+
+        if os.path.exists(subtitle_file):
+            return subtitle_file
