@@ -62,6 +62,8 @@ http://tutos.readthedocs.org/en/latest/source/ndg.html
 定期获取download文件夹大小，超过一定值时删除早起下载的视频，字幕文件，同时在video model中将对应file字段清空
 check 2016-2-18
 
+制作调整字幕大小，字体的功能 check 2016-2-21
+
 编写test
 
 开始部署到VPS上
@@ -79,17 +81,14 @@ check 2016-2-18
 http://127.0.0.1:8000/admin/video/video/QTCJJiZrNYo/?_changelist_filters=p%3D1
 等部分视频下载视频信息时，未关联到对应的yt_channel
 
+解决ffmpeg合并ass字幕时的字体目录问题
+
 =============================================================================================
 
 可以把youtube视频加入不同的list，根据list将视频上传到优酷上不同的专辑下
 
 在youtube上建立一些playlist，浏览youtube是可以把需要下载的视频加入这些list，
 AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
-
-制作调整字幕大小，字体的功能
-http://pythonhosted.org/pysubs2/tutorial.html
-https://nutbread.github.io/ass/
-https://github.com/rfw/python-ass
 
 获取视频标题的google翻译
 

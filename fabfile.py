@@ -11,7 +11,7 @@ env.user = "username"
 def work():
     local("workon AutoSystem")
     local("ssh-agent -s")
-    local("set HOME=C:\\Users\\GoTop")
+    local("set HOME=C/:\\Users\\GoTop")# 如果设置C:\\Users\\GoTop则不成功
     local("git fetch")
     local("git reset --hard origin/master")
     local("pip install -r requirements.txt")

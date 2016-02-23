@@ -9,6 +9,8 @@ from pysrt import SubRipFile, SubRipItem, SubRipTime
 import pysubs2
 import ass
 
+from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+
 __author__ = 'GoTop'
 
 
@@ -93,16 +95,17 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
 
     # ffmpeg -i input.mkv -vf ass=subtitles.ass output.mp4
     hard_add_subtitle_command = [FFMPEG_BIN,
-                                 '-i', video_file,
+                                 '-i', os.path.basename(video_file),
                                  '-vf',
-                                 "ass=%s" % subtitle,
-                                 output_video_file]
+                                 "ass=%s" % os.path.basename(subtitle),
+                                 os.path.basename(output_video_file)]
 
     if mode == 'hard':
         command = hard_add_subtitle_command
     else:
         command = soft_add_subtitle_command
 
+    os.chdir(YOUTUBE_DOWNLOAD_DIR)
     process = subprocess.Popen(command, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     stdout, stderr = process.communicate()

@@ -157,7 +157,7 @@ class VideoAdmin(admin.ModelAdmin):
         if obj.subtitle_video_file:
             return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % \
                    obj.subtitle_video_file
-        elif obj.file:
+        elif obj.file and obj.subtitle_cn and obj.subtitle_en:
             merge_subtitle_to_video_url = reverse(
                 'video:merge_subtitle_to_video',
                 args=[obj.video_id, 'zh-Hans_en'])
