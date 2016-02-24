@@ -71,7 +71,7 @@ def download_single_youtube_video_main(video_id):
         ydl.download([video.youtube_url])
 
         # youtube-dl下载成功后并不会返回下载视频文件的信息
-        # todo 所以要自己查看下载目录下是否有相关video id的视频，以此来判断是否下载成功
+        # 要自己查看下载目录下是否有相关video id的视频，以此来判断是否下载成功
         # 并将视频文件的地址保存到对应的字段
         video_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                 keyword=video.video_id,
@@ -82,15 +82,6 @@ def download_single_youtube_video_main(video_id):
         if (video_filepath.__len__()) == 1:
             # 从list中把唯一的一个数据pop出来
             video.file = video_filepath.pop()
-
-        # 只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
-        # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
-        # subtitle_en_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
-        #                                               keyword=video.video_id
-        #                                                       + ".en",
-        #                                               extend=options.get(
-        #                                                   'subtitlesformat',
-        #                                                   None))
 
         video.save()
     return video_filepath

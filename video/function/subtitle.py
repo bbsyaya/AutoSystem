@@ -86,7 +86,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
 
     result = add_subtitle_to_video(video.file.path, subtitle_file,
                                    subtitle_video, 'hard')
-    if result == True:
+    if result == True and os.path.exists(subtitle_video):
         # 如何将字幕合并到视频成功，则保存视频文件地址到Video module中
         video.subtitle_video_file = subtitle_video
         video.save()
