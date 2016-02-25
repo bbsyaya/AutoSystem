@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings.base import DEBUG
 from video.models import Video
 import youtube_dl
 from video.function.file import search_keyword_in_file
@@ -63,8 +64,12 @@ def download_single_youtube_video_main(video_id):
         'prefer_ffmpeg': True,
         'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin",
         # 'progress_hooks': [my_hook],
-        'proxy': '127.0.0.1:8115'
+        'socksproxy': '127.0.0.1:8115'
     }
+
+    #如果是本地debug状态则使用代理
+    if DEBUG == True:
+        options['socksproxy'] = '127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         # youtube_url = video.youtube_url

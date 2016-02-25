@@ -5,6 +5,7 @@ from django.utils.text import get_valid_filename
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.function.file import get_size, clean_media_root
+from video.function.subtitle import merge_sub_edit_style
 from video.function.youku import set_youku_category
 from video.libs.subtitle import srt_to_ass, edit_two_lang_style
 from video.models import Video
@@ -14,7 +15,7 @@ __author__ = 'GoTop'
 import os
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.local")
 django.setup()
 
 # get_video_info(video_id = 'QTCJJiZrNYo')
@@ -36,5 +37,7 @@ django.setup()
 #
 # edit_two_lang_style(merge_subs_dir)
 
-video = Video.objects.get(video_id='pSahhWDQRW0')
-set_youku_category(video.youku.id)
+# video = Video.objects.get(video_id='pSahhWDQRW0')
+# set_youku_category(video.youku.id)
+
+merge_sub_edit_style(video_id='UQ0w6nO-8sY')

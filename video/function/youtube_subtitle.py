@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings.base import DEBUG
 from video.models import Video, YT_channel
 import youtube_dl
 from video.function.file import search_keyword_in_file
@@ -23,8 +24,11 @@ def download_subtitle(video_id):
         # 'convertsubtitles': 'srt',
         'subtitlesformat': 'vtt',
         'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
-        'skip_download': True,
-    }
+        'skip_download': True, }
+
+    #如果是本地debug状态则使用代理
+    if DEBUG == True:
+        options['socksproxy'] = '127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         ydl.download([video.youtube_url])
