@@ -8,8 +8,8 @@ from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
 from AutoSystem.settings.base import YOUKU_CLIENT_ID
 from oauth2_authentication.function.youku import youku_get_authenticate
-from video.function.youku import set_youku_category, youku_upload, \
-    update_youku_online_info, set_youku_playlist, \
+from video.function.youku import set_youku_category_local, youku_upload, \
+    update_youku_online_info, set_youku_playlist_online, \
     delete_youku_video
 from video.models import Video, Youku, YoukuPlaylist
 
@@ -30,14 +30,14 @@ def youku_upload_view(request, youku_id):
 
 def set_youku_playlist_view(request, youku_id):
     youku = Youku.objects.get(pk=youku_id)
-    result = set_youku_playlist(youku.youku_video_id, youku.youku_playlist_id)
+    result = set_youku_playlist_online(youku.youku_video_id, youku.youku_playlist_id)
     return render_to_response('result.html',
                               {'text': '更新playlist成功, youku_id为 ' + youku_id})
 
 
 def update_youku_online_info_view(request, youku_video_id):
     updated_youku_video_id = update_youku_online_info(youku_video_id)
-    updated_youku_playlist_video_id = set_youku_playlist(youku_video_id)
+    updated_youku_playlist_video_id = set_youku_playlist_online(youku_video_id)
 
     return render_to_response('result.html', {
         'text': '更新成功, 在优酷上的video id为 ' + updated_youku_video_id})
@@ -110,7 +110,7 @@ def auto_set_youku_category_view(request):
 
     youku_setted_list = []
     for youku in youku_list:
-        youku_setted = set_youku_category(youku.id)
+        youku_setted = set_youku_category_local(youku.id)
         youku_setted_list.append(youku_setted.title)
 
     return render_to_response('result.html', {'list': youku_setted_list})

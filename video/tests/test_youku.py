@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 
 from faker import Factory
 
-from video.function.youku import set_youku_category
+from video.function.youku import set_youku_category_local
 from video.models import Youku
 
 __author__ = 'GoTop'
@@ -48,7 +48,7 @@ class YoukuTagsTest(TestCase):
         """
         youku = YoukuFactory.create()
 
-        youku_new = set_youku_category(youku.id)
+        youku_new = set_youku_category_local(youku.id)
         self.assertEqual(youku_new.category,
                          youku.video.channel.category.get_youku_playlist_category_display())
 

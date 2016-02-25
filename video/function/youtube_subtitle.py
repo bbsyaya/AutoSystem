@@ -1,12 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+from celery import task
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
 from AutoSystem.settings.base import DEBUG
 from video.models import Video, YT_channel
 import youtube_dl
 from video.function.file import search_keyword_in_file
 
-
+@task
 def download_subtitle(video_id):
     """
     下载video的中英字幕并保存到video model中

@@ -1,5 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+from celery import task
+
 from oauth2_authentication.function.youku import youku_get_authenticate
 from AutoSystem.settings.base import YOUKU_CLIENT_ID
 from youku import YoukuUpload, YoukuVideos, YoukuPlaylists
@@ -17,6 +19,7 @@ from video.models import Youku, Video, YoukuPlaylist
 __author__ = 'GoTop'
 
 
+@task
 def youku_upload(youku_id):
     """
     将youku id的youku对象对应的合并有字幕的video视频的上传到优酷网
@@ -115,7 +118,7 @@ def update_youku_online_info(youku_video_id):
     return updated_youku_video_id
 
 
-def set_youku_category(youku_id):
+def set_youku_category_local(youku_id):
     """
     根据youku_id获取对应的video的channel的category，
     将它的youku_playlist_category属性的值设置给youku.category
@@ -129,7 +132,7 @@ def set_youku_category(youku_id):
     return youku
 
 
-def set_youku_playlist(youku_video_id, playlist_id):
+def set_youku_playlist_online(youku_video_id, playlist_id):
     """
     根据youku的youkuplaylist属性，在优酷网上将youku对象添加到该playlist中
 
@@ -179,6 +182,10 @@ def delete_video_from_playlist(youku_video_id, playlist_id):
 
 
 def get_youku_playlist():
+    """
+    获取认证用户的playlist
+    :return:
+    """
     service = YoukuPlaylists(CLIENT_ID)
     youku_access_token = youku_get_authenticate()
     # http://doc.open.youku.com/?docid=377
@@ -190,4 +197,4 @@ def get_youku_playlist():
 
 
 if __name__ == '__main__':
-    set_youku_category(youku_id=3)
+    set_youku_category_local(youku_id=3)

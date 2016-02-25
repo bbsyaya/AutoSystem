@@ -1,7 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+from celery import task
+
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
 from AutoSystem.settings.base import DEBUG
+
 from video.models import Video
 import youtube_dl
 from video.function.file import search_keyword_in_file
@@ -26,7 +29,7 @@ def download_multi_youtube_video_main(num):
         # video.save()
     return video_filepath_list
 
-
+@task
 def download_single_youtube_video_main(video_id):
     """
     下载单个youtube视频，并将下载后的视频文件的目录保存到Video.file
@@ -64,7 +67,6 @@ def download_single_youtube_video_main(video_id):
         'prefer_ffmpeg': True,
         'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin",
         # 'progress_hooks': [my_hook],
-        'socksproxy': '127.0.0.1:8115'
     }
 
     #如果是本地debug状态则使用代理

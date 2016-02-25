@@ -6,7 +6,7 @@ from django.utils.text import get_valid_filename
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.function.file import get_size, clean_media_root
 from video.function.subtitle import merge_sub_edit_style
-from video.function.youku import set_youku_category
+from video.function.youku import set_youku_category_local
 from video.libs.subtitle import srt_to_ass, edit_two_lang_style
 from video.models import Video
 

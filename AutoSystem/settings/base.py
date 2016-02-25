@@ -171,19 +171,23 @@ YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
 
 # 使用django自带broker的设置
 # 需要自己用命令python manage.py shell启动shell，在里面测试，不能直接用PyCharm的console
-BROKER_URL = 'django://'
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Madrid'
+# BROKER_URL = 'django://'
+# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'Europe/Madrid'
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+# That is, tasks will be executed locally instead of being sent to the queue.
+# 用于测试环境，可以不开启worker，和broker
+# CELERY_ALWAYS_EAGER = True
+
 
 # 使用redis的设置
 # BROKER_HOST = "localhost"
@@ -201,8 +205,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 # CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
 
 import djcelery
-djcelery.setup_loader()
 
+djcelery.setup_loader()
 
 # http://stackoverflow.com/a/31103483/1314124
 # 让django1.8.9不显示RemovedInDjango19Warning
@@ -215,6 +219,7 @@ LOGGING['filters']['suppress_deprecated'] = {
 }
 LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
 
+
 class SuppressDeprecated(logging.Filter):
     def filter(self, record):
         WARNINGS_TO_SUPPRESS = [
@@ -222,4 +227,5 @@ class SuppressDeprecated(logging.Filter):
             'RemovedInDjango19Warning'
         ]
         # Return false to suppress message.
-        return not any([warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
+        return not any(
+                [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])

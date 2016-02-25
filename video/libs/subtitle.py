@@ -4,6 +4,8 @@ import platform
 import subprocess
 
 import os.path
+
+from celery import task
 from pysrt import SubRipFile, SubRipItem, SubRipTime
 # from pysubs2.ssafile import SSAFile
 import pysubs2
@@ -68,7 +70,7 @@ def merge_subtitle(sub_a, sub_b, delta):
     out.clean_indexes()
     return out
 
-
+@task
 def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     """
     将video_id对应的视频的字母，软写入到对应的视频中
