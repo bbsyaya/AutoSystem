@@ -61,8 +61,9 @@ def download_single_youtube_video_main(video_id):
         # mkv and mp4 videos
         'merge_output_format': 'mkv',
         'prefer_ffmpeg': True,
-        'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin"
+        'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin",
         # 'progress_hooks': [my_hook],
+        'proxy': '127.0.0.1:8115'
     }
 
     with youtube_dl.YoutubeDL(options) as ydl:
