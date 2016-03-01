@@ -186,7 +186,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # That is, tasks will be executed locally instead of being sent to the queue.
 # 用于测试环境，可以不开启worker，和broker
-# CELERY_ALWAYS_EAGER = True
+#CELERY_ALWAYS_EAGER = True
 
 
 # 使用redis的设置

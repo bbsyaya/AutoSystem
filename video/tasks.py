@@ -23,7 +23,7 @@ from video.models import Video
 def add(x, y):
     return x + y
 
-@task
+
 def auto_download_upload_video(num):
     """
     定期使用celery执行该命令，将下载、设置、上传视频等工作分配到worker
@@ -32,7 +32,7 @@ def auto_download_upload_video(num):
     """
     tran_video_list = Video.need_upload_to_youku.order_by('publishedAt', 'title')[:num]
     for idx, video in enumerate(tran_video_list):
-        download_upload_video(video.video_id)
+        download_upload_video.delay(video.video_id)
 
 def get_info():
     pass

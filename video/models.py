@@ -10,12 +10,13 @@ from django.db import models
 class NeedUploadToYoukuManager(models.Manager):
     def get_queryset(self):
         # 返回Video model中 allow_upload_youku为true，设置有对应的youku model，
-        # 并且未上传到优酷网(youku__youku_video_id='')的video
+        # 未下载过，并且未上传到优酷网(youku__youku_video_id='')的video
         need_upload_to_youku_queryset = super(NeedUploadToYoukuManager,
                                               self).get_queryset().filter(
                 # 在SQLite数据库中，django model BooleanField True对应1，False对应0
                 # 不知道在Django1.7之后的版本是否修改该bug
                 allow_upload_youku=1,
+                file = '',
                 youku__isnull=False,
                 youku__youku_video_id='')
 

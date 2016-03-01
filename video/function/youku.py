@@ -33,9 +33,13 @@ def youku_upload(youku_id):
 
     # 如果没有在将字幕合并到视频中，则使用原版的视频
     if youku.video.subtitle_video_file == '':
+        # 如果 subtitle_video_file 不存在
         video_file_path = youku.video.file.path
-    else:
+    elif youku.video.subtitle_video_file.name:
+        # 如果 subtitle_video_file 存在
         video_file_path = youku.video.subtitle_video_file.path
+    else:
+        return False
 
     service = YoukuUpload(CLIENT_ID, youku_access_token, video_file_path)
 
@@ -45,7 +49,8 @@ def youku_upload(youku_id):
     else:
         title = youku.title
 
-    # 上传的时候如果video.description为None，youku这个库会提示object of type 'NoneType' has no len()
+    # 上传的时候如果video.description为None，youku这个库会提示object of type 'NoneType' has
+    # no len()
     if youku.description is None:
         description = ''
     else:
@@ -58,7 +63,7 @@ def youku_upload(youku_id):
         else:
             youku.tags = youku.video.get_tags(9)
 
-    #tags = youku.tags
+    # tags = youku.tags
 
     # 参数 http://cloud.youku.com/docs?id=110
     # tags：string 必选参数 视频标签，自定义标签不超过10个，单个标签最少2个字符，最多12个字符（6个汉字），多个标签之间用逗号(,)隔开
@@ -85,8 +90,8 @@ def delete_youku_video(youku_video_id):
     service = YoukuVideos(CLIENT_ID)
     youku_access_token = youku_get_authenticate()
     delete_youku_video_id = service.destroy_video(
-        access_token=youku_access_token,
-        video_id=youku_video_id)
+            access_token=youku_access_token,
+            video_id=youku_video_id)
 
     if delete_youku_video_id == youku_video_id:
         # 在优酷网上成功删除视频后，在本地将youku.youku_video_id清空
@@ -110,11 +115,11 @@ def update_youku_online_info(youku_video_id):
     youku_access_token = youku_get_authenticate()
 
     updated_youku_video_id = service.update_video(
-        access_token=youku_access_token, video_id=youku_video_id,
-        title=youku.title,
-        tags=youku.tags, category=youku.category, copyright_type=None,
-        public_type=None, watch_password=None,
-        description=youku.description, thumbnail_seq=None)
+            access_token=youku_access_token, video_id=youku_video_id,
+            title=youku.title,
+            tags=youku.tags, category=youku.category, copyright_type=None,
+            public_type=None, watch_password=None,
+            description=youku.description, thumbnail_seq=None)
     return updated_youku_video_id
 
 
@@ -126,7 +131,8 @@ def set_youku_category_local(youku_id):
     :return:
     """
     youku = Youku.objects.get(pk=youku_id)
-    youku.category = youku.video.channel.category.get_youku_playlist_category_display()
+    youku.category = \
+        youku.video.channel.category.get_youku_playlist_category_display()
 
     youku.save(update_fields=['category'])
     return youku
@@ -136,7 +142,8 @@ def set_youku_playlist_online(youku_video_id, playlist_id):
     """
     根据youku的youkuplaylist属性，在优酷网上将youku对象添加到该playlist中
 
-    一个视频可以加入多个playlist，所以在youku中设置playlist后，如果不执行del_videos_from_playlist操作，视频仍然属于该playlist
+    一个视频可以加入多个playlist，所以在youku中设置playlist后，如果不执行del_videos_from_playlist
+    操作，视频仍然属于该playlist
     :param youku_id:
     :return:
     """
@@ -192,8 +199,8 @@ def get_youku_playlist():
     # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
     # video_ids=850,860,870,880
     playlist_json = service.find_playlists_by_me(
-        access_token=youku_access_token,
-        orderby='published', page=1, count=20)
+            access_token=youku_access_token,
+            orderby='published', page=1, count=20)
 
 
 if __name__ == '__main__':

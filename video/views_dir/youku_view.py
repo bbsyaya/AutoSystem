@@ -37,7 +37,9 @@ def set_youku_playlist_view(request, youku_id):
 
 def update_youku_online_info_view(request, youku_video_id):
     updated_youku_video_id = update_youku_online_info(youku_video_id)
-    updated_youku_playlist_video_id = set_youku_playlist_online(youku_video_id)
+    youku = Youku.objects.get(youku_video_id = updated_youku_video_id)
+    updated_youku_playlist_video_id = set_youku_playlist_online(
+            youku_video_id, youku.youku_playlist.id)
 
     return render_to_response('result.html', {
         'text': '更新成功, 在优酷上的video id为 ' + updated_youku_video_id})

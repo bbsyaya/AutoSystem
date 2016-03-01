@@ -67,12 +67,15 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     """
     video = Video.objects.get(pk=video_id)
 
-    if sub_lang_type == 'en':
+    if sub_lang_type == 'en' and video.subtitle_en.name:
         subtitle_file = video.subtitle_en.path
-    elif sub_lang_type == 'zh-Hans':
+    elif sub_lang_type == 'zh-Hans' and video.subtitle_cn.name:
         subtitle_file = video.subtitle_cn.path
-    elif sub_lang_type == 'zh-Hans_en':
+    elif sub_lang_type == 'zh-Hans_en' and video.subtitle_merge.name:
         subtitle_file = video.subtitle_merge.path
+    else:
+        #如果获取不到subtitle_file，则返回False
+        return False
 
     # 获取到文件名称
     file_basename = os.path.basename(video.file.path)

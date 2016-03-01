@@ -1,6 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 
+from celery import task
+
 from video.function.subtitle import merge_video_subtitle, \
     add_subtitle_to_video_process, \
     srt_to_ass_process, merge_sub_edit_style
@@ -27,7 +29,7 @@ def auto_download_upload_video():
     for idx, video in enumerate(tran_video_list):
         download_upload_video(video.video_id)
 
-
+@task
 def download_upload_video(video_id):
     """
     下载youtube视频和中英字幕，合并字幕到视频，设置优酷目录，然后上传到优酷
@@ -44,4 +46,5 @@ def download_upload_video(video_id):
 
     video = Video.objects.get(pk=video_id)
     set_youku_category_local(video.youku.id)
+
     youku_upload(video.youku.id)
