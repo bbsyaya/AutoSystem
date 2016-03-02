@@ -2,6 +2,8 @@
 from __future__ import unicode_literals, absolute_import
 import os
 
+from celery import task
+
 import django
 
 from django.utils.text import slugify, get_valid_filename
@@ -56,7 +58,7 @@ def merge_video_subtitle(video_id):
     else:
         return False
 
-
+@task
 def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     """
     将video_id对应的视频的字母，软写入到对应的视频中
