@@ -79,8 +79,12 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
         #如果获取不到subtitle_file，则返回False
         return False
 
-    # 获取到文件名称
-    file_basename = os.path.basename(video.file.path)
+    if(video.file.name):
+        # 获取到文件名称
+        file_basename = os.path.basename(video.file.path)
+    else:
+        return False
+
     # 将文件名称分割为名称和后缀
     file_basename_list = os.path.splitext(file_basename)
     subtitle_video = file_basename_list[0] + '.' + sub_lang_type + \
@@ -125,7 +129,7 @@ def srt_to_ass_process(video_id, srt_file_dir):
     else:
         return False
 
-
+@task
 def merge_sub_edit_style(video_id):
     """
     合并srt字幕，然后将srt字幕转换为ass格式，添加双语字幕式样，合并到视频中

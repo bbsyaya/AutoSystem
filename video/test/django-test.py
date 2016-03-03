@@ -9,7 +9,7 @@ from video.function.subtitle import merge_sub_edit_style
 from video.function.youku import set_youku_category_local
 from video.libs.subtitle import srt_to_ass, edit_two_lang_style
 from video.models import Video
-from video.tasks import auto_download_upload_video
+from video.tasks import auto_download_upload_video, add_sub
 
 __author__ = 'GoTop'
 
@@ -42,5 +42,7 @@ django.setup()
 # set_youku_category(video.youku.id)
 
 #merge_sub_edit_style(video_id='UQ0w6nO-8sY')
+
+#add_sub()
 
 auto_download_upload_video(1)

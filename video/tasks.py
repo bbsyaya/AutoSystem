@@ -38,26 +38,50 @@ def auto_download_upload_video(num):
     tran_video_list = Video.need_upload_to_youku.order_by('publishedAt',
                                                           'title')[:num]
     for idx, video in enumerate(tran_video_list):
-
-
         # 下载youtube视频和中英字幕，合并字幕到视频，设置优酷目录，然后上传到优酷
 
-        download_single_youtube_video_main.delay(video.video_id)
-        download_subtitle(video.video_id)
+        # download_single_youtube_video_main.s(video.video_id).delay()
+        #
+        # download_subtitle.s(video.video_id).delay()
+        #
+        # merge_sub_edit_style(video.video_id)
+        #
+        # # 将字幕添加到视频上
+        # add_subtitle_to_video_process.s(video.video_id,
+        #                                 sub_lang_type='zh-Hans_en').delay()
+        #
+        # set_youku_category_local(video.youku.id)
+        #
+        # youku_upload.s(video.youku.id).delay()
 
-        merge_sub_edit_style(video.video_id)
+        download_video_task = download_single_youtube_video_main.si(
+                video.video_id)
+        download_subtitle_task = download_subtitle.si(video.video_id)
+        merge_sub_task = merge_sub_edit_style.si(video.video_id)
+        add_sub_to_video_task = add_subtitle_to_video_process.si(video.video_id,
+                                                                 sub_lang_type='zh-Hans_en')
 
-        # 将字幕添加到视频上
-        add_subtitle_to_video_process.delay(video.video_id,
-                                      sub_lang_type='zh-Hans_en')
+        youku_upload_task = youku_upload.si(video.youku.id)
 
-        set_youku_category_local(video.youku.id)
-
-        youku_upload(video.youku.id)
+        # 将subtask chain起来执行
+        (download_video_task | download_subtitle_task | merge_sub_task |
+         add_sub_to_video_task | youku_upload_task)(retry=True,
+                                                    retry_policy={
+                                                        'max_retries': 10,
+                                                        'interval_start': 0,
+                                                        'interval_step': 0.2,
+                                                        'interval_max': 0.2,
+                                                    }).get()
 
 
 def get_info():
     pass
+
+
+@task
+def add_sub():
+    s = add.s(2, 2).delay()
+    print(s)
 
 
 if __name__ == '__main__':

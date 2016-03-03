@@ -32,7 +32,7 @@ def youku_upload(youku_id):
     youku = Youku.objects.get(pk=youku_id)
 
     # 如果没有在将字幕合并到视频中，则使用原版的视频
-    if youku.video.subtitle_video_file == '':
+    if youku.video.subtitle_video_file == '' and youku.video.file.name:
         # 如果 subtitle_video_file 不存在
         video_file_path = youku.video.file.path
     elif youku.video.subtitle_video_file.name:
