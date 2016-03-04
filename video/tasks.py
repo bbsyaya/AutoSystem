@@ -1,6 +1,5 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
-
 # from AutoSystem.celery import app
 #
 # __author__ = 'GoTop'
@@ -13,7 +12,6 @@ from __future__ import unicode_literals, absolute_import
 
 
 from celery import task
-
 from video.function.subtitle import merge_video_subtitle, \
     add_subtitle_to_video_process, \
     merge_sub_edit_style
@@ -55,7 +53,7 @@ def auto_download_upload_video(num):
         # youku_upload.s(video.youku.id).delay()
 
         download_video_task = download_single_youtube_video_main.si(
-                video.video_id)
+            video.video_id)
         download_subtitle_task = download_subtitle.si(video.video_id)
         merge_sub_task = merge_sub_edit_style.si(video.video_id)
         add_sub_to_video_task = add_subtitle_to_video_process.si(video.video_id,
@@ -65,13 +63,14 @@ def auto_download_upload_video(num):
 
         # 将subtask chain起来执行
         (download_video_task | download_subtitle_task | merge_sub_task |
-         add_sub_to_video_task | youku_upload_task)(retry=True,
-                                                    retry_policy={
-                                                        'max_retries': 10,
-                                                        'interval_start': 0,
-                                                        'interval_step': 0.2,
-                                                        'interval_max': 0.2,
-                                                    }).get()
+         add_sub_to_video_task | youku_upload_task).apply_async(retry=True,
+                                                                retry_policy={
+                                                                    'max_retries': 10,
+                                                                    'interval_start': 0,
+                                                                    'interval_step': 0.2,
+                                                                    'interval_max': 0.2,
+                                                                }
+                                                                )
 
 
 def get_info():

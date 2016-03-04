@@ -29,7 +29,7 @@ def download_subtitle(video_id):
 
     #如果是本地debug状态则使用代理
     if DEBUG == True:
-        options['socksproxy'] = '127.0.0.1:8115'
+        options['socksproxy'] = 'socks5:127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         ydl.download([video.youtube_url])

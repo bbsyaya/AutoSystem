@@ -53,7 +53,9 @@ def download_single_youtube_video_main(video_id):
         # 'format': 'bestvideo+bestaudio/best',
         # 'extractaudio': True,  # only keep the audio
         # 'audioformat': "mp3",  # convert to mp3
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',
+        # You must use %(stitle)s (and not %(title)s) to insert the video title
+        # in the --output template. The "s" one is sanitized for filesystems.
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(stitle)s-%(id)s.%(ext)s',
         # name the file the ID of the video
         'restrictfilenames': True,
         'noplaylist': True,  # only download single song, not playlist
@@ -71,7 +73,7 @@ def download_single_youtube_video_main(video_id):
 
     #如果是本地debug状态则使用代理
     if DEBUG == True:
-        options['socksproxy'] = '127.0.0.1:8115'
+        options['socksproxy'] = 'socks5:127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         # youtube_url = video.youtube_url
