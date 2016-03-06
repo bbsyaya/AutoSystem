@@ -29,13 +29,20 @@ def download_multi_youtube_video_main(num):
         # video.save()
     return video_filepath_list
 
+
 @task
-def download_single_youtube_video_main(video_id):
+def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
+'mkv'):
     """
     下载单个youtube视频，并将下载后的视频文件的目录保存到Video.file
     :param video_id:
+    file_extend 根据youtube-dl的 merge_output_format规定的来选
     :return:
     """
+    if search_video_file(video_id, file_extend):
+        # 视频文件之前已经下载过，返回false
+        return False
+
     video = Video.objects.get(video_id=video_id)
 
     # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding
@@ -55,7 +62,7 @@ def download_single_youtube_video_main(video_id):
         # 'audioformat': "mp3",  # convert to mp3
         # You must use %(stitle)s (and not %(title)s) to insert the video title
         # in the --output template. The "s" one is sanitized for filesystems.
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(stitle)s-%(id)s.%(ext)s',
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',
         # name the file the ID of the video
         'restrictfilenames': True,
         'noplaylist': True,  # only download single song, not playlist
@@ -65,33 +72,47 @@ def download_single_youtube_video_main(video_id):
         # 'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
         # 'embedsubtitles': False,  # Embed subtitles in the video (only for
         # mkv and mp4 videos
-        'merge_output_format': 'mkv',
+        'merge_output_format': file_extend,
         'prefer_ffmpeg': True,
         'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin",
         # 'progress_hooks': [my_hook],
     }
 
-    #如果是本地debug状态则使用代理
+    # 如果是本地debug状态则使用代理
     if DEBUG == True:
-        options['socksproxy'] = 'socks5:127.0.0.1:8115'
+        options['socksproxy'] = '127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         # youtube_url = video.youtube_url
-        # 用设置成list的形式
-        ydl.download([video.youtube_url])
+        n = 0
+        try:
+            # 用设置成list的形式
+            ydl.download([video.youtube_url])
+        except 'ContentTooShortError':
+            if n + 1 < max_retey:
+                ydl.download([video.youtube_url])
+            else:
+                return False
 
-        # youtube-dl下载成功后并不会返回下载视频文件的信息
-        # 要自己查看下载目录下是否有相关video id的视频，以此来判断是否下载成功
-        # 并将视频文件的地址保存到对应的字段
-        video_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
-                                                keyword=video.video_id,
-                                                extend=options.get(
-                                                    'merge_output_format',
-                                                    None))
-        # 只能查找到一个这样的文件才对
-        if (video_filepath.__len__()) == 1:
-            # 从list中把唯一的一个数据pop出来
-            video.file = video_filepath.pop()
-
-        video.save()
+    video_filepath = search_video_file(video_id,
+                                       file_extend)
     return video_filepath
+
+
+def search_video_file(video_id, file_extend):
+    # 要自己查看下载目录下是否有相关video id的视频、字幕文件
+    # 入存在并将视频文件的地址保存到对应的字段
+    video = Video.objects.get(video_id=video_id)
+
+    video_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
+                                            keyword=video.video_id,
+                                            extend=file_extend)
+    # 只能查找到一个这样的文件才对
+    if (video_filepath.__len__()) == 1:
+        # 从list中把唯一的一个数据pop出来
+        video.file = video_filepath.pop()
+        video.save()
+        return video_filepath
+    else:
+        # 找到多个文件，暂时返回False
+        return False

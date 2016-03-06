@@ -41,7 +41,7 @@ def download_single_youtube_video_view(request, video_id):
 
 
 def download_subtitle_view(request, video_id):
-    result = download_subtitle(video_id)
+    result = download_subtitle(video_id, subtitlesformat='vtt', max_retey=3)
     if result is False:
         result = []
     return render_to_response('result.html',

@@ -35,3 +35,19 @@ def deploy():
     with cd(code_dir):
         run("git pull origin master")
         run("touch mysite.wsgi")
+
+
+def redishome():
+    local("C:\\Users\\GoTop\\Desktop\\redis-2.4.5-win32-win64\\64bit\\redis"
+          "-server.exe C:\\Users\\GoTop\\Desktop\\redis-2.4.5-win32-win64"
+          "\\64bit\\redis.conf")
+
+
+def flower():
+    local("workon AutoSystem")
+    local("python manage.py celery flower")
+
+def worker():
+    local("workon AutoSystem")
+    local("python manage.py celery worker --loglevel=info")
+

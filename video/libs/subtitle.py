@@ -5,6 +5,7 @@ import subprocess
 
 import os.path
 
+import sys
 from celery import task
 from pysrt import SubRipFile, SubRipItem, SubRipTime
 # from pysubs2.ssafile import SSAFile
@@ -70,6 +71,7 @@ def merge_subtitle(sub_a, sub_b, delta):
     out.clean_indexes()
     return out
 
+
 @task
 def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     """
@@ -107,15 +109,38 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     else:
         command = soft_add_subtitle_command
 
-    os.chdir(YOUTUBE_DOWNLOAD_DIR)
-    process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    stdout, stderr = process.communicate()
+    # os.chdir(YOUTUBE_DOWNLOAD_DIR)
 
-    if stderr:
-        return stderr
-    else:
-        return True
+    # stderr can be STDOUT, which indicates that the stderr data from the child
+    # process should be captured into the same file handle as for stdout.
+    process = subprocess.Popen(command,
+                               cwd=YOUTUBE_DOWNLOAD_DIR,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    # 无法启动程序
+    # while True:
+    #     out = process.stderr.read(1)
+    #     if out == '' and process.poll() != None:
+    #         break
+    #     if out != '':
+    #         sys.stdout.write(out)
+    #         sys.stdout.flush()
+
+    # 能执行命令，但是不显示所有过程
+    for line in iter(process.stdout.readline, b''):
+        print '>>> {}'.format(line.rstrip())
+
+
+
+    # 能执行命令，但是不显示所有过程
+    # while True:
+    #     output = process.stdout.readline()
+    #     if output == '' and process.poll() is not None:
+    #         break
+    #     if output:
+    #         print output.strip()
+    # rc = process.poll()
+    # return rc
 
 
 def srt_to_ass(srt_file, ass_file):
@@ -180,9 +205,9 @@ def edit_two_lang_style(subtitle_file):
         for events in subtitle.events:
             utf8string = events.text.decode("utf-8")
             events.text = utf8string.replace(
-                    r'\N',
-                    r'\N{\fn方正综艺_GBK\fs14\b0\c&HFFFFFF&\3c&H2F2F2F&\4c'
-                    r'&H000000&}'
+                r'\N',
+                r'\N{\fn方正综艺_GBK\fs14\b0\c&HFFFFFF&\3c&H2F2F2F&\4c'
+                r'&H000000&}'
             )
 
         with open(subtitle_file, "w") as f:

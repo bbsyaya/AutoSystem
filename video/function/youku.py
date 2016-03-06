@@ -20,7 +20,7 @@ __author__ = 'GoTop'
 
 
 @task
-def youku_upload(youku_id):
+def youku_upload(youku_id, max_retey = 8):
     """
     将youku id的youku对象对应的合并有字幕的video视频的上传到优酷网
 
@@ -74,7 +74,15 @@ def youku_upload(youku_id):
         'tags': youku.tags,
         'description': description
     }
-    youku_video_id = service.upload(video_info)
+    n = 0
+    try:
+        youku_video_id = service.upload(video_info)
+    except:
+        if n + 1 < max_retey:
+            youku_video_id = service.upload(video_info)
+        else:
+            return False
+
 
     youku.youku_video_id = youku_video_id
     youku.save()
