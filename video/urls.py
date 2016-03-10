@@ -19,7 +19,7 @@ urlpatterns = [
         name='search'),
 
     #####################
-    # YouTube 订阅链接
+    # YouTube
     #####################
     # http://127.0.0.1:8000/video/get_my_subscription
     url(r'get_my_subscription$',
@@ -60,9 +60,6 @@ urlpatterns = [
     url(r'auto_youtube_download/(?P<num>\d+)$',
         youtube_view.auto_youtube_download_view),
 
-    # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
-    url(r'download_upload_video/(?P<video_id>.+)$',
-        video.download_upload_video_view, name='download_upload_video'),
 
     # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
     url(r'download_subtitle/(?P<video_id>.+)$',
@@ -131,4 +128,9 @@ urlpatterns = [
     ############################################################################################
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
+
+
+    # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
+    url(r'download_upload_video/(?P<video_id>.+)$',
+        video.download_upload_video_view, name='download_upload_video'),
 ]

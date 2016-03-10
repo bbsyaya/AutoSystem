@@ -56,8 +56,10 @@ class FFMPegRunner(object):
                 if callable(status_handler):
                     status_handler(percents, new_percents)
                 percents = new_percents
-                if new_percents == 100:
-                    return True
+                # 因为
+                # if new_percents == 100:
+                #     return True
+        return True
 
     def get_percent(self, position, duration):
         if not position or not duration:

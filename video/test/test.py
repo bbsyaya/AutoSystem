@@ -9,9 +9,9 @@ import subprocess
 import math
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+from video.libs.convert_subtitles import convert_file
 
 __author__ = 'GoTop'
-
 
 # filename = "E:\media\Video\YouTube\PlayStation_2016_Predictions_
 # -_Kinda_Funny_Gamescast_Ep._51_Pt._3-g8MIFkLq7A8.en.vtt"
@@ -42,14 +42,6 @@ __author__ = 'GoTop'
 # print(os.path.getsize(file))
 
 
-
-
-
-runner = FFMPegRunner()
-
-
-def status_handler(old, new):
-    print "From {0} to {1}".format(old, new)
-
-
-runner.run_session('ffmpeg -i input.mkv -vf "ass=subtitle.ass" output.mp4', status_handler=status_handler)
+input = 'input.vtt'
+output = 'ouput.srt'
+convert_file(input, output)

@@ -126,8 +126,8 @@ class VideoAdmin(admin.ModelAdmin):
     download_youtube_url.short_description = '下载YouTube视频'
 
     def download_subtitle_url(self, obj):
-        if obj.subtitle_en:
-            return "<a href='%s' target='_blank'>字幕-地址</a>" % obj.subtitle_en
+        if obj.subtitle_cn:
+            return "<a href='%s' target='_blank'>字幕-地址</a>" % obj.subtitle_cn
         else:
             download_subtitle_url = reverse('video:download_subtitle',
                                             args=[obj.video_id])
@@ -157,10 +157,10 @@ class VideoAdmin(admin.ModelAdmin):
         if obj.subtitle_video_file:
             return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % \
                    obj.subtitle_video_file
-        elif obj.file and obj.subtitle_cn and obj.subtitle_en:
+        elif obj.file and obj.subtitle_cn :
             merge_subtitle_to_video_url = reverse(
                 'video:merge_subtitle_to_video',
-                args=[obj.video_id, 'zh-Hans_en'])
+                args=[obj.video_id, 'zh-Hans'])
             return "<a href='%s' target='_blank'>合并-字幕到视频</a>" % \
                    merge_subtitle_to_video_url
         else:

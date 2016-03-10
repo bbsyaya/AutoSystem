@@ -12,6 +12,8 @@ from video.libs.subtitle import merge_subtitle, add_subtitle_to_video, \
     srt_to_ass, edit_two_lang_style
 from video.models import Video
 
+from video.libs.convert_subtitles import convert_file
+
 __author__ = 'GoTop'
 
 from pysrt import SubRipFile, SubRipTime
@@ -36,9 +38,27 @@ def merge_video_subtitle(video_id):
     encoding = "utf_8"
 
     if (video.subtitle_cn != '') & (video.subtitle_en != ''):
-        subs_cn = SubRipFile.open(video.subtitle_cn.path, encoding=encoding)
-        subs_en = SubRipFile.open(video.subtitle_en.path, encoding=encoding)
-        merge_subs = merge_subtitle(subs_cn, subs_en, delta)
+
+        # convert_file(input_captions = video.subtitle_cn, output_writer)
+
+        # vtt格式的字幕
+        subs_cn_vtt = SubRipFile.open(video.subtitle_cn.path, encoding=encoding)
+        subs_en_vtt = SubRipFile.open(video.subtitle_en.path, encoding=encoding)
+
+        # 将vtt字幕转换为srt
+        subs_cn_srt_filename = '%s-%s.cn.srt' % (
+            get_valid_filename(video.title), video.video_id)
+        subs_cn_srt = os.path.join(YOUTUBE_DOWNLOAD_DIR, subs_cn_srt_filename)
+        subs_cn_srt_result = convert_file(input_captions=video.subtitle_cn.path,
+                                          output_writer=subs_cn_srt)
+
+        subs_en_srt_filename = '%s-%s.cn.srt' % (
+            get_valid_filename(video.title), video.video_id)
+        subs_en_srt = os.path.join(YOUTUBE_DOWNLOAD_DIR, subs_en_srt_filename)
+        subs_en_srt_result = convert_file(input_captions=video.subtitle_en.path,
+                                          output_writer=subs_en_srt)
+
+        merge_subs = merge_subtitle(subs_cn_srt, subs_en_srt, delta)
 
         # 某些youtube视频的title有非ASCII的字符，或者/等不能出现在文件名中的字符
         # 所以使用django utils自带的get_valid_filename()转化一下
@@ -58,10 +78,11 @@ def merge_video_subtitle(video_id):
     else:
         return False
 
+
 @task
 def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     """
-    将video_id对应的视频的字母，软写入到对应的视频中
+    将video_id对应的视频的字幕，硬入到对应的视频中
 
     :param video_id:
     :param subtitle_type: (en,zh-Hans,zh-Hans_en)
@@ -69,17 +90,26 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     """
     video = Video.objects.get(pk=video_id)
 
-    if sub_lang_type == 'en' and video.subtitle_en.name:
-        subtitle_file = video.subtitle_en.path
-    elif sub_lang_type == 'zh-Hans' and video.subtitle_cn.name:
+    if sub_lang_type == 'zh-Hans' and video.subtitle_cn.name:
         subtitle_file = video.subtitle_cn.path
+
+        ass_filename = '%s-%s.zh-Hans.ass' % (
+        get_valid_filename(video.title), video_id)
+
+        ass_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, ass_filename)
+
+        subtitle_file = srt_to_ass(subtitle_file, ass_subs_dir)
+        # youtube上的英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码
+        # 暂时不知道该如何处理，所以只合并中文字幕到视频
+    # elif sub_lang_type == 'en' and video.subtitle_en.name:
+    #     subtitle_file = video.subtitle_en.path
     elif sub_lang_type == 'zh-Hans_en' and video.subtitle_merge.name:
         subtitle_file = video.subtitle_merge.path
     else:
-        #如果获取不到subtitle_file，则返回False
+        # 如果获取不到subtitle_file，则返回False
         return False
 
-    if(video.file.name):
+    if (video.file.name):
         # 获取到文件名称
         file_basename = os.path.basename(video.file.path)
     else:
@@ -107,7 +137,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
 
 def srt_to_ass_process(video_id, srt_file_dir):
     """
-    将srt字幕文件转换为ass格式字幕文件
+    将中英字幕合并成的srt字幕文件转换为ass格式字幕文件
 
     :param video_id:
     :param srt_file_dir:
@@ -129,6 +159,7 @@ def srt_to_ass_process(video_id, srt_file_dir):
     else:
         return False
 
+
 @task
 def merge_sub_edit_style(video_id):
     """
@@ -137,11 +168,11 @@ def merge_sub_edit_style(video_id):
     :param video_id:
     :return:
     """
-    # 将中英srt格式的字幕合并为srt格式的字幕
+    # 将中英vtt格式的字幕合并为srt格式的字幕
     merge_subtitle_result = merge_video_subtitle(video_id)
     if merge_subtitle_result:
 
-        # 将srt字幕转换为ass格式字幕
+        # 将合并的srt字幕转换为ass格式字幕
         ass_subs_dir = srt_to_ass_process(video_id, merge_subtitle_result)
 
         # 修改双语字幕的式样

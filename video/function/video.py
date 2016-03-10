@@ -39,10 +39,10 @@ def download_upload_video(video_id):
     download_single_youtube_video_main(video_id)
     download_subtitle(video_id)
 
-    merge_sub_edit_style(video_id)
+    #merge_sub_edit_style(video_id)
 
     # 将字幕添加到视频上
-    add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans_en')
+    add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
 
     video = Video.objects.get(pk=video_id)
     set_youku_category_local(video.youku.id)

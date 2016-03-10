@@ -125,7 +125,11 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     def status_handler(old, new):
         print "From {0}% to {1}%".format(old, new)
 
-    runner.run_session(command = command, status_handler=status_handler)
+    result = runner.run_session(command = command,
+                                status_handler=status_handler)
+    return result
+
+
 
 
     # 能执行命令，但是不显示所有过程
@@ -156,7 +160,8 @@ def srt_to_ass(srt_file, ass_file):
     stdout, stderr = process.communicate()
 
     if stderr:
-        return stderr
+        print(stderr)
+        return False
     else:
         return ass_file
 

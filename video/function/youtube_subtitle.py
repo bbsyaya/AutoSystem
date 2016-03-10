@@ -27,7 +27,7 @@ def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
         # name the file the ID of the video
         'verbose': True,  # Print various debugging information
         'restrictfilenames': True,
-        'subtitleslangs': ['en', 'zh-Hans'],  # 要写成list的形式
+        'subtitleslangs': ['zh-Hans' ],  # 要写成list的形式
         # 'convertsubtitles': 'srt',
         'subtitlesformat': subtitlesformat,
         'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
