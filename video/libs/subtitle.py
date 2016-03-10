@@ -13,6 +13,7 @@ import pysubs2
 import ass
 
 from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+from video.libs.ffmpeg_runner import FFMPegRunner
 
 __author__ = 'GoTop'
 
@@ -113,34 +114,23 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
 
     # stderr can be STDOUT, which indicates that the stderr data from the child
     # process should be captured into the same file handle as for stdout.
-    process = subprocess.Popen(command,
-                               cwd=YOUTUBE_DOWNLOAD_DIR,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    # 无法启动程序
-    # while True:
-    #     out = process.stderr.read(1)
-    #     if out == '' and process.poll() != None:
-    #         break
-    #     if out != '':
-    #         sys.stdout.write(out)
-    #         sys.stdout.flush()
+    # process = subprocess.Popen(command,
+    #                            cwd=YOUTUBE_DOWNLOAD_DIR,
+    #                            stdout=subprocess.PIPE,
+    #                            stderr=subprocess.STDOUT)
 
-    # 能执行命令，但是不显示所有过程
-    for line in iter(process.stdout.readline, b''):
-        print '>>> {}'.format(line.rstrip())
 
+    runner = FFMPegRunner()
+
+    def status_handler(old, new):
+        print "From {0}% to {1}%".format(old, new)
+
+    runner.run_session(command = command, status_handler=status_handler)
 
 
     # 能执行命令，但是不显示所有过程
-    # while True:
-    #     output = process.stdout.readline()
-    #     if output == '' and process.poll() is not None:
-    #         break
-    #     if output:
-    #         print output.strip()
-    # rc = process.poll()
-    # return rc
+    # for line in iter(process.stdout.readline, b''):
+    #     print '>>> {}'.format(line.rstrip())
 
 
 def srt_to_ass(srt_file, ass_file):
@@ -206,8 +196,7 @@ def edit_two_lang_style(subtitle_file):
             utf8string = events.text.decode("utf-8")
             events.text = utf8string.replace(
                 r'\N',
-                r'\N{\fn方正综艺_GBK\fs14\b0\c&HFFFFFF&\3c&H2F2F2F&\4c'
-                r'&H000000&}'
+                r'\N{\fn方正综艺_GBK\fs14\b0\c&HFFFFFF&\3c&H2F2F2F&\4c&H000000&}'
             )
 
         with open(subtitle_file, "w") as f:
