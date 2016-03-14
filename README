@@ -72,6 +72,11 @@ potplay上也无法正常显示英文vtt字幕
 暂时只合并中文字幕到视频
 2016-3-10
 
+使用官方的youtube-dl (2016.3.6)能监测到自动字幕，但是使用修改版youtube-dl
+https://github.com/Don42/youtube-dl/commits/socks_handler_2016-03-03
+总是无法监测到字幕
+2016-3-14
+
 编写test
 
 研究Fabic部署，获取服务器ssh密钥
@@ -88,6 +93,8 @@ VPS是否能渲染1080p的视频
 youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8sY
 
 为celery的subtask加入retry的设置
+
+
 
 
 =============================================================================================

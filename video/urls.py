@@ -11,15 +11,15 @@ from django.conf.urls import patterns, url
 from . import views
 
 urlpatterns = [
-    ############################################################################################
+    ##########################################################################
     # YouTube
-    ############################################################################################
+    ##########################################################################
     # http://127.0.0.1:8000/video/search?q=gta&max_results=10
     url(r'search/(?P<q>\w+)/(?P<max_results>\d+)$', views.search_view,
         name='search'),
 
     #####################
-    # YouTube
+    # YouTube 获取视频信息
     #####################
     # http://127.0.0.1:8000/video/get_my_subscription
     url(r'get_my_subscription$',
@@ -40,7 +40,8 @@ urlpatterns = [
     # 1 如果没登陆django admin就访问这个页面，会被转到
     # http://127.0.0.1:8000/accounts/login/?next=/oauth2/authenticate
     # 提示Page not found (404)
-    # 2 如果没访问 127.0.0.1:8000/oauth2/authenticate 进行认证就直接访问该页面，会提示 int 错误
+    # 2 如果没访问 127.0.0.1:8000/oauth2/authenticate 进行认证就直接访问该页面，
+    # 会提示 int 错误
     url(r'get_subscription_update_video/(?P<max_results>\d+)$',
         youtube_view.get_subscription_update_video_view,
         name='my_youtube_homepage'),
@@ -60,7 +61,6 @@ urlpatterns = [
     url(r'auto_youtube_download/(?P<num>\d+)$',
         youtube_view.auto_youtube_download_view),
 
-
     # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
     url(r'download_subtitle/(?P<video_id>.+)$',
         youtube_view.download_subtitle_view, name='download_subtitle'),
@@ -70,9 +70,9 @@ urlpatterns = [
         youtube_view.get_multi_youtube_video_info_view,
         name=' get_multi_youtube_video_info'),
 
-    ############################################################################################
+    ###########################################################################
     # 字幕
-    ############################################################################################
+    ###########################################################################
     # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
     url(r'merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view,
         name='merge_subtitle'),
@@ -88,9 +88,9 @@ urlpatterns = [
         subtitle_view.merge_subtitle_to_video_view,
         name='merge_subtitle_to_video'),
 
-    ############################################################################################
+    ########################################################################
     # 优酷
-    ############################################################################################
+    #########################################################################
     # http://127.0.0.1:8000/video/youku_upload/1
     url(r'youku_upload/(?P<youku_id>.+)/$', youku_view.youku_upload_view,
         name='youku_upload'),
@@ -123,12 +123,11 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 
-    ############################################################################################
+    #########################################################################
     # 综合操作
-    ############################################################################################
+    #########################################################################
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
-
 
     # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
     url(r'download_upload_video/(?P<video_id>.+)$',

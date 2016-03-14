@@ -7,6 +7,9 @@ from video.models import Video, YT_channel
 import youtube_dl
 from video.function.file import search_keyword_in_file
 
+def my_hook(d):
+    if d['status'] == 'finished':
+        print('Done downloading, now converting ...')
 
 @task
 def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
@@ -31,7 +34,8 @@ def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
         # 'convertsubtitles': 'srt',
         'subtitlesformat': subtitlesformat,
         'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
-        'skip_download': True,}
+        'skip_download': True,
+        'progress_hooks': [my_hook],}
 
     # 如果是本地debug状态则使用代理
     if DEBUG == True:
