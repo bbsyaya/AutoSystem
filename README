@@ -94,6 +94,9 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 为celery的subtask加入retry的设置
 
+上传到youku时显示进度
+
+
 
 
 

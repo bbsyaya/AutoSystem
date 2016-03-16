@@ -124,7 +124,9 @@ class Video(models.Model):
             # 如果要获取的tags数num比tags中包含的词组要少，则截取tags_list中的num个tags
             if len(tags_list) > num:
                 tags_list = tags_list[:num]
-            return ', '.join(tags_list)
+
+            #要用中文的，不能用英文的,否则优酷会认为每个英文是一个tag
+            return '， '.join(tags_list)
         else:
             return False
 
@@ -216,7 +218,7 @@ class Youku(models.Model):
                              help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.CharField(max_length=50, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多 12 "
-                                      "个字符（6个汉字），多个标签之间用逗号(,)隔开，上传时必选"
+                                      "个字符（6个汉字），多个标签之间用中文的逗号(,)隔开，上传时必选"
                             )
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')

@@ -22,7 +22,9 @@ class YoukuInline(admin.StackedInline):
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'show_thumbnail', 'publishedAt',
+        'title',
+        # 'show_thumbnail',
+        'publishedAt',
         'duration_readable', 'youtube_url',
         'allow_upload_youku',
         'download_youtube_url', 'download_subtitle_url',
@@ -32,12 +34,12 @@ class VideoAdmin(admin.ModelAdmin):
         'download_upload_video_url')
     list_editable = ['allow_upload_youku']
 
-    readonly_fields = ('title','description','thumbnail',
-        'publishedAt', 'youtube_url', 'duration_readable',
-        'view_count','channel',
-        'like_count', 'tags_readable')
+    readonly_fields = ('title', 'description', 'thumbnail',
+                       'publishedAt', 'youtube_url', 'duration_readable',
+                       'view_count', 'channel',
+                       'like_count', 'tags_readable')
     list_per_page = 10
-    search_fields = ('title','video_id') # 只能是model中的text field
+    search_fields = ('title', 'video_id')  # 只能是model中的text field
     inlines = [YoukuInline, ]
 
     # 在change和edit页面显示哪些field
@@ -149,7 +151,6 @@ class VideoAdmin(admin.ModelAdmin):
         else:
             return "-"
 
-
     merge_subtitle.allow_tags = True
     merge_subtitle.short_description = '合并中英字幕'
 
@@ -157,7 +158,7 @@ class VideoAdmin(admin.ModelAdmin):
         if obj.subtitle_video_file:
             return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % \
                    obj.subtitle_video_file
-        elif obj.file and obj.subtitle_cn :
+        elif obj.file and obj.subtitle_cn:
             merge_subtitle_to_video_url = reverse(
                 'video:merge_subtitle_to_video',
                 args=[obj.video_id, 'zh-Hans'])

@@ -63,6 +63,8 @@ def youku_upload(youku_id, max_retey = 8):
         else:
             youku.tags = youku.video.get_tags(9)
 
+    #youku.tags = "youku，dreaming"
+
     # tags = youku.tags
 
     # 参数 http://cloud.youku.com/docs?id=110

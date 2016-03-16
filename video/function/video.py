@@ -45,6 +45,10 @@ def download_upload_video(video_id):
     add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
 
     video = Video.objects.get(pk=video_id)
-    set_youku_category_local(video.youku.id)
+
+    if hasattr(video, 'youku'):
+        set_youku_category_local(video.youku.id)
+    else:
+        print('该视频未设置youku信息，无法上传到优酷')
 
     youku_upload(video.youku.id)
