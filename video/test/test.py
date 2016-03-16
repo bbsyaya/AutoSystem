@@ -42,6 +42,9 @@ __author__ = 'GoTop'
 # print(os.path.getsize(file))
 
 
-input = 'input.vtt'
-output = 'ouput.srt'
-convert_file(input, output)
+# input = 'input.vtt'
+# output = 'ouput.srt'
+# convert_file(input, output)
+
+tags = ["Amazon", "new", "march", "shows", "movies", "tv", "Streaming"]
+print(len(tags))

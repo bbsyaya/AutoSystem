@@ -13,12 +13,12 @@ class NeedUploadToYoukuManager(models.Manager):
         # 未下载过，并且未上传到优酷网(youku__youku_video_id='')的video
         need_upload_to_youku_queryset = super(NeedUploadToYoukuManager,
                                               self).get_queryset().filter(
-                # 在SQLite数据库中，django model BooleanField True对应1，False对应0
-                # 不知道在Django1.7之后的版本是否修改该bug
-                allow_upload_youku=1,
-                file = '',
-                youku__isnull=False,
-                youku__youku_video_id='')
+            # 在SQLite数据库中，django model BooleanField True对应1，False对应0
+            # 不知道在Django1.7之后的版本是否修改该bug
+            allow_upload_youku=1,
+            file='',
+            youku__isnull=False,
+            youku__youku_video_id='')
 
         return need_upload_to_youku_queryset
 
@@ -28,7 +28,7 @@ class NeedGetVideoInfoManager(models.Manager):
     def get_queryset(self):
         need_get_video_info_queryset = super(NeedGetVideoInfoManager,
                                              self).get_queryset().filter(
-                duration=None)
+            duration=None)
 
         return need_get_video_info_queryset
 
@@ -36,7 +36,7 @@ class NeedGetVideoInfoManager(models.Manager):
 class DownloadedManager(models.Manager):
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().exclude(
-                file='')
+            file='')
 
 
 # Create your models here.
@@ -117,15 +117,16 @@ class Video(models.Model):
         :param num:
         :return:
         """
-        if len(self.tags) < 20:
-            num = len(self.tags)
         # 将list格式的tags转化为用逗号分隔形式是string
         if self.tags:
             jsonDec = json.decoder.JSONDecoder()
-            tags_list = jsonDec.decode(self.tags)[:num]
+            tags_list = jsonDec.decode(self.tags)
+            # 如果要获取的tags数num比tags中包含的词组要少，则截取tags_list中的num个tags
+            if len(tags_list) > num:
+                tags_list = tags_list[:num]
             return ', '.join(tags_list)
         else:
-            return self.tags
+            return False
 
     def delete_associate_video(self):
         """
@@ -231,10 +232,11 @@ class Youku(models.Model):
                                  blank=True)
 
     setted_youku_playlist = models.ForeignKey('YoukuPlaylist',
-                                           related_name='setted_youku_playlist',
-                                           on_delete=models.SET_NULL, null=True,
-                                           blank=True, help_text=
-                                           "设置该视频所属的Playlist")
+                                              related_name='setted_youku_playlist',
+                                              on_delete=models.SET_NULL,
+                                              null=True,
+                                              blank=True, help_text=
+                                              "设置该视频所属的Playlist")
     youku_playlist = models.ForeignKey('YoukuPlaylist',
                                        related_name='youku_playlist_online',
                                        on_delete=models.SET_NULL, null=True,
