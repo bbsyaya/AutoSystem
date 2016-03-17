@@ -3,13 +3,16 @@ anyjson==0.3.3
 ass==0.4.2
 Babel==2.2.0
 backports.ssl-match-hostname==3.5.0.1
+beautifulsoup4==4.4.1
 billiard==3.3.0.22
 celery==3.1.20
 certifi==2015.11.20.1
 cffi==1.3.1
 chardet==2.3.0
 cryptography==1.1.2
+cssutils==1.0.1
 Django==1.8.9
+django-adminbrowse==0.1.2
 django-autoslug==1.7.2
 django-celery==3.1.17
 django-cleanup==0.4.2
@@ -20,6 +23,8 @@ django-youtube==0.2
 ecdsa==0.13
 enum34==1.1.1
 Fabric==1.10.2
+factory-boy==2.6.1
+fake-factory==0.5.3
 feedparser==5.1.3
 flower==0.8.4
 futures==3.0.4
@@ -30,6 +35,8 @@ idna==2.0
 ipaddress==1.0.15
 isodate==0.5.4
 kombu==3.0.33
+lxml==3.4.4
+model-mommy==1.2.6
 ndg-httpsclient==0.4.0
 oauth2==1.9.0.post1
 oauth2client==1.5.2
@@ -40,9 +47,11 @@ progressbar==2.3
 py-oauth2==0.0.10
 pyasn1==0.1.9
 pyasn1-modules==0.0.8
+pycaption==0.5.5
 pycparser==2.14
 pycrypto==2.6.1
 pyOpenSSL==0.15.1
+PySocks==1.5.6
 pysrt==1.0.1
 pysubs2==0.2.1
 python-dateutil==2.4.2
@@ -51,8 +60,8 @@ pytz==2015.7
 redis==2.10.5
 requests==2.8.1
 requests-oauthlib==0.5.0
-rsa==3.2.3
-simplejson==3.8.1
+rsa==3.3
+simplejson==3.8.2
 six==1.10.0
 sqlparse==0.1.18
 srt==0.0.7
@@ -60,4 +69,5 @@ tornado==4.2
 uritemplate==0.6
 wheel==0.29.0
 youku==0.0.8
-youtube-dl==2016.2.13
+youtube-dl==2016.3.1
+youtube-upload==0.8.0
