@@ -9,3 +9,17 @@ DEBUG = False
 INSTALLED_APPS += (
     # other apps for production site
 )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'autosystem',
+        'USER': 'autosystemuser',
+        'PASSWORD': 'The19840520',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+
+ALLOWED_HOSTS = ['*']

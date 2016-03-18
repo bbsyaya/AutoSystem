@@ -238,3 +238,6 @@ __pycache__/
 
 #static 目录下的也不要加入git
 static/
+
+# local and server have difference __init__.py
+AutoSystem/settings/__init__.py
