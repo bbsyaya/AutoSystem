@@ -221,6 +221,7 @@ pip-log.txt
 .idea/workspace.xml
 /.idea/*
 /.idea/
+./.idea/*
 
 
 #############
