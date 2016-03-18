@@ -5,6 +5,8 @@ __author__ = 'GoTop'
 
 from .base import *
 
+MEDIA_ROOT = 'E:/media/'
+
 # from AutoSystem.settings.flowerconfig import  *
 
 DATABASES = {
@@ -19,6 +21,14 @@ DEBUG = True
 INSTALLED_APPS += (
     # 'debug_toolbar', # and other apps for local development
 )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 

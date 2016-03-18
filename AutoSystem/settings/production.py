@@ -5,6 +5,8 @@ __author__ = 'GoTop'
 
 from .base import *
 
+MEDIA_ROOT = '/home/gotop/Media/'
+
 DEBUG = False
 INSTALLED_APPS += (
     # other apps for production site
