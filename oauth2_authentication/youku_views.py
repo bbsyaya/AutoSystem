@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response
 __author__ = 'GoTop'
 
 from django.contrib.auth.decorators import login_required
-from AutoSystem.settings.base import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
+from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
 
 from pyoauth2 import Client
 import django_settings

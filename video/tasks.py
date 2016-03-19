@@ -87,7 +87,7 @@ if __name__ == '__main__':
     import os
     import django
 
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings.base")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
     django.setup()
 
     auto_download_upload_video(10)

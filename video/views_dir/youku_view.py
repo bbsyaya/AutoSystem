@@ -6,7 +6,7 @@ from datetime import datetime
 from django.db.models import Q
 from django.shortcuts import render, render_to_response
 from youku import YoukuVideos, YoukuUpload, YoukuPlaylists
-from AutoSystem.settings.base import YOUKU_CLIENT_ID
+from AutoSystem.settings import YOUKU_CLIENT_ID
 from oauth2_authentication.function.youku import youku_get_authenticate
 from video.function.youku import set_youku_category_local, youku_upload, \
     update_youku_online_info, set_youku_playlist_online, \

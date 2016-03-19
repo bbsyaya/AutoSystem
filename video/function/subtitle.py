@@ -7,7 +7,7 @@ from celery import task
 import django
 
 from django.utils.text import slugify, get_valid_filename
-from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.libs.subtitle import merge_subtitle, add_subtitle_to_video, \
     srt_to_ass, edit_two_lang_style
 from video.models import Video

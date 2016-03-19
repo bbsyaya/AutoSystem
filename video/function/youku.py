@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 from celery import task
 
 from oauth2_authentication.function.youku import youku_get_authenticate
-from AutoSystem.settings.base import YOUKU_CLIENT_ID
+from AutoSystem.settings import YOUKU_CLIENT_ID
 from youku import YoukuUpload, YoukuVideos, YoukuPlaylists
 
 CLIENT_ID = YOUKU_CLIENT_ID

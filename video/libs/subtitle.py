@@ -12,7 +12,7 @@ from pysrt import SubRipFile, SubRipItem, SubRipTime
 import pysubs2
 import ass
 
-from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.libs.ffmpeg_runner import FFMPegRunner
 
 __author__ = 'GoTop'

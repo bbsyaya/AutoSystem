@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 import django_settings
 from pyoauth2 import Client
-from AutoSystem.settings.base import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
+from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
 
 __author__ = 'GoTop'
 

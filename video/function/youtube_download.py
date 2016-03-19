@@ -2,8 +2,8 @@
 from __future__ import unicode_literals, absolute_import
 from celery import task
 
-from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
-from AutoSystem.settings.base import DEBUG
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings import DEBUG
 
 from video.models import Video
 import youtube_dl

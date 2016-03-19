@@ -4,7 +4,7 @@ import json
 import isodate as isodate
 import simplejson
 from AutoSystem import settings
-from AutoSystem.settings.base import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.function.subtitle import add_subtitle_to_video
 from video.models import Video, YT_channel
 import youtube_dl

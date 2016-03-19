@@ -208,7 +208,7 @@ from django.utils.log import DEFAULT_LOGGING
 
 LOGGING = copy.deepcopy(DEFAULT_LOGGING)
 LOGGING['filters']['suppress_deprecated'] = {
-    '()': 'AutoSystem.settings.base.SuppressDeprecated'
+    '()': 'AutoSystem.settings.SuppressDeprecated'
 }
 LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
 
