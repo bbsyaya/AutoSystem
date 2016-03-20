@@ -96,9 +96,12 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 上传到youku时显示进度
 
+youtube 的Credentials的Authorized redirect URIs必须是顶级域名:
+Invalid Redirect: http://106.185.37.62/oauth2/oauth2callback must end with a public top-level domain (such as .com or .org)
+买个域名还是将本地数据库中auth2_authentication_credectial里的值复制到服务器上的数据库中？
+已用后者搞定。
 
-
-
+远程debug
 
 =============================================================================================
 

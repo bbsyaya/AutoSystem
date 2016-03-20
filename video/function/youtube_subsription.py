@@ -13,15 +13,19 @@ def get_subscription_update_video(user, max_results):
     :param request:
     :return:
     """
-    youtube = get_authenticated_service(
-        user)  # home: This parameter can only be used in a properly
+    youtube = get_authenticated_service(user)
+    # home: This parameter can only be used in a properly
     # authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on
     # the YouTube home page for the currently authenticated user.
-    res = youtube.activities().list(
+
+    if youtube:
+        res = youtube.activities().list(
         part='snippet, contentDetails',
-        home=True,
-        maxResults=max_results).execute()
+            home=True,
+            maxResults=max_results).execute()
+    else:
+        return False
 
     # 循环获取完所有的结果
     nextPageToken = res.get('nextPageToken')

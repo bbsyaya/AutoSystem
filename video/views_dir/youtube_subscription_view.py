@@ -16,7 +16,7 @@ def get_my_subscription_view(request):
     :return:
     """
     max_results = 10
-    youtube = get_authenticated_service(request)
+    youtube = get_authenticated_service(request.user)
     res = youtube.subscriptions().list(part='snippet',
                                        mine=True,
                                        maxResults=max_results).execute()

@@ -17,10 +17,16 @@ def get_subscription_update_video_view(request, max_results):
     :param request:
     :return:
     """
-    video_list = get_subscription_update_video(request.user, max_results)
+    result = get_subscription_update_video(request.user, max_results)
+
+    if result:
+        video_list = result
+        text = '以下视频已保存'
+    else:
+        text = '获取youtube视频信息失败'
 
     return render_to_response('result.html',
-                              {'text': '以下视频已保存',
+                              {'text': text,
                                'dict_in_list': video_list})
 
 

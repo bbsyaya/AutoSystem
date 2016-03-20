@@ -33,25 +33,6 @@ YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 
-def get_authenticated_service(user):
-    """
-    让用户到google上进行认证，返回认证后的http服务
-    :param request:
-    :return:
-    """
-    storage = Storage(CredentialsModel, 'id', user, 'credential')
-    credential = storage.get()
-
-    if credential is None or credential.invalid is True:
-        result = None
-    else:
-        http = httplib2.Http()
-        http = credential.authorize(http)
-        service = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, http=http)
-        result = service
-    return result
-
-
 @login_required
 def authenticate_view(request):
     """
@@ -84,6 +65,25 @@ def authenticate_view(request):
         # 如果返回的是认证后的service，则显示成功获取的文字即可
         return render_to_response('result.html',
                                   {'text': '本地保存有认证文件'})
+
+
+def get_authenticated_service(user):
+    """
+    让用户到google上进行认证，返回认证后的http服务
+    :param request:
+    :return:
+    """
+    storage = Storage(CredentialsModel, 'id', user, 'credential')
+    credential = storage.get()
+
+    if credential is None or credential.invalid is True:
+        result = None
+    else:
+        http = httplib2.Http()
+        http = credential.authorize(http)
+        service = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, http=http)
+        result = service
+    return result
 
 
 @login_required

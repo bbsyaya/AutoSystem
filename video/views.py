@@ -16,7 +16,7 @@ def search_view(request, q, max_results):
     :param max_results:
     :return:
     """
-    youtube = get_authenticated_service(request)
+    youtube = get_authenticated_service(request.user)
     search_response = youtube.search().list(
         q=q,
         part="id,snippet",
@@ -51,7 +51,7 @@ def my_homepage_subscription_view(request, max_results):
     :param request:
     :return:
     """
-    youtube = get_authenticated_service(request)
+    youtube = get_authenticated_service(request.user)
 
     # home: This parameter can only be used in a properly authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on
@@ -82,7 +82,7 @@ def my_watchlater_lists_view(request, max_results):
     :param max_results:
     :return:
     """
-    youtube = get_authenticated_service(request)
+    youtube = get_authenticated_service(request.user)
 
     # Retrieve the contentDetails part of the channel resource for the
     # authenticated user's channel.

@@ -21,8 +21,8 @@ def get_subscription_update_video(user, max_results):
     :param request:
     :return:
     """
-    youtube = get_authenticated_service(
-        user)  # home: This parameter can only be used in a properly
+    youtube = get_authenticated_service(user)
+    # home: This parameter can only be used in a properly
     # authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on
     # the YouTube home page for the currently authenticated user.
@@ -232,7 +232,8 @@ def download_single_youtube_video_main(video_id):
 
         # 只适用于subtitlesformat设置为srt或ass的情况，设置为best则失效
         # 字幕名称格式 LG K10 and K7 hands-on-_9coAtC2PZI.en.srt
-        # subtitle_en_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
+        # subtitle_en_filepath = search_keyword_in_file(
+        # dir=YOUTUBE_DOWNLOAD_DIR,
         #                                               keyword=video.video_id
         #                                                       + ".en",
         #                                               extend=options.get(
