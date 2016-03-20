@@ -65,8 +65,6 @@ check 2016-2-18
 
 解决ffmpeg命令在windows上使用绝对路径的问题 (解决方法，使用硬写入)check 2016-2-23
 
-解决ffmpeg合并ass字幕时的字体目录问题
-
 youtube上的英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码，暂时不知道该如何处理。
 potplay上也无法正常显示英文vtt字幕
 暂时只合并中文字幕到视频
@@ -93,6 +91,9 @@ check 2016-3-20
 开始部署到VPS上
 check 2016-3-20
 
+将youtube playlist是否下载的设置导入production环境
+check 2016-3-20
+
 编写test
 
 研究Fabic部署，获取服务器ssh密钥
@@ -102,6 +103,7 @@ VPS是否能渲染1080p的视频
 
 在本机上测试celery+redis运行对应函数
 
+解决ffmpeg合并ass字幕时的字体目录问题
 
 youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8sY
 
@@ -118,7 +120,7 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist
 上传视频到优酷后，使用celery延时设置playlist即可
 
-将youtube playlist是否下载的设置导入production环境
+
 
 http://127.0.0.1:8000/admin/video/video/QTCJJiZrNYo/?_changelist_filters=p%3D1
 等部分视频下载视频信息时，未关联到对应的yt_channel

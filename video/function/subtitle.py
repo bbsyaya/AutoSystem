@@ -82,7 +82,7 @@ def merge_video_subtitle(video_id):
 @task
 def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     """
-    将video_id对应的视频的字幕，硬入到对应的视频中
+    将video_id对应的视频的vtt字幕转为ass格式，然后硬入到对应的视频中
 
     :param video_id:
     :param subtitle_type: (en,zh-Hans,zh-Hans_en)
@@ -90,6 +90,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     """
     video = Video.objects.get(pk=video_id)
 
+    # 如果要求写入的中文字幕，而且中文字幕存在
     if sub_lang_type == 'zh-Hans' and video.subtitle_cn.name:
         subtitle_file = video.subtitle_cn.path
 
@@ -104,13 +105,14 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     # elif sub_lang_type == 'en' and video.subtitle_en.name:
     #     subtitle_file = video.subtitle_en.path
     elif sub_lang_type == 'zh-Hans_en' and video.subtitle_merge.name:
+        #如果要求写入的中文和英文的合并字幕，而且合并字幕存在
         subtitle_file = video.subtitle_merge.path
     else:
         # 如果获取不到subtitle_file，则返回False
         return False
 
     if (video.file.name):
-        # 获取到文件名称
+        # 获取到视频文件名称
         file_basename = os.path.basename(video.file.path)
     else:
         return False
