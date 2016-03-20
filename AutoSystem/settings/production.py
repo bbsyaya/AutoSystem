@@ -5,9 +5,11 @@ __author__ = 'GoTop'
 
 from .base import *
 
+SETTING_FILE = 'production'
+
 MEDIA_ROOT = '/home/gotop/Media/'
 
-DEBUG = False
+DEBUG = True
 INSTALLED_APPS += (
     # other apps for production site
 )
@@ -24,9 +26,9 @@ DATABASES = {
 }
 
 
-YOUTUBE_DOWNLOAD_DIR = '/home/gotop/Media/Video/YouTube'
+YOUTUBE_DOWNLOAD_DIR = '/home/gotop/Media/Video/YouTube/'
 
-
+FFMPEG_LOCATION = "/usr/bin/ffmpeg"
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
 # &response_type=code&redirect_uri=http
 # ://127.0.0.1:8000

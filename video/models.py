@@ -51,7 +51,7 @@ class Video(models.Model):
 
     view_count = models.CharField(max_length=10, blank=True)
     like_count = models.CharField(max_length=10, blank=True)
-    tags = models.CharField(max_length=100, blank=True)
+    tags = models.TextField(max_length=200, blank=True)
     duration = models.IntegerField(blank=True, null=True,
                                    help_text='视频时长，单位是s')
 
@@ -151,7 +151,7 @@ class Video(models.Model):
 class YT_channel(models.Model):
     channel_id = models.URLField(max_length=100, primary_key=True)
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=300, blank=True)
+    description = models.TextField(max_length=500, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
     category = models.ForeignKey('Category', null=True, blank=True)
     is_download = models.NullBooleanField(null=True, blank=True)

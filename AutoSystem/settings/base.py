@@ -58,9 +58,9 @@ INSTALLED_APPS = (
     # 'adminbrowse',
 
     # 'django_youtube',
-    'oauth2_authentication',
+    #'oauth2_authentication',
     'video',
-
+    'oauth2_authentication',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -103,7 +103,6 @@ USE_TZ = True
 # django.contrib.staticfiles 要求设置STATIC_ROOT和MEDIA_ROOT，这样能自动收集所有的静态文件到指定的目录下
 STATIC_ROOT = BASE_DIR + '/static/'
 
-MEDIA_ROOT = 'E:/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

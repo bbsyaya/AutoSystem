@@ -45,7 +45,7 @@ def get_my_subscription_view(request):
                 channel_id=subscription['resourceId']['channelId'],
                 defaults={'title': subscription['title'],
                           'description': subscription['description'],
-                          'thumbnails': subscription['thumbnails']['default']['url']
+                          'thumbnail': subscription['thumbnails']['default']['url']
                           }
         )
 

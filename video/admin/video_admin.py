@@ -38,7 +38,7 @@ class VideoAdmin(admin.ModelAdmin):
                        'publishedAt', 'youtube_url', 'duration_readable',
                        'view_count', 'channel',
                        'like_count', 'tags_readable')
-    list_per_page = 10
+    list_per_page = 20
     search_fields = ('title', 'video_id')  # 只能是model中的text field
     inlines = [YoukuInline, ]
 

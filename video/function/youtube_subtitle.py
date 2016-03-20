@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from celery import task
-from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
 from AutoSystem.settings import DEBUG
 from video.models import Video, YT_channel
 import youtube_dl
@@ -26,7 +26,7 @@ def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
 
     video = Video.objects.get(video_id=video_id)
     options = {
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '%(title)s-%(id)s.%(ext)s',
         # name the file the ID of the video
         'verbose': True,  # Print various debugging information
         'restrictfilenames': True,
@@ -38,7 +38,7 @@ def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
         'progress_hooks': [my_hook],}
 
     # 如果是本地debug状态则使用代理
-    if DEBUG == True:
+    if SETTING_FILE == 'local':
         options['socksproxy'] = '127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:

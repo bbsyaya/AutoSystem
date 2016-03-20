@@ -23,6 +23,7 @@ def get_subscription_update_video_view(request, max_results):
         video_list = result
         text = '以下视频已保存'
     else:
+        video_list = []
         text = '获取youtube视频信息失败'
 
     return render_to_response('result.html',

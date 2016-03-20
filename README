@@ -77,18 +77,31 @@ https://github.com/Don42/youtube-dl/commits/socks_handler_2016-03-03
 总是无法监测到字幕
 2016-3-14
 
+youtube 的Credentials的Authorized redirect URIs必须是顶级域名:
+Invalid Redirect: http://106.185.37.62/oauth2/oauth2callback must end with a public top-level domain (such as .com or .org)
+买个域名还是将本地数据库中auth2_authentication_credectial里的值复制到服务器上的数据库中？
+已用后者搞定。
+check 2016-3-20
+
+远程debug
+check 2016-3-20
+
+本地和vps上的settings文件不一样，导入settings中变量的代码也不一样，怎么解决？
+使用settings目录下__init__.py文件导入各类setting的方法
+check 2016-3-20
+
+开始部署到VPS上
+check 2016-3-20
+
 编写test
 
 研究Fabic部署，获取服务器ssh密钥
 http://tutos.readthedocs.org/en/latest/source/ndg.html
 
-开始部署到VPS上
-
 VPS是否能渲染1080p的视频
 
 在本机上测试celery+redis运行对应函数
 
-本地和vps上的settings文件不一样，导入settings中变量的代码也不一样，怎么解决？
 
 youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8sY
 
@@ -96,12 +109,9 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 上传到youku时显示进度
 
-youtube 的Credentials的Authorized redirect URIs必须是顶级域名:
-Invalid Redirect: http://106.185.37.62/oauth2/oauth2callback must end with a public top-level domain (such as .com or .org)
-买个域名还是将本地数据库中auth2_authentication_credectial里的值复制到服务器上的数据库中？
-已用后者搞定。
+设置断点时无法正确映射到remote server（大小写问题）
 
-远程debug
+提高日本linode 上下载youtube视频的速度，目前只有150KiB/s
 
 =============================================================================================
 

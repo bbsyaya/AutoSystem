@@ -2,8 +2,8 @@
 from __future__ import unicode_literals, absolute_import
 from celery import task
 
-from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
-from AutoSystem.settings import DEBUG
+from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
+from AutoSystem.settings import FFMPEG_LOCATION
 
 from video.models import Video
 import youtube_dl
@@ -62,7 +62,7 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
         # 'audioformat': "mp3",  # convert to mp3
         # You must use %(stitle)s (and not %(title)s) to insert the video title
         # in the --output template. The "s" one is sanitized for filesystems.
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '\%(title)s-%(id)s.%(ext)s',
+        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '%(title)s-%(id)s.%(ext)s',
         # name the file the ID of the video
         'restrictfilenames': True,
         'noplaylist': True,  # only download single song, not playlist
@@ -74,12 +74,14 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
         # mkv and mp4 videos
         'merge_output_format': file_extend,
         'prefer_ffmpeg': True,
-        'ffmpeg_location': "E:\\Program Files\\ffmpeg\\bin",
+
+        'ffmpeg_location': FFMPEG_LOCATION,
+
         # 'progress_hooks': [my_hook],
     }
 
     # 如果是本地debug状态则使用代理
-    if DEBUG == True:
+    if SETTING_FILE == 'local':
         options['socksproxy'] = '127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:

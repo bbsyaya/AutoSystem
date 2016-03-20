@@ -5,6 +5,8 @@ __author__ = 'GoTop'
 
 from .base import *
 
+SETTING_FILE = 'local'
+
 MEDIA_ROOT = 'E:/media/'
 
 # from AutoSystem.settings.flowerconfig import  *
@@ -15,7 +17,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 DEBUG = True
 INSTALLED_APPS += (
@@ -29,9 +30,8 @@ DATABASES = {
     }
 }
 
-
 YOUTUBE_DOWNLOAD_DIR = 'E:\media\Video\YouTube'
-
+FFMPEG_LOCATION = 'E:\\Program Files\\ffmpeg\\bin'
 
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
 # &response_type=code&redirect_uri=http
@@ -40,7 +40,6 @@ YOUTUBE_DOWNLOAD_DIR = 'E:\media\Video\YouTube'
 # 再用post的方式，用Authorization Code去获取access token
 YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
 YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"
-
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
