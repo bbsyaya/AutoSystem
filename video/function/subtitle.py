@@ -1,17 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 import os
-
 from celery import task
-
 import django
-
 from django.utils.text import slugify, get_valid_filename
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.libs.subtitle import merge_subtitle, add_subtitle_to_video, \
-    srt_to_ass, edit_two_lang_style
+    srt_to_ass, edit_two_lang_style, edit_cn_ass_subtitle_style
 from video.models import Video
-
 from video.libs.convert_subtitles import convert_file
 
 __author__ = 'GoTop'
@@ -95,17 +91,19 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
         subtitle_file = video.subtitle_cn.path
 
         ass_filename = '%s-%s.zh-Hans.ass' % (
-        get_valid_filename(video.title), video_id)
+            get_valid_filename(video.title), video_id)
 
         ass_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, ass_filename)
 
         subtitle_file = srt_to_ass(subtitle_file, ass_subs_dir)
+
+        subtitle_file = edit_cn_ass_subtitle_style(subtitle_file)
         # youtube上的英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码
         # 暂时不知道该如何处理，所以只合并中文字幕到视频
     # elif sub_lang_type == 'en' and video.subtitle_en.name:
     #     subtitle_file = video.subtitle_en.path
     elif sub_lang_type == 'zh-Hans_en' and video.subtitle_merge.name:
-        #如果要求写入的中文和英文的合并字幕，而且合并字幕存在
+        # 如果要求写入的中文和英文的合并字幕，而且合并字幕存在
         subtitle_file = video.subtitle_merge.path
     else:
         # 如果获取不到subtitle_file，则返回False

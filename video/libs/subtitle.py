@@ -209,3 +209,33 @@ def edit_two_lang_style(subtitle_file):
 
         if os.path.exists(subtitle_file):
             return subtitle_file
+
+def edit_cn_ass_subtitle_style(subtitle_file):
+    """
+    为ass格式的中文字幕设置style
+    :param subtitle_file:
+    :return:
+    """
+
+    with open(subtitle_file, "r") as f:
+        subtitle = ass.parse(f)
+
+        print(subtitle.styles)
+
+        subtitle.styles[0].fontname = '方正黑体_GBK'
+        subtitle.styles[0].fontsize = 21
+        subtitle.styles[0].primary_color = '&H00FFFFFF'
+        subtitle.styles[0].secondary_color = '&HF0000000'
+        subtitle.styles[0].outline_color = '&H006C3300'
+        subtitle.styles[0].back_color = '&H00000000'
+        subtitle.styles[0].bold = -1
+        subtitle.styles[0].border_style = 1
+        subtitle.styles[0].outline = 2
+        subtitle.styles[0].shadow = 1
+        subtitle.styles[0].alignment = 2
+
+        with open(subtitle_file, "w") as f:
+            subtitle.dump_file(f)
+
+        if os.path.exists(subtitle_file):
+            return subtitle_file
