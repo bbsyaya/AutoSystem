@@ -32,7 +32,7 @@ def download_multi_youtube_video_main(num):
 
 @task
 def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
-'mkv'):
+'mp4'):
     """
     下载单个youtube视频，并将下载后的视频文件的目录保存到Video.file
     :param video_id:
