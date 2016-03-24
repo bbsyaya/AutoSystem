@@ -58,9 +58,8 @@ INSTALLED_APPS = (
     # 'adminbrowse',
 
     # 'django_youtube',
-    #'oauth2_authentication',
-    'video',
     'oauth2_authentication',
+    'video',
 )
 
 MIDDLEWARE_CLASSES = (

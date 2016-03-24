@@ -40,6 +40,7 @@ FFMPEG_LOCATION = 'E:\\Program Files\\ffmpeg\\bin'
 # 再用post的方式，用Authorization Code去获取access token
 YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
 YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"
+REDIRECT_URL = 'http://127.0.0.1:8000/oauth2/youku_oauth2callback'
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 

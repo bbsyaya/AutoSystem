@@ -34,9 +34,9 @@ FFMPEG_LOCATION = "/usr/bin/ffmpeg"
 # ://127.0.0.1:8000
 # 可获得Authorization Code
 # 再用post的方式，用Authorization Code去获取access token
-YOUKU_CLIENT_ID = "a6aeb5ff9627346b"
-YOUKU_CLIENT_SECRET = "1c2c6330b65fdb2a4cd3e20dee8fac22"
-REDIRECT_URL = 'http://106.185.37.62/oauth2/youku_oauth2callback'
+YOUKU_CLIENT_ID = "77e7308f29201c63"
+YOUKU_CLIENT_SECRET = "0dbdd25be16ee0bc7aa6427b3d04148b"
+REDIRECT_URL = 'http://139.162.49.187/oauth2/youku_oauth2callback'
 
 
 ALLOWED_HOSTS = ['*']

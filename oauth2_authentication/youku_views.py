@@ -7,14 +7,15 @@ from django.shortcuts import render_to_response
 __author__ = 'GoTop'
 
 from django.contrib.auth.decorators import login_required
-from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
+from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET, \
+    REDIRECT_URL
 
 from pyoauth2 import Client
 import django_settings
 
 CLIENT_ID = YOUKU_CLIENT_ID
 CLIENT_SECRET = YOUKU_CLIENT_SECRET
-REDIRECT_URL = 'http://127.0.0.1:8000/oauth2/youku_oauth2callback'
+
 SCOPE = ''
 
 YOUKU_AUTHORIZE_URL = 'https://openapi.youku.com/v2/oauth2/authorize'
@@ -57,10 +58,12 @@ def youku_oauth2callback_view(request):
     access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
 
     access_token_string = access_token.token
-    django_settings.set('String', 'youku_access_token', access_token_string, False)
+    django_settings.set('String', 'youku_access_token', access_token_string,
+                        False)
 
     # 由youku认证页面转来的，没有request.META.HTTP_REFERER变量
     # 所以无法设置其返回前面的页面
     # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return render_to_response('result.html',
-                              {'text': "Access Token: %s , 已保存到django setting 数据库里" % access_token_string})
+                              {
+                                  'text': "Access Token: %s , 已保存到django setting 数据库里" % access_token_string})

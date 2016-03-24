@@ -30,6 +30,6 @@ def youku_get_authenticate():
     if youku_access_token is None:
         # 到youku获取access token
         # 但是转到youku的认证页面之后再也无法转回来了
-        return HttpResponseRedirect(reverse('oauth2_authentication:youku_authenticate'))
+        return HttpResponseRedirect(reverse('youku_authenticate'))
     else:
         return youku_access_token
