@@ -30,6 +30,4 @@ urlpatterns = patterns(
 
     # http://127.0.0.1:8000/oauth2/youku_oauth2callback
     url(r'^youku_oauth2callback', youku_views.youku_oauth2callback_view),
-
-
 )

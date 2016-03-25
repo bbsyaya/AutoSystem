@@ -295,4 +295,6 @@ static/
 # local and server have difference __init__.py
 AutoSystem/settings/__init__.py
 
+fabfile.py
+
 

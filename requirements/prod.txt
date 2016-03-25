@@ -29,6 +29,7 @@ flower==0.8.4
 futures==3.0.4
 gdata==2.0.18
 google-api-python-client==1.4.2
+gunicorn==19.4.5
 httplib2==0.9.2
 idna==2.0
 ipaddress==1.0.15
@@ -43,6 +44,7 @@ oauthlib==1.0.3
 pafy==0.4.2
 paramiko==1.16.0
 progressbar==2.3
+psycopg2==2.6.1
 py-oauth2==0.0.10
 pyasn1==0.1.9
 pyasn1-modules==0.0.8
@@ -66,7 +68,5 @@ sqlparse==0.1.18
 srt==0.0.7
 tornado==4.2
 uritemplate==0.6
-wheel==0.29.0
 youku==0.0.8
 youtube-dl==2016.3.1
-

@@ -55,7 +55,7 @@ def youku_oauth2callback_view(request):
                     authorize_url=YOUKU_AUTHORIZE_URL,
                     token_url=YOUKU_TOKEN_URL)
 
-    access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
+    access_token     = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
 
     access_token_string = access_token.token
     django_settings.set('String', 'youku_access_token', access_token_string,
