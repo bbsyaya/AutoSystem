@@ -30,7 +30,7 @@ DATABASES = {
     }
 }
 
-YOUTUBE_DOWNLOAD_DIR = 'E:\media\Video\YouTube\\'
+YOUTUBE_DOWNLOAD_DIR = 'E:\Media\Video\YouTube\\'
 FFMPEG_LOCATION = 'E:\\Program Files\\ffmpeg\\bin'
 
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9

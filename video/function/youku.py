@@ -1,10 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from celery import task
-
+import certifi
 from oauth2_authentication.function.youku import youku_get_authenticate
 from AutoSystem.settings import YOUKU_CLIENT_ID
-from youku import YoukuUpload, YoukuVideos, YoukuPlaylists
+from video.libs.youku import YoukuUpload, YoukuVideos, YoukuPlaylists
 
 CLIENT_ID = YOUKU_CLIENT_ID
 
@@ -20,7 +20,7 @@ __author__ = 'GoTop'
 
 
 @task
-def youku_upload(youku_id, max_retey = 8):
+def youku_upload(youku_id, max_retey=8):
     """
     将youku id的youku对象对应的合并有字幕的video视频的上传到优酷网
 
@@ -61,9 +61,34 @@ def youku_upload(youku_id, max_retey = 8):
         if youku.category:
             youku.tags = youku.category
         else:
-            youku.tags = youku.video.get_tags(9)
+            youku.tags = youku.video.get_tags(5)
 
-    #youku.tags = "youku，dreaming"
+    # error: 120010125, UploadsException, A single tag at most 20 words
+    # youku.tags = "coffee， espresso，seattle coffee gear，Bodum，Pebo，vacumm
+    # pot，  coffee maker，question，answer"
+
+    # error: 120010125, UploadsException, A single tag at most 20 words
+    # youku.tags = "coffee，espresso，seattle，Bodum，Pebo，vacumm pot，coffee
+    # "maker，question，answer"
+
+    # error: 120010122, UploadsException, Your definition of the tag number more than 10,please delete the tag number
+    # youku.tags = "coffee,espresso,seattle,Bodum,Pebo,vacumm pot,coffee maker, question, answer"
+
+    # error: 120010122, UploadsException, Your definition of the tag number more than 10,please delete the tag number
+    #youku.tags = "coffee,espresso,seattle,Bodum,Pebo,vacumm_pot,coffee_maker,  question, answer"
+
+    # error: 120010123, UploadsException, Tags contain sensitive characters
+    # youku.tags = "coffee，espresso，seattle，Bodum，Pebo，vacumm_pot，coffeemaker，question，answe"
+
+    # error: 120010125, UploadsException, A single tag at most 20 words
+    #youku.tags = "coffee，espresso，seattle"
+
+    # 成功
+    # youku.tags = "coffee,espresso,seattle"
+
+    # 成功，youku 上显示显示的tags为 gear coffee Seattle ESPRESSO BODUM
+    # 说明使用优酷api上传时，用英文逗号和空格来分割tags
+    youku.tags = "coffee,espresso,seattle coffee gear,Bodum"
 
     # tags = youku.tags
 
@@ -85,7 +110,6 @@ def youku_upload(youku_id, max_retey = 8):
         else:
             return False
 
-
     youku.youku_video_id = youku_video_id
     youku.save()
     return youku_video_id
@@ -100,8 +124,8 @@ def delete_youku_video(youku_video_id):
     service = YoukuVideos(CLIENT_ID)
     youku_access_token = youku_get_authenticate()
     delete_youku_video_id = service.destroy_video(
-            access_token=youku_access_token,
-            video_id=youku_video_id)
+        access_token=youku_access_token,
+        video_id=youku_video_id)
 
     if delete_youku_video_id == youku_video_id:
         # 在优酷网上成功删除视频后，在本地将youku.youku_video_id清空
@@ -125,11 +149,11 @@ def update_youku_online_info(youku_video_id):
     youku_access_token = youku_get_authenticate()
 
     updated_youku_video_id = service.update_video(
-            access_token=youku_access_token, video_id=youku_video_id,
-            title=youku.title,
-            tags=youku.tags, category=youku.category, copyright_type=None,
-            public_type=None, watch_password=None,
-            description=youku.description, thumbnail_seq=None)
+        access_token=youku_access_token, video_id=youku_video_id,
+        title=youku.title,
+        tags=youku.tags, category=youku.category, copyright_type=None,
+        public_type=None, watch_password=None,
+        description=youku.description, thumbnail_seq=None)
     return updated_youku_video_id
 
 
@@ -209,8 +233,8 @@ def get_youku_playlist():
     # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
     # video_ids=850,860,870,880
     playlist_json = service.find_playlists_by_me(
-            access_token=youku_access_token,
-            orderby='published', page=1, count=20)
+        access_token=youku_access_token,
+        orderby='published', page=1, count=20)
 
 
 if __name__ == '__main__':

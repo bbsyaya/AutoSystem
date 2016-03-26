@@ -1,10 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 import json
+import certifi
 from django.http import HttpResponseRedirect
+
 from django.shortcuts import render_to_response
 
 __author__ = 'GoTop'
+
 
 from django.contrib.auth.decorators import login_required
 from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET, \
@@ -12,6 +15,7 @@ from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET, \
 
 from pyoauth2 import Client
 import django_settings
+
 
 CLIENT_ID = YOUKU_CLIENT_ID
 CLIENT_SECRET = YOUKU_CLIENT_SECRET
@@ -55,7 +59,9 @@ def youku_oauth2callback_view(request):
                     authorize_url=YOUKU_AUTHORIZE_URL,
                     token_url=YOUKU_TOKEN_URL)
 
-    access_token     = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
+    access_token = client.auth_code.get_token(code,
+                                              redirect_uri=REDIRECT_URL,
+                                              verify=certifi.where())
 
     access_token_string = access_token.token
     django_settings.set('String', 'youku_access_token', access_token_string,

@@ -121,12 +121,22 @@ class Video(models.Model):
         if self.tags:
             jsonDec = json.decoder.JSONDecoder()
             tags_list = jsonDec.decode(self.tags)
-            # 如果要获取的tags数num比tags中包含的词组要少，则截取tags_list中的num个tags
-            if len(tags_list) > num:
-                tags_list = tags_list[:num]
 
-            #要用中文的，不能用英文的,否则优酷会认为每个英文是一个tag
-            return '， '.join(tags_list)
+            tags_fomart_list = []
+            for tag in tags_list:
+                # 用下划线替换单个tags里的空格，因为上传时优酷用英文逗号和空格来分割tags
+                tag = tag.replace(" ", "_")
+                # 上传到优酷时，单个tag最多20个字符，所以剔除超过20个字符的tag
+                if len(tag) <= 20:
+                    tags_fomart_list.append(tag)
+
+            # 如果要获取的tags数num比tags中包含的词组要少，则截取tags_list中的num个tags
+            if len(tags_fomart_list) > num:
+                tags_fomart_list = tags_fomart_list[:num]
+
+
+            #上传时优酷用英文逗号和空格来分割tags
+            return ','.join(tags_fomart_list)
         else:
             return False
 
@@ -218,7 +228,7 @@ class Youku(models.Model):
                              help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.CharField(max_length=50, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多 12 "
-                                      "个字符（6个汉字），多个标签之间用中文的逗号(,)隔开，上传时必选"
+                                      "个字符（6个汉字），多个标签之间用英文的逗号(,)和空格隔开，上传时必选"
                             )
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')

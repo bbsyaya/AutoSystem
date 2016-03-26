@@ -81,22 +81,23 @@ def search_subtitles_file(video_id, subtitle_format):
                                                   extend=subtitle_format)
 
     result = []
-    if (subtitle_en_filepath.__len__()) == 1:
+    if (subtitle_en_filepath.__len__()) > 0:
         # 从list中把唯一的一个数据pop出来
         video.subtitle_en = subtitle_en_filepath.pop()
-        result.append(video.subtitle_en)
+        result.append(video.subtitle_en.path)
 
     subtitle_cn_filepath = search_keyword_in_file(dir=YOUTUBE_DOWNLOAD_DIR,
                                                   keyword=video_id
                                                           + ".zh-Hans",
                                                   extend=subtitle_format)
-    if (subtitle_cn_filepath.__len__()) == 1:
+    if (subtitle_cn_filepath.__len__()) > 0:
         # 从list中把唯一的一个数据pop出来
         video.subtitle_cn = subtitle_cn_filepath.pop()
-        result.append(video.subtitle_en)
+        result.append(video.subtitle_cn.path)
 
     video.save(update_fields=["subtitle_en", "subtitle_cn"])
 
     if result == []:
         result = False
-    return result
+    else:
+        return result
