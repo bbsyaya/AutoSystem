@@ -62,15 +62,15 @@ def auto_download_upload_video(num):
         youku_upload_task = youku_upload.si(video.youku.id)
 
         # 将subtask chain起来执行
-        (download_video_task | download_subtitle_task |
-         add_sub_to_video_task | youku_upload_task).apply_async(retry=True,
-                                                                retry_policy={
-                                                                    'max_retries': 10,
-                                                                    'interval_start': 0,
-                                                                    'interval_step': 0.2,
-                                                                    'interval_max': 0.2,
-                                                                }
-                                                                )
+        (download_video_task | download_subtitle_task
+         | youku_upload_task).apply_async(retry=True,
+                                          retry_policy={
+                                              'max_retries': 10,
+                                              'interval_start': 0,
+                                              'interval_step': 0.2,
+                                              'interval_max': 0.2,
+                                          }
+                                          )
 
 
 def get_info():
