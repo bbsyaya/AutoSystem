@@ -124,8 +124,15 @@ class Video(models.Model):
 
             tags_fomart_list = []
             for tag in tags_list:
-                # 用下划线替换单个tags里的空格，因为上传时优酷用英文逗号和空格来分割tags
-                tag = tag.replace(" ", "_")
+                # 优酷的单个tag中，不允许有 下划线，减号, 点, &
+                # 除了中文和英文字幕以外的符号都不行
+                # 优酷用英文逗号和空格来分割tags，如果单个tag中存在空格，
+                # 可能会导致最终的tag数超过10个
+                tag = tag.replace(" ", "")
+                tag = tag.replace("-", "")
+                tag = tag.replace("_", "")
+                tag = tag.replace(".", "")
+                tag = tag.replace("+", "")
                 # 上传到优酷时，单个tag最多20个字符，所以剔除超过20个字符的tag
                 if len(tag) <= 20:
                     tags_fomart_list.append(tag)
@@ -133,7 +140,6 @@ class Video(models.Model):
             # 如果要获取的tags数num比tags中包含的词组要少，则截取tags_list中的num个tags
             if len(tags_fomart_list) > num:
                 tags_fomart_list = tags_fomart_list[:num]
-
 
             #上传时优酷用英文逗号和空格来分割tags
             return ','.join(tags_fomart_list)
@@ -228,7 +234,7 @@ class Youku(models.Model):
                              help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.CharField(max_length=50, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多 12 "
-                                      "个字符（6个汉字），多个标签之间用英文的逗号(,)和空格隔开，上传时必选"
+                                      "个字符（6个汉字），多个标签之间用英文的逗号(,)和空格隔开，单个tag中，不允许有下划线，减号,上传时必选"
                             )
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')
