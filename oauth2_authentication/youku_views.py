@@ -8,14 +8,12 @@ from django.shortcuts import render_to_response
 
 __author__ = 'GoTop'
 
-
 from django.contrib.auth.decorators import login_required
 from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET, \
     REDIRECT_URL
 
 from pyoauth2 import Client
 import django_settings
-
 
 CLIENT_ID = YOUKU_CLIENT_ID
 CLIENT_SECRET = YOUKU_CLIENT_SECRET
@@ -61,7 +59,9 @@ def youku_oauth2callback_view(request):
 
     access_token = client.auth_code.get_token(code,
                                               redirect_uri=REDIRECT_URL,
-                                              verify=certifi.where())
+                                              #cert=certifi.where(),
+                                              verify=False
+                                              )
 
     access_token_string = access_token.token
     django_settings.set('String', 'youku_access_token', access_token_string,

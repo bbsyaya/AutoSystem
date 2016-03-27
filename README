@@ -114,12 +114,27 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 设置断点时无法正确映射到remote server（大小写问题）
 
 提高日本linode 上下载youtube视频的速度，目前只有150KiB/s
+但2016-3-27 14:49测试，下载速度60m/s
+2016-3-27 15:45 下载速度155.56KiB/s
+上传到优酷倒是相当快
+
+
+Linode上压字幕到视频十分慢，一个150m的视频要45min，虽然subprocess可以后天运行不因为页面timeout而停止，但是无法把压了字幕后的信息录入数据库
+用celery异步执行不知道是否可行，或者直接上传原视频，不压字幕
+
+
+将subtiel分出来到另一个独立的app中，独立的model，用外键与video相连
+
+将youku分出来到另一个独立的app中
+
+
+
+
 
 =============================================================================================
 
 在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist
 上传视频到优酷后，使用celery延时设置playlist即可
-
 
 
 http://127.0.0.1:8000/admin/video/video/QTCJJiZrNYo/?_changelist_filters=p%3D1

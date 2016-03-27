@@ -122,7 +122,7 @@ class YoukuUpload(object):
         params['access_token'] = self.access_token
 
         url = 'https://openapi.youku.com/v2/uploads/create.json'
-        r = requests.get(url, params=params, verify=certifi.where())
+        r = requests.get(url, params=params, verify=False)
         check_error(r, 201)
         result = r.json()
 
@@ -239,7 +239,7 @@ class YoukuUpload(object):
         url = 'http://%s/gupload/upload_slice' % self.upload_server_ip
         # GoTop add verify=certifi.where() 2016-3-26, Because on CentOS,
         # Request module can't find youku CA
-        r = requests.post(url, params=params, data=data, verify=certifi.where())
+        r = requests.post(url, params=params, data=data, verify=False)
         check_error(r, 201)
         self._save_slice_state(r.json())
 
@@ -267,7 +267,7 @@ class YoukuUpload(object):
             'upload_server_ip': status['upload_server_ip']
         }
         url = 'https://openapi.youku.com/v2/uploads/commit.json'
-        r = requests.post(url, data=params)
+        r = requests.post(url, data=params, verify=False)
         check_error(r, 200)
         self.finished = True
         self._delete_upload_state_file()

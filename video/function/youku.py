@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from celery import task
-import certifi
+
 from oauth2_authentication.function.youku import youku_get_authenticate
 from AutoSystem.settings import YOUKU_CLIENT_ID
 from video.libs.youku import YoukuUpload, YoukuVideos, YoukuPlaylists
@@ -61,34 +61,7 @@ def youku_upload(youku_id, max_retey=8):
         if youku.category:
             youku.tags = youku.category
         else:
-            youku.tags = youku.video.get_tags(5)
-
-    # error: 120010125, UploadsException, A single tag at most 20 words
-    # youku.tags = "coffee， espresso，seattle coffee gear，Bodum，Pebo，vacumm
-    # pot，  coffee maker，question，answer"
-
-    # error: 120010125, UploadsException, A single tag at most 20 words
-    # youku.tags = "coffee，espresso，seattle，Bodum，Pebo，vacumm pot，coffee
-    # "maker，question，answer"
-
-    # error: 120010122, UploadsException, Your definition of the tag number more than 10,please delete the tag number
-    # youku.tags = "coffee,espresso,seattle,Bodum,Pebo,vacumm pot,coffee maker, question, answer"
-
-    # error: 120010122, UploadsException, Your definition of the tag number more than 10,please delete the tag number
-    #youku.tags = "coffee,espresso,seattle,Bodum,Pebo,vacumm_pot,coffee_maker,  question, answer"
-
-    # error: 120010123, UploadsException, Tags contain sensitive characters
-    # youku.tags = "coffee，espresso，seattle，Bodum，Pebo，vacumm_pot，coffeemaker，question，answe"
-
-    # error: 120010125, UploadsException, A single tag at most 20 words
-    #youku.tags = "coffee，espresso，seattle"
-
-    # 成功
-    # youku.tags = "coffee,espresso,seattle"
-
-    # 成功，youku 上显示显示的tags为 gear coffee Seattle ESPRESSO BODUM
-    # 说明使用优酷api上传时，用英文逗号和空格来分割tags
-    youku.tags = "coffee,espresso,seattle coffee gear,Bodum"
+            youku.tags = youku.video.get_tags(10)
 
     # tags = youku.tags
 
