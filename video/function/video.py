@@ -11,7 +11,7 @@ from video.function.youtube_download import download_single_youtube_video_main
 from video.function.youtube_subsription import get_subscription_update_video
 from video.function.youtube_subtitle import download_subtitle
 from video.libs.subtitle import edit_two_lang_style, srt_to_ass
-from video.models import Video
+from video.models import Video, Youku
 
 __author__ = 'GoTop'
 
@@ -29,6 +29,7 @@ def auto_download_upload_video():
     for idx, video in enumerate(tran_video_list):
         download_upload_video(video.video_id)
 
+
 @task
 def download_upload_video(video_id):
     """
@@ -39,16 +40,18 @@ def download_upload_video(video_id):
     download_single_youtube_video_main(video_id)
     download_subtitle(video_id)
 
-    #merge_sub_edit_style(video_id)
+    # merge_sub_edit_style(video_id)
 
     # 将字幕添加到视频上
     add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
 
     video = Video.objects.get(pk=video_id)
 
-    if hasattr(video, 'youku'):
-        set_youku_category_local(video.youku.id)
-    else:
-        print('该视频未设置youku信息，无法上传到优酷')
+    #如果该video没有对应的Youku对象，就新建一个，title就用video的英文title
+    if not hasattr(video, 'youku'):
+        youku = Youku.objects.create(title = video.title)
+        video.objects.add(youku)
+
+    set_youku_category_local(video.youku.id)
 
     youku_upload(video.youku.id)

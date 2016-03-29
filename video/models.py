@@ -331,6 +331,7 @@ class BaiduYun(models.Model):
 
 
 class Category(models.Model):
+    #Youtube的Channel的分类，设置有对应的youku_playlist的分类（优酷网站上的规定）
     title = models.CharField(max_length=50, blank=True)
     youku_playlist_category = models.CharField(max_length=50, blank=True,
                                                choices=YOUKU_CATEGORY,
