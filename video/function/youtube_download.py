@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from celery import task
+from youtube_dl.utils import ContentTooShortError
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
 from AutoSystem.settings import FFMPEG_LOCATION
@@ -90,7 +91,7 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
         try:
             # 用设置成list的形式
             ydl.download([video.youtube_url])
-        except 'ContentTooShortError':
+        except ContentTooShortError:
             if n + 1 < max_retey:
                 ydl.download([video.youtube_url])
             else:

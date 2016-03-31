@@ -92,26 +92,22 @@ check 2016-3-20
 check 2016-3-20
 
 将youtube playlist是否下载的设置导入production环境
-check 2016-3-20
+check 2016-3-20 使用Django自带的功能dump出数据，再导入
 
 编写test
 
 研究Fabic部署，获取服务器ssh密钥
 http://tutos.readthedocs.org/en/latest/source/ndg.html
+check 直接使用ssh 密码登陆
 
 VPS是否能渲染1080p的视频
+check 2016-3-28 可以，但是速度十分慢
 
 在本机上测试celery+redis运行对应函数
+check 2016-3-28
 
 解决ffmpeg合并ass字幕时的字体目录问题
-
-youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8sY
-
-为celery的subtask加入retry的设置
-
-上传到youku时显示进度
-
-设置断点时无法正确映射到remote server（大小写问题）
+check 2016-3-31 CentOS上安装对应的ttf字体就可以了
 
 提高日本linode 上下载youtube视频的速度，目前只有150KiB/s
 但2016-3-27 14:49测试，下载速度60m/s
@@ -121,7 +117,16 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 Linode上压字幕到视频十分慢，一个150m的视频要45min，虽然subprocess可以后天运行不因为页面timeout而停止，但是无法把压了字幕后的信息录入数据库
 用celery异步执行不知道是否可行，或者直接上传原视频，不压字幕
+check 2016-3-31 暂时先不压字幕
+=============================================================================================
 
+youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8sY
+
+为celery的subtask加入retry的设置
+
+上传到youku时显示进度
+
+设置断点时无法正确映射到remote server（大小写问题）
 
 将subtiel分出来到另一个独立的app中，独立的model，用外键与video相连
 
