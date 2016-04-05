@@ -232,7 +232,7 @@ class Youku(models.Model):
     # 说明 doc.open.youku.com/?docid=393
     title = models.CharField(max_length=100, blank=True,
                              help_text='视频标题，能填写2-50个字符,上传时必选')
-    tags = models.CharField(max_length=50, blank=True,
+    tags = models.TextField(max_length=200, blank=True,
                             help_text="自定义标签不超过10个，单个标签最少2个字符，最多 12 "
                                       "个字符（6个汉字），多个标签之间用英文的逗号(,)和空格隔开，单个tag中，不允许有下划线，减号,上传时必选"
                             )
