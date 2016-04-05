@@ -233,9 +233,7 @@ class Youku(models.Model):
     title = models.CharField(max_length=100, blank=True,
                              help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.TextField(max_length=200, blank=True,
-                            help_text="自定义标签不超过10个，单个标签最少2个字符，最多 12 "
-                                      "个字符（6个汉字），多个标签之间用英文的逗号(,)和空格隔开，单个tag中，不允许有下划线，减号,上传时必选"
-                            )
+                            help_text="不超过10个;单个标签最少2个、最多12个字符;标签间用英文的逗号(,)和空格隔开，单个tag中，不允许有_ - ;必选")
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')
     category = models.CharField(max_length=50, blank=True,
