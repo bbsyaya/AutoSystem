@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='video',
             name='tags',
-            field=models.CharField(max_length=200, blank=True),
+            field=models.TextField(max_length=200, blank=True),
         ),
     ]

@@ -42,6 +42,7 @@ class VideoAdmin(admin.ModelAdmin):
     search_fields = ('title', 'video_id')  # 只能是model中的text field
     inlines = [YoukuInline, ]
 
+
     # 在change和edit页面显示哪些field
     fieldsets = (
         ('Main', {
@@ -80,6 +81,19 @@ class VideoAdmin(admin.ModelAdmin):
 
     # 使用什么字段来排序
     ordering = ('-publishedAt', 'title')
+
+    #设置使用select_related，在获取video的changelist页面直接获取video对象和其youku的值
+    # 避免没一个video对象单独查询一次youku对象的信息
+    list_select_related = (
+        'youku',
+    )
+
+    # 设置使用select_related，在获取video的changelist页面直接获取video对象和其youku的值
+    # 避免没一个video对象单独查询一次youku对象的信息
+    #
+    # def queryset(self, request):
+    #     return super(VideoAdmin, self).queryset(request).prefetch_related(
+    #         'youku')
 
     # def get_form(self, request, obj=None, **kwargs):
     #     # Proper kwargs are form, fields, exclude, formfield_callback
