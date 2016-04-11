@@ -6,12 +6,27 @@ import json
 from django import forms
 from django.db import models
 
-
-class NeedUploadToYoukuManager(models.Manager):
+class NeedUploadManager(models.Manager):
     def get_queryset(self):
         # 返回Video model中 allow_upload_youku为true，设置有对应的youku model，
-        # 未下载过，并且未上传到优酷网(youku__youku_video_id='')的video
-        need_upload_to_youku_queryset = super(NeedUploadToYoukuManager,
+        # 已下载视频文件过，并且未上传到优酷网(youku__youku_video_id='')的video
+        need_upload_queryset = super(NeedUploadManager,
+                                              self).get_queryset().filter(
+            # 在SQLite数据库中，django model BooleanField True对应1，False对应0
+            # 不知道在Django1.7之后的版本是否修改该bug
+            allow_upload_youku=1,
+            youku__isnull=False,
+            youku__youku_video_id='').exclude(file= '')
+
+        return need_upload_queryset
+
+class NeedDownloadUploadManager(models.Manager):
+    def get_queryset(self):
+        # 返回Video model中 allow_upload_youku为true，设置有对应的youku model，
+        # 未下载视频文件过，并且未上传到优酷网(youku__youku_video_id='')的video
+        # 注意：该函数不返回已经上传到youku，但是file文件被删除（为空）的video
+        # （被自动清理函数删除了），以免重复下载
+        need_download_upload_queryset = super(NeedDownloadUploadManager,
                                               self).get_queryset().filter(
             # 在SQLite数据库中，django model BooleanField True对应1，False对应0
             # 不知道在Django1.7之后的版本是否修改该bug
@@ -20,8 +35,7 @@ class NeedUploadToYoukuManager(models.Manager):
             youku__isnull=False,
             youku__youku_video_id='')
 
-        return need_upload_to_youku_queryset
-
+        return need_download_upload_queryset
 
 class NeedGetVideoInfoManager(models.Manager):
     # 返回video model中视频时长为空的video
@@ -34,9 +48,14 @@ class NeedGetVideoInfoManager(models.Manager):
 
 
 class DownloadedManager(models.Manager):
+    """
+    获取未下载过视频文件的youtube video对象
+    """
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().exclude(
             file='')
+
+
 
 
 # Create your models here.
@@ -159,7 +178,8 @@ class Video(models.Model):
         self.subtitle_video_file.delete()
 
     objects = models.Manager()
-    need_upload_to_youku = NeedUploadToYoukuManager()
+    need_download_upload = NeedDownloadUploadManager()
+    need_upload = NeedUploadManager()
     downloaded = DownloadedManager()
     need_get_video_info = NeedGetVideoInfoManager()
 

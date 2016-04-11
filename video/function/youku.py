@@ -1,6 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+
+import logging
+
 from celery import task
+from celery_once import QueueOnce
 
 from oauth2_authentication.function.youku import youku_get_authenticate
 from AutoSystem.settings import YOUKU_CLIENT_ID
@@ -19,7 +23,7 @@ from video.models import Youku, Video, YoukuPlaylist
 __author__ = 'GoTop'
 
 
-@task
+@task(base=QueueOnce)
 def youku_upload(youku_id, max_retey=8):
     """
     将youku id的youku对象对应的合并有字幕的video视频的上传到优酷网
@@ -85,6 +89,10 @@ def youku_upload(youku_id, max_retey=8):
 
     youku.youku_video_id = youku_video_id
     youku.save()
+
+    logger = logging.getLogger(__name__)
+    logger.info("上传视频到优酷，id为" + youku.video_id)
+
     return youku_video_id
 
 

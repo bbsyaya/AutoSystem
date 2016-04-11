@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+import logging
 
 __author__ = 'GoTop'
 
@@ -20,9 +21,10 @@ DATABASES = {
 
 DEBUG = True
 INSTALLED_APPS += (
+    "django_rq",
+    "django_rq_dashboard",
     # 'debug_toolbar', # and other apps for local development
 )
-
 
 YOUTUBE_DOWNLOAD_DIR = 'E:\Media\Video\YouTube\\'
 FFMPEG_LOCATION = 'E:\\Program Files\\ffmpeg\\bin'
@@ -35,8 +37,6 @@ FFMPEG_LOCATION = 'E:\\Program Files\\ffmpeg\\bin'
 YOUKU_CLIENT_ID = "bdf4fcf59c05aff9"
 YOUKU_CLIENT_SECRET = "6acb15a83ec6eb8ebb5e7db6ccbaf283"
 REDIRECT_URL = 'http://127.0.0.1:8000/oauth2/youku_oauth2callback'
-
-
 
 # 使用django自带broker的设置
 # 需要自己用命令python manage.py shell启动shell，在里面测试，不能直接用PyCharm的console
@@ -54,10 +54,14 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'redis'
+
+#celery_once的设置
+ONCE_REDIS_URL = 'redis://localhost:6379/0'
+ONCE_DEFAULT_TIMEOUT = 60 * 60
+
 # That is, tasks will be executed locally instead of being sent to the queue.
 # 用于测试环境，可以不开启worker，和broker
-#CELERY_ALWAYS_EAGER = True
-
+# CELERY_ALWAYS_EAGER = True
 
 # 使用redis的设置
 # BROKER_HOST = "localhost"
@@ -75,9 +79,36 @@ CELERY_RESULT_BACKEND = 'redis'
 # CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
 
 import djcelery
+
 djcelery.setup_loader()
 
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
+# https://github.com/ui/django-rq
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        # 'DEFAULT_TIMEOUT': 360,
+    },
+    'high': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        # 'DEFAULT_TIMEOUT': 500,
+        # 'EXCEPTION_HANDLERS': ['path.to.my.handler'], # If you need custom
+        # exception handlers
+    },
+    'low': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        # 'DEFAULT_TIMEOUT': 360,
+    }
+}
+# add a link to this dashboard link in /admin
+RQ_SHOW_ADMIN_LINK = True
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
@@ -101,3 +132,93 @@ if DEBUG:
     SHOW_TOOLBAR_CALLBACK = True
 
     INTERNAL_IPS = ('127.0.0.1',)
+
+
+class SuppressDeprecated(logging.Filter):
+    def filter(self, record):
+        WARNINGS_TO_SUPPRESS = [
+            'RemovedInDjango18Warning',
+            'RemovedInDjango19Warning'
+        ]
+        # Return false to suppress message.
+        return not any(
+            [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        },
+        'suppress_deprecated': {
+            '()': 'AutoSystem.settings.SuppressDeprecated'
+        }
+    },
+
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s|%(message)s'
+        },
+    },
+
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'filters': ['suppress_deprecated']
+        },
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5MB
+            'backupCount': 0,
+            'formatter': 'verbose',
+        },
+    },
+
+    'loggers': {
+        'AutoSystem': {
+            'handlers': ['console','logfile'],
+            'level': 'DEBUG',
+        },
+        'myapp.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'video': {
+            'handlers': ['console', 'logfile'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'myapp.management': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'video.models': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}

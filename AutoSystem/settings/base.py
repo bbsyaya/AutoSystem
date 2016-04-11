@@ -102,7 +102,6 @@ USE_TZ = True
 # django.contrib.staticfiles 要求设置STATIC_ROOT和MEDIA_ROOT，这样能自动收集所有的静态文件到指定的目录下
 STATIC_ROOT = BASE_DIR + '/static/'
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
@@ -151,34 +150,28 @@ YOUTUBE_DEVELOPER_KEY = 'AIzaSyAp4Dr7YgwofjNbosQ5VZFXm8G5A1QNIPQ'
 YOUTUBE_CLIENT_ID = '505556718060-20u5pd4rd7sgeigqmdc5o5rvt1ifjtfk.apps' \
                     '.googleusercontent.com'
 
-
-
-
 YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
 # https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
 # &response_type=code
 
-
-
-
 # http://stackoverflow.com/a/31103483/1314124
 # 让django1.8.9不显示RemovedInDjango19Warning
-import logging, copy
-from django.utils.log import DEFAULT_LOGGING
-
-LOGGING = copy.deepcopy(DEFAULT_LOGGING)
-LOGGING['filters']['suppress_deprecated'] = {
-    '()': 'AutoSystem.settings.SuppressDeprecated'
-}
-LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
-
-
-class SuppressDeprecated(logging.Filter):
-    def filter(self, record):
-        WARNINGS_TO_SUPPRESS = [
-            'RemovedInDjango18Warning',
-            'RemovedInDjango19Warning'
-        ]
-        # Return false to suppress message.
-        return not any(
-                [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
+# import logging, copy
+# from django.utils.log import DEFAULT_LOGGING
+#
+# LOGGING = copy.deepcopy(DEFAULT_LOGGING)
+# LOGGING['filters']['suppress_deprecated'] = {
+#     '()': 'AutoSystem.settings.SuppressDeprecated'
+# }
+# LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
+#
+#
+# class SuppressDeprecated(logging.Filter):
+#     def filter(self, record):
+#         WARNINGS_TO_SUPPRESS = [
+#             'RemovedInDjango18Warning',
+#             'RemovedInDjango19Warning'
+#         ]
+#         # Return false to suppress message.
+#         return not any(
+#             [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])

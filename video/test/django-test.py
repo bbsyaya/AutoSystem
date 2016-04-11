@@ -4,12 +4,12 @@ from __future__ import unicode_literals, absolute_import
 from django.utils.text import get_valid_filename
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
-from video.function.file import get_size, clean_media_root
+from video.function.file import get_size
 from video.function.subtitle import merge_sub_edit_style
 from video.function.youku import set_youku_category_local
 from video.libs.subtitle import srt_to_ass, edit_two_lang_style
 from video.models import Video
-from video.tasks import auto_download_upload_video, add_sub
+from video.tasks import *
 
 __author__ = 'GoTop'
 
@@ -41,8 +41,16 @@ django.setup()
 # video = Video.objects.get(video_id='pSahhWDQRW0')
 # set_youku_category(video.youku.id)
 
-#merge_sub_edit_style(video_id='UQ0w6nO-8sY')
+# merge_sub_edit_style(video_id='UQ0w6nO-8sY')
 
-#add_sub()
+# add_sub()
 
-auto_download_upload_video(1)
+# auto_download_upload_video(1)
+
+
+# auto_get_subscription_update_video(max_results=5)
+
+# auto_upload(1)
+
+auto_clean_media_directory(max_size=1.6 * 1024 * 1024 * 1024, delete_file_num
+=1)

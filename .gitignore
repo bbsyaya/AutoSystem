@@ -299,5 +299,7 @@ AutoSystem/settings/__init__.py
 
 fabfile.py
 db.sqlite3
+dump.rdb
+celerybeat.pid
 
 

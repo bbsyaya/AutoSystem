@@ -1,6 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+
+import logging
+
 from celery import task
+from celery_once import QueueOnce
 from youtube_dl.utils import ContentTooShortError
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
@@ -31,7 +35,7 @@ def download_multi_youtube_video_main(num):
     return video_filepath_list
 
 
-@task
+@task(base=QueueOnce)
 def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
 'mp4'):
     """
@@ -84,6 +88,7 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
     # 如果是本地debug状态则使用代理
     if SETTING_FILE == 'local':
         options['socksproxy'] = '127.0.0.1:8115'
+        # options['proxy'] = '127.0.0.1:8115'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         # youtube_url = video.youtube_url
@@ -97,8 +102,12 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
             else:
                 return False
 
-    video_filepath = search_video_file(video_id,
-                                       file_extend)
+    video_filepath = search_video_file(video_id, file_extend)
+
+    if video_filepath:
+        logger = logging.getLogger(__name__)
+        logger.info("下载视频成功，视频地址为", video_filepath)
+
     return video_filepath
 
 

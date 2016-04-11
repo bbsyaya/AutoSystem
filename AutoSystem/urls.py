@@ -22,6 +22,14 @@ urlpatterns = patterns('',
 
                        )
 
+urlpatterns += patterns('',
+    url(r'^django-rq/', include('django_rq.urls')),
+)
+
+urlpatterns += patterns('',
+    (r'^admin/rq/', include('django_rq_dashboard.urls')),
+)
+
 if DEBUG:
     urlpatterns += patterns('', url(r'^media/(?P<path>.*)$',
                                     'django.views.static.serve',
