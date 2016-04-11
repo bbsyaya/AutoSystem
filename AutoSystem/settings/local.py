@@ -82,6 +82,7 @@ import djcelery
 
 djcelery.setup_loader()
 
+# This allows you to easily change the schedules, even while Django and Celery are running.
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 # https://github.com/ui/django-rq

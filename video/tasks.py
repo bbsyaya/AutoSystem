@@ -15,9 +15,10 @@ import django
 #     return x + y
 import datetime
 from celery import task
+from celery_once import QueueOnce
 from django.contrib.auth.models import User
 
-from django_rq import job
+#from django_rq import job
 
 from video.function.file import clean_media_directory
 from video.function.subtitle import merge_video_subtitle, \
@@ -55,7 +56,7 @@ def auto_get_subscription_update_video(max_results=5):
     return video_list
 
 
-@task
+@task(base=QueueOnce)
 def auto_get_multi_youtube_video_info(max_results=5):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AutoSystem.settings")
     django.setup()

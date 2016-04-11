@@ -71,7 +71,7 @@ def clean_media_directory(max_size, delete_file_num = 5):
                         + video.title )
         # 循环执行本函数，直至size小于max_size
         # 测试期间先注释掉,否则会删掉很多视频
-        clean_media_directory(max_size, num)
+        clean_media_directory(max_size, delete_file_num)
 
     return True
 

@@ -1,6 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from celery import task
+from celery_once import QueueOnce
+
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
 from AutoSystem.settings import DEBUG
 from video.models import Video, YT_channel
@@ -11,7 +13,7 @@ def my_hook(d):
     if d['status'] == 'finished':
         print('Done downloading, now converting ...')
 
-@task
+@task(base=QueueOnce)
 def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
     """
     下载video的中英字幕并保存到video model中
