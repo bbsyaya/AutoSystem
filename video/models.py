@@ -152,6 +152,7 @@ class Video(models.Model):
                 tag = tag.replace("_", "")
                 tag = tag.replace(".", "")
                 tag = tag.replace("+", "")
+                tag = tag.replace("&", "")
                 # 上传到优酷时，单个tag最多20个字符，所以剔除超过20个字符的tag
                 if len(tag) <= 20:
                     tags_fomart_list.append(tag)
