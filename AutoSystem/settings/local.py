@@ -21,8 +21,8 @@ DATABASES = {
 
 DEBUG = True
 INSTALLED_APPS += (
-    "django_rq",
-    "django_rq_dashboard",
+    #"django_rq",
+    #"django_rq_dashboard",
     # 'debug_toolbar', # and other apps for local development
 )
 

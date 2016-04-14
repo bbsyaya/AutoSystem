@@ -13,7 +13,7 @@ from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET, \
     REDIRECT_URL
 
 from pyoauth2 import Client
-import django_settings
+from video.libs import django_settings
 
 CLIENT_ID = YOUKU_CLIENT_ID
 CLIENT_SECRET = YOUKU_CLIENT_SECRET

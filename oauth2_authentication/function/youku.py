@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 from django.core.urlresolvers import reverse
 
 from django.http import HttpResponseRedirect
-import django_settings
+from video.libs import django_settings
 from pyoauth2 import Client
 from AutoSystem.settings import YOUKU_CLIENT_ID, YOUKU_CLIENT_SECRET
 
