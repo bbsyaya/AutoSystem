@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
+
+
 __author__ = 'GoTop'
 
 from django.contrib import admin
@@ -10,7 +12,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from video.models import Video, Youku
 from video.forms import YoukuForm, VideoForm
-
+from video.admin.video_admin_filter import DownloadFilter, UploadFilter
 
 class YoukuInline(admin.StackedInline):
     model = Youku
@@ -42,6 +44,7 @@ class VideoAdmin(admin.ModelAdmin):
     search_fields = ('title', 'video_id')  # 只能是model中的text field
     inlines = [YoukuInline, ]
 
+    list_filter = [DownloadFilter, UploadFilter]
 
     # 在change和edit页面显示哪些field
     fieldsets = (
@@ -82,7 +85,7 @@ class VideoAdmin(admin.ModelAdmin):
     # 使用什么字段来排序
     ordering = ('-publishedAt', 'title')
 
-    #设置使用select_related，在获取video的changelist页面直接获取video对象和其youku的值
+    # 设置使用select_related，在获取video的changelist页面直接获取video对象和其youku的值
     # 避免没一个video对象单独查询一次youku对象的信息
     list_select_related = (
         'youku',
