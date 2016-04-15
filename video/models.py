@@ -9,15 +9,6 @@ from django.db import models
 from django.db.models import Lookup
 from django.db.models.fields import Field
 
-@Field.register_lookup
-class NotEqualLookup(Lookup):
-    lookup_name = 'ne'
-
-    def as_sql(self, compiler, connection):
-        lhs, lhs_params = self.process_lhs(compiler, connection)
-        rhs, rhs_params = self.process_rhs(compiler, connection)
-        params = lhs_params + rhs_params
-        return '%s <> %s' % (lhs, rhs), params
 
 class NeedUploadManager(models.Manager):
     def get_queryset(self):
@@ -67,9 +58,6 @@ class DownloadedManager(models.Manager):
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().exclude(
             file='')
-
-
-
 
 # Create your models here.
 class Video(models.Model):
@@ -373,3 +361,14 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+
+@Field.register_lookup
+class NotEqualLookup(Lookup):
+    lookup_name = 'ne'
+
+    def as_sql(self, compiler, connection):
+        lhs, lhs_params = self.process_lhs(compiler, connection)
+        rhs, rhs_params = self.process_rhs(compiler, connection)
+        params = lhs_params + rhs_params
+        return '%s <> %s' % (lhs, rhs), params

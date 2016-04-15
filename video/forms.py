@@ -58,3 +58,27 @@ class VideoForm(forms.ModelForm):
         #     'subtitle_video_file': forms.TextInput(attrs={'size': 180}),
         # }
         fields = '__all__'  # Register your models here.
+
+
+class VideoChangeListForm(forms.ModelForm):
+    # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+
+    class Meta:
+        model = Video
+        youku_title = forms.CharField()
+        fields = youku_title
+
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        if instance:
+            initial = kwargs.get('initial', {})
+            initial['youku_title'] = instance.youku.title
+            kwargs['initial'] = initial
+        super(VideoChangeListForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        # use whatever parsing you like here
+        youku_title = self.cleaned_data['youku_title']
+        self.youku.save(title = youku_title)
+        super(VideoChangeListForm, self).save(*args, **kwargs)

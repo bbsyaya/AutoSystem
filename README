@@ -118,6 +118,20 @@ check 2016-3-31 CentOS上安装对应的ttf字体就可以了
 Linode上压字幕到视频十分慢，一个150m的视频要45min，虽然subprocess可以后天运行不因为页面timeout而停止，但是无法把压了字幕后的信息录入数据库
 用celery异步执行不知道是否可行，或者直接上传原视频，不压字幕
 check 2016-3-31 暂时先不压字幕
+
+在celery中设置定时获取youtube视频，下载上传youtube视频
+check 2016-4-12
+
+新加坡Linode上，获取youku的access token后无法保存到django-setting的表中
+暂时使用直接在数据库中修改要保持的值的方法代替
+check 2016-4-10 更新到pull request版本的django-settings，支持django1.9
+
+如何将setting信息正确保存到数据库中
+解决：django-setting插件有一个push
+https://github.com/jqb/django-settings/pull/30/commits
+check 2016-4-10
+
+
 =============================================================================================
 
 youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8sY
@@ -134,16 +148,7 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 在changelist的界面直接输入video对应的youku model的中文title
 
-在celery中设置定时获取youtube视频，下载上传youtube视频
-
 增加对上传到youku多账号支持
-
-新加坡Linode上，获取youku的access token后无法保存到django-setting的表中
-暂时使用直接在数据库中修改要保持的值的方法代替
-
-如何将setting信息正确保存到数据库中
-解决：django-setting插件有一个push
-https://github.com/jqb/django-settings/pull/30/commits
 
 =============================================================================================
 

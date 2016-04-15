@@ -103,7 +103,8 @@ class DownloadUploadFilter(admin.SimpleListFilter):
         """
         return (
             ('0', '设置了youku，但未下载'),
-            ('1', '已下载，但未上传'),
+            ('1', '已下载，但未设置youku信息'),
+            ('2', '已下载，设置了youku信息，但未上传'),
         )
 
     def queryset(self, request, queryset):
@@ -118,5 +119,7 @@ class DownloadUploadFilter(admin.SimpleListFilter):
         # 已下载，但未上传
         if self.value() == '1':
             # 设置了youku model，并且已下载youtube视频文件到本地
-            return queryset.filter(youku__youku_video_id__ne='').exclude(
-                file='')
+            return queryset.filter(youku__isnull=True, file__ne='')
+        if self.value() == '2':
+            # 设置了youku model，并且已下载youtube视频文件到本地
+            return queryset.filter(youku__youku_video_id='', file__ne='')

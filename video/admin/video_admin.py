@@ -3,16 +3,16 @@ from __future__ import unicode_literals
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
-
-
 __author__ = 'GoTop'
 
 from django.contrib import admin
 from django import forms
 from django.core.urlresolvers import reverse
 from video.models import Video, Youku
-from video.forms import YoukuForm, VideoForm
-from video.admin.video_admin_filter import DownloadFilter, UploadFilter, DownloadUploadFilter
+from video.forms import YoukuForm, VideoForm, VideoChangeListForm
+from video.admin.video_admin_filter import DownloadFilter, UploadFilter, \
+    DownloadUploadFilter
+
 
 class YoukuInline(admin.StackedInline):
     model = Youku
@@ -80,7 +80,8 @@ class VideoAdmin(admin.ModelAdmin):
         }),
     )
 
-    form = VideoForm
+    #form = VideoForm
+    form =VideoChangeListForm
 
     # 使用什么字段来排序
     ordering = ('-publishedAt', 'title')
