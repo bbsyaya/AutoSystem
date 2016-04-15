@@ -12,7 +12,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from video.models import Video, Youku
 from video.forms import YoukuForm, VideoForm
-from video.admin.video_admin_filter import DownloadFilter, UploadFilter
+from video.admin.video_admin_filter import DownloadFilter, UploadFilter, DownloadUploadFilter
 
 class YoukuInline(admin.StackedInline):
     model = Youku
@@ -44,7 +44,7 @@ class VideoAdmin(admin.ModelAdmin):
     search_fields = ('title', 'video_id')  # 只能是model中的text field
     inlines = [YoukuInline, ]
 
-    list_filter = [DownloadFilter, UploadFilter]
+    list_filter = [DownloadFilter, UploadFilter, DownloadUploadFilter]
 
     # 在change和edit页面显示哪些field
     fieldsets = (

@@ -141,6 +141,7 @@ class SuppressDeprecated(logging.Filter):
             'RemovedInDjango18Warning',
             'RemovedInDjango19Warning'
         ]
+        m = record.getMessage()
         # Return false to suppress message.
         return not any(
             [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
