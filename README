@@ -138,6 +138,8 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 为celery的subtask加入retry的设置
 
+多次上传到优酷不成功后，设置该video的 allow_upload_youku 值为false
+
 上传到youku时显示进度
 
 设置断点时无法正确映射到remote server（大小写问题）
@@ -192,6 +194,11 @@ AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类
 
 
 ==============================================================
+起始操作：
+获取youku上的playlist
+http://127.0.0.1:8000/video/get_my_playlists
+
+
 流程
 
 1. 自动下载我youtube首页显示的订阅频道的视频信息，保存到本地数据库
@@ -210,6 +217,8 @@ http://127.0.0.1:8000/video/auto_set_youku_category
 
 5. 自动上传所有填写好youku model中category的视频到youku
 http://127.0.0.1:8000/video/auto_youku_upload
+
+
 
 ================================================================
 Celery异步调用，要求将费时的批量操作写成一个函数

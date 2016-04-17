@@ -25,6 +25,7 @@ class YoukuInline(admin.StackedInline):
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
         'title',
+        'remark',
         # 'show_thumbnail',
         'publishedAt',
         'duration_readable', 'youtube_url',
@@ -33,8 +34,10 @@ class VideoAdmin(admin.ModelAdmin):
         'merge_subtitle',
         'merge_subtitle_to_video', 'youku_url',
         'update_youku_online_url', 'delete_youku_video_url',
-        'download_upload_video_url')
-    list_editable = ['allow_upload_youku']
+        'download_upload_video_url',
+        )
+    list_editable = ['allow_upload_youku', 'remark']
+
 
     readonly_fields = ('title', 'description', 'thumbnail',
                        'publishedAt', 'youtube_url', 'duration_readable',
@@ -80,8 +83,13 @@ class VideoAdmin(admin.ModelAdmin):
         }),
     )
 
-    #form = VideoForm
-    form =VideoChangeListForm
+    # It is used to create the form presented on both the add/change pages.
+    form = VideoForm
+    # form =VideoChangeListForm
+
+    # 通过编写ModelAdmin类中的get_changelist_form()来自定义changelist form
+    def get_changelist_form(self, request, **kwargs):
+        return VideoChangeListForm
 
     # 使用什么字段来排序
     ordering = ('-publishedAt', 'title')
@@ -125,6 +133,9 @@ class VideoAdmin(admin.ModelAdmin):
     # def duration_readable(self, obj):
     #     if obj.duration:
     #         m, s = divmod(obj.duration, 60)
+
+    def youku_title(self, obj):
+        pass
 
     def youtube_url(self, obj):
         youtube_url = 'https://www.youtube.com/watch?v=%s' % obj.video_id

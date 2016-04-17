@@ -11,6 +11,10 @@ SETTING_FILE = 'production'
 
 MEDIA_ROOT = '/home/gotop/Media/'
 
+os.environ[
+    'REQUESTS_CA_BUNDLE'] = '/home/gotop/.virtualenvs/AutoSystem/lib/python2' \
+                            '.7/site-packages/certifi/cacert.pem'
+
 DEBUG = True
 INSTALLED_APPS += (
     # other apps for production site
@@ -27,7 +31,6 @@ DATABASES = {
     }
 }
 
-
 YOUTUBE_DOWNLOAD_DIR = '/home/gotop/Media/Video/YouTube/'
 FFMPEG_LOCATION = "/usr/bin/ffmpeg"
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
@@ -39,9 +42,7 @@ YOUKU_CLIENT_ID = "77e7308f29201c63"
 YOUKU_CLIENT_SECRET = "0dbdd25be16ee0bc7aa6427b3d04148b"
 REDIRECT_URL = 'http://139.162.49.187/oauth2/youku_oauth2callback'
 
-
 ALLOWED_HOSTS = ['*']
-
 
 # 使用django自带broker的设置
 # 需要自己用命令python manage.py shell启动shell，在里面测试，不能直接用PyCharm的console
@@ -63,7 +64,7 @@ CELERY_TIMEZONE = 'Asia/Shanghai'
 
 # That is, tasks will be executed locally instead of being sent to the queue.
 # 用于测试环境，可以不开启worker，和broker
-#CELERY_ALWAYS_EAGER = True
+# CELERY_ALWAYS_EAGER = True
 
 
 # 使用redis的设置
@@ -82,10 +83,13 @@ CELERY_TIMEZONE = 'Asia/Shanghai'
 # CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
 
 import djcelery
+
 djcelery.setup_loader()
 
-# This allows you to easily change the schedules, even while Django and Celery are running.
+# This allows you to easily change the schedules, even while Django and
+# Celery are running.
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
 
 class SuppressDeprecated(logging.Filter):
     def filter(self, record):
@@ -96,6 +100,7 @@ class SuppressDeprecated(logging.Filter):
         # Return false to suppress message.
         return not any(
             [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
+
 
 LOGGING = {
     'version': 1,
@@ -150,7 +155,7 @@ LOGGING = {
 
     'loggers': {
         'AutoSystem': {
-            'handlers': ['console','logfile'],
+            'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
         },
         'myapp.request': {

@@ -15,8 +15,10 @@ class YoukuForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(YoukuForm, self).__init__(*args, **kwargs)
 
-        # http://stackoverflow.com/questions/1226590/django-how-can-i-access-the-form-field-from-inside-a-custom-widget/2135739#2135739
-        # From inside the Form class you can access the Model instance through self.instance. Remember the instance
+        # http://stackoverflow.com/questions/1226590/django-how-can-i-access
+        # -the-form-field-from-inside-a-custom-widget/2135739#2135739
+        # From inside the Form class you can access the Model instance
+        # through self.instance. Remember the instance
         # will be rather blank when Add/Creating a new object.
         # 将form model传给 buttom widget
         self.fields['upload_to_youku'].widget.form_instance = self.instance
@@ -27,7 +29,8 @@ class YoukuForm(forms.ModelForm):
         model = Youku
 
         # 覆盖默认的widget
-        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms
+        # /#overriding-the-default-fields
         widgets = {
             'title': forms.TextInput(attrs={'size': 180}),
             'tags': forms.TextInput(attrs={'size': 180}),
@@ -48,7 +51,8 @@ class VideoForm(forms.ModelForm):
         model = Video
 
         # 覆盖默认的widget
-        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+        # https://docs.djangoproject.com/en/dev/topics/forms/modelforms
+        # /#overriding-the-default-fields
         # widgets = {
         #     'title': forms.TextInput(attrs={'size': 180}),
         #     'subtitle_en': forms.TextInput(attrs={'size': 180}),
@@ -57,28 +61,32 @@ class VideoForm(forms.ModelForm):
         #     'file': forms.TextInput(attrs={'size': 180}),
         #     'subtitle_video_file': forms.TextInput(attrs={'size': 180}),
         # }
+
         fields = '__all__'  # Register your models here.
 
-
+# todo 能在video changelist 页面将 remark 显示为可编辑的youku.title,但修改无效
+# debug时，不会调用到save()，原因不明
 class VideoChangeListForm(forms.ModelForm):
-    # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
+    # https://docs.djangoproject.com/en/dev/topics/forms/modelforms
+    # /#overriding-the-default-fields
 
     class Meta:
         model = Video
-        youku_title = forms.CharField()
-        fields = youku_title
-
+        #youku_title = forms.CharField()
+        fields = []
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         if instance:
-            initial = kwargs.get('initial', {})
-            initial['youku_title'] = instance.youku.title
-            kwargs['initial'] = initial
+            if hasattr(instance, 'youku'):
+                initial = kwargs.get('initial', {})
+                initial['remark'] = instance.youku.title
+                kwargs['initial'] = initial
         super(VideoChangeListForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         # use whatever parsing you like here
-        youku_title = self.cleaned_data['youku_title']
-        self.youku.save(title = youku_title)
+        youku_title = self.cleaned_data['remark']
+
+        self.youku.save(title=youku_title)
         super(VideoChangeListForm, self).save(*args, **kwargs)

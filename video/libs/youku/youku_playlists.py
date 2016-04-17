@@ -2,7 +2,7 @@
 
 doc: http://open.youku.com/docs/tech_doc.html
 """
-
+import certifi
 import requests
 from util import check_error, remove_none_value
 
@@ -71,7 +71,7 @@ class YoukuPlaylists(object):
             'page': page,
             'count': count
         }
-        r = requests.get(url, params=params)
+        r = requests.get(url, params=params, verify=False)
         check_error(r)
         return r.json()
 
