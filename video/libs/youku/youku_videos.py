@@ -8,7 +8,6 @@ from util import check_error, remove_none_value
 
 
 class YoukuVideos(object):
-
     """Youku Videos API.
 
     doc:http://open.youku.com/docs/api_videos.html
@@ -151,7 +150,7 @@ class YoukuVideos(object):
             'thumbnail_seq': thumbnail_seq
         }
         data = remove_none_value(data)
-        r = requests.post(url, data=data)
+        r = requests.post(url, data=data, verify=False)
         check_error(r)
         return r.json()['id']
 

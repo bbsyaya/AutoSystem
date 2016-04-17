@@ -8,7 +8,6 @@ from util import check_error, remove_none_value
 
 
 class YoukuPlaylists(object):
-
     """Youku Playlists API.
 
     doc: http://open.youku.com/docs/api_playlists.html
@@ -181,7 +180,7 @@ class YoukuPlaylists(object):
             'playlist_id': playlist_id,
             'video_ids': video_ids
         }
-        r = requests.post(url, data=data)
+        r = requests.post(url, data=data, verify=False)
         check_error(r)
         return r.json()['id']
 
@@ -195,7 +194,7 @@ class YoukuPlaylists(object):
             'playlist_id': playlist_id,
             'video_ids': video_ids
         }
-        r = requests.post(url, data=data)
+        r = requests.post(url, data=data, verify=False)
         check_error(r)
         return r.json()['id']
 

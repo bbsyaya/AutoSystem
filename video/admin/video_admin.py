@@ -25,7 +25,6 @@ class YoukuInline(admin.StackedInline):
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
         'title',
-        'remark',
         # 'show_thumbnail',
         'publishedAt',
         'duration_readable', 'youtube_url',
@@ -36,7 +35,7 @@ class VideoAdmin(admin.ModelAdmin):
         'update_youku_online_url', 'delete_youku_video_url',
         'download_upload_video_url',
         )
-    list_editable = ['allow_upload_youku', 'remark']
+    list_editable = ['allow_upload_youku']
 
 
     readonly_fields = ('title', 'description', 'thumbnail',
@@ -87,9 +86,10 @@ class VideoAdmin(admin.ModelAdmin):
     form = VideoForm
     # form =VideoChangeListForm
 
+    #todo 无法保存修改值，暂时停用
     # 通过编写ModelAdmin类中的get_changelist_form()来自定义changelist form
-    def get_changelist_form(self, request, **kwargs):
-        return VideoChangeListForm
+    # def get_changelist_form(self, request, **kwargs):
+    #     return VideoChangeListForm
 
     # 使用什么字段来排序
     ordering = ('-publishedAt', 'title')
