@@ -119,7 +119,7 @@ def delete_youku_video(youku_video_id):
 def update_youku_online_info(youku_video_id):
     """
     将youku_video_id的本地youku对象的属性，在优酷上进行更新
-
+    注意：无法对视频进行关于playlist的操作
     :param youku_video_id:
     :return:
     """
