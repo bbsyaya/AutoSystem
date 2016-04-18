@@ -168,12 +168,13 @@ def set_youku_playlist_online(youku_video_id, playlist_id):
     # http://doc.open.youku.com/?docid=377
     # 视频ID用逗号来分割,每个专辑最多200个视频，限制单次操作视频的最大个数，默认20
     # video_ids=850,860,870,880
-    id = service.add_videos_to_playlist(access_token=youku_access_token,
+    # 返回的是专辑ID
+    playlist_id = service.add_videos_to_playlist(access_token=youku_access_token,
                                         playlist_id=playlist_id,
                                         video_ids=youku_video_id)
 
-    if id:
-        return id
+    if playlist_id:
+        return playlist_id
     else:
         return False
 
