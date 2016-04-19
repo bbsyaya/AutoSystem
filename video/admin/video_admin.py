@@ -35,9 +35,8 @@ class VideoAdmin(admin.ModelAdmin):
         'merge_subtitle_to_video', 'youku_url',
         'update_youku_online_url', 'delete_youku_video_url',
         'download_upload_video_url',
-        )
-    list_editable = ['allow_upload_youku','remark']
-
+    )
+    list_editable = ['allow_upload_youku', 'remark']
 
     readonly_fields = ('title', 'description', 'thumbnail',
                        'publishedAt', 'youtube_url', 'duration_readable',
@@ -85,6 +84,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     # It is used to create the form presented on both the add/change pages.
     form = VideoForm
+
     # form =VideoChangeListForm
 
     # 通过编写ModelAdmin类中的get_changelist_form()来自定义changelist form
@@ -313,8 +313,6 @@ class VideoAdmin(admin.ModelAdmin):
     download_upload_video_url.allow_tags = True
     download_upload_video_url.short_description = '下载+上传-视频'
 
-
-
     def save_formset(self, request, form, formset, change):
         """
         form 为vdieo的form
@@ -330,28 +328,30 @@ class VideoAdmin(admin.ModelAdmin):
         for obj in formset.deleted_objects:
             obj.delete()
         for instance in instances:
-            # instance 为youku 对象
+            # instance 为 youku 对象
             instance.save()
-
-            if 'setted_youku_playlist' in formset[0].changed_data:
+            if 'setted_youku_playlist' in formset.forms[0].changed_data:
                 # 如果设置的setted_youku_playlist与youku_playlist不相同，则要在优酷网上将video
                 # 从youku_playlist中删除，然后再将video添加到setted_youku_playlist中，
                 # 最后将本地数据库中的youku_playlist设置为setted_youku_playlist
-                if formset.initial['setted_youku_playlist'] <> formset.initial[
-                    'youku_playlist']:
+                setted_youku_playlist = formset.forms[0].cleaned_data[
+                    'setted_youku_playlist']
+                origin_youku_playlist = formset.forms[0].cleaned_data[
+                    'youku_playlist']
+                if setted_youku_playlist != origin_youku_playlist:
                     # todo 以下这段引用如果放在顶部则无法启动django server，原因未明
                     from video.function.youku import delete_video_from_playlist, \
                         set_youku_playlist_online
                     # 只要改变了field['youku_playlist']，自动在playlist_id的优酷playlist
                     # 中删除youku_video_id视频
-                    old_youku_playlist_id = formset.initial['youku_playlist']
-                    delete_video_from_playlist(obj.youku_video_id,
-                                               old_youku_playlist_id)
+                    delete_video_from_playlist(instance.youku_video_id,
+                                               origin_youku_playlist.id)
                     playlist_id = set_youku_playlist_online(
-                        obj.youku_video_id,
-                        formset.cleaned_data['setted_youku_playlist'].id)
+                        instance.youku_video_id, setted_youku_playlist.id)
                     if playlist_id:
-                        obj.youku_playlist = obj.setted_youku_playlist
-        formset.save_m2m()
+                        instance.youku_playlist = instance.setted_youku_playlist
+                        instance.save(update_fields=['youku_playlist'])
+        formset.forms[0].save_m2m()
+
 
 admin.site.register(Video, VideoAdmin)
