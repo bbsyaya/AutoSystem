@@ -64,15 +64,15 @@ class VideoForm(forms.ModelForm):
 
         fields = '__all__'  # Register your models here.
 
-# todo 能在video changelist 页面将 remark 显示为可编辑的youku.title,但修改无效
+
+
 # debug时，不会调用到save()，原因不明
 class VideoChangeListForm(forms.ModelForm):
     # https://docs.djangoproject.com/en/dev/topics/forms/modelforms
     # /#overriding-the-default-fields
-
     class Meta:
         model = Video
-        #youku_title = forms.CharField()
+        # youku_title = forms.CharField()
         fields = []
 
     def __init__(self, *args, **kwargs):
@@ -86,7 +86,8 @@ class VideoChangeListForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         # use whatever parsing you like here
-        youku_title = self.cleaned_data['remark']
-
-        self.youku.save(title=youku_title)
-        super(VideoChangeListForm, self).save(*args, **kwargs)
+        if hasattr(self.instance, 'youku'):
+            youku_title = self.cleaned_data['remark']
+            self.instance.youku.title = youku_title
+            self.instance.youku.save(update_fields=['title'])
+        return super(VideoChangeListForm, self).save(*args, **kwargs)
