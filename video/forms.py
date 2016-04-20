@@ -92,8 +92,7 @@ class VideoChangeListForm(forms.ModelForm):
             # 如果video实例没有设置youku对象，但是changelist form中的remark field中有输入
             # 则新建一个youku对象，将youku.title设置为remark field的值
             youku_obj = Youku.objects.create(title = self.cleaned_data[
-                'remark'])
-            self.instance.youku = youku_obj
-        self.instance.save()
+                'remark'], video = self.instance)
+        #self.instance.save()
 
         return super(VideoChangeListForm, self).save(*args, **kwargs)
