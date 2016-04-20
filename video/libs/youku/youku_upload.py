@@ -240,7 +240,9 @@ class YoukuUpload(object):
         # GoTop add verify=certifi.where() 2016-3-26, Because on CentOS,
         # Request module can't find youku CA
         r = requests.post(url, params=params, data=data, verify=False)
-        check_error(r, 201)
+        # GoTop change check_error(r, 201) to check_error(r, 200, 201)
+        # because sometime it return 200, sometime 201, both mean success
+        check_error(r, 200, 201)
         self._save_slice_state(r.json())
 
     def check(self):

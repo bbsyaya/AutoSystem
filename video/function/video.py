@@ -40,9 +40,14 @@ def download_upload_video(video_id):
     video = Video.objects.get(pk=video_id)
 
     if not video.file:
-        download_single_youtube_video_main(video_id)
+        video_filepath = download_single_youtube_video_main(video_id)
+    else:
+        video_filepath = False
+
     if not video.subtitle_en:
-        download_subtitle(video_id)
+        subtitle_fielpath_list = download_subtitle(video_id)
+    else:
+        subtitle_fielpath_list = []
 
     # merge_sub_edit_style(video_id)
 
@@ -57,4 +62,8 @@ def download_upload_video(video_id):
     set_youku_category_local(video.youku.id)
 
     if not video.youku.video_id:
-        youku_upload(video.youku.id)
+        youku_video_id = youku_upload(video.youku.id)
+    else:
+        youku_video_id = False
+
+    return (video_filepath, subtitle_fielpath_list, youku_video_id )

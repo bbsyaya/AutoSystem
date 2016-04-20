@@ -351,7 +351,7 @@ class VideoAdmin(admin.ModelAdmin):
                     if playlist_id:
                         instance.youku_playlist = instance.setted_youku_playlist
                         instance.save(update_fields=['youku_playlist'])
-        formset.forms[0].save_m2m()
+        formset.save_m2m()
 
 
 admin.site.register(Video, VideoAdmin)

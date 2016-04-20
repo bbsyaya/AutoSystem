@@ -65,17 +65,15 @@ class VideoForm(forms.ModelForm):
         fields = '__all__'  # Register your models here.
 
 
-
-# debug时，不会调用到save()，原因不明
 class VideoChangeListForm(forms.ModelForm):
-    # https://docs.djangoproject.com/en/dev/topics/forms/modelforms
-    # /#overriding-the-default-fields
+    # https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#overriding-the-default-fields
     class Meta:
         model = Video
         # youku_title = forms.CharField()
         fields = []
 
     def __init__(self, *args, **kwargs):
+        # instance为video实例
         instance = kwargs.get('instance')
         if instance:
             if hasattr(instance, 'youku'):
@@ -85,9 +83,17 @@ class VideoChangeListForm(forms.ModelForm):
         super(VideoChangeListForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        # use whatever parsing you like here
+        # self.instance为video实例
         if hasattr(self.instance, 'youku'):
-            youku_title = self.cleaned_data['remark']
-            self.instance.youku.title = youku_title
-            self.instance.youku.save(update_fields=['title'])
+            #不管remark field是否有输入，都将其赋给youku.title
+            self.instance.youku.title = self.cleaned_data['remark']
+            #self.instance.youku.save(update_fields=['title'])
+        elif self.cleaned_data['remark']:
+            # 如果video实例没有设置youku对象，但是changelist form中的remark field中有输入
+            # 则新建一个youku对象，将youku.title设置为remark field的值
+            youku_obj = Youku.objects.create(title = self.cleaned_data[
+                'remark'])
+            self.instance.youku = youku_obj
+        self.instance.save()
+
         return super(VideoChangeListForm, self).save(*args, **kwargs)
