@@ -338,19 +338,21 @@ class VideoAdmin(admin.ModelAdmin):
                     'setted_youku_playlist']
                 origin_youku_playlist = formset.forms[0].cleaned_data[
                     'youku_playlist']
-                if setted_youku_playlist != origin_youku_playlist:
-                    # todo 以下这段引用如果放在顶部则无法启动django server，原因未明
-                    from video.function.youku import delete_video_from_playlist, \
-                        set_youku_playlist_online
-                    # 只要改变了field['youku_playlist']，自动在playlist_id的优酷playlist
-                    # 中删除youku_video_id视频
-                    delete_video_from_playlist(instance.youku_video_id,
-                                               origin_youku_playlist.id)
-                    playlist_id = set_youku_playlist_online(
-                        instance.youku_video_id, setted_youku_playlist.id)
-                    if playlist_id:
-                        instance.youku_playlist = instance.setted_youku_playlist
-                        instance.save(update_fields=['youku_playlist'])
+                if setted_youku_playlist:
+                    if setted_youku_playlist != origin_youku_playlist:
+                        # todo 以下这段引用如果放在顶部则无法启动django server，原因未明
+                        from video.function.youku import delete_video_from_playlist, \
+                            set_youku_playlist_online
+                        # 只要改变了field['youku_playlist']，自动在playlist_id的优酷playlist
+                        # 中删除youku_video_id视频
+                        if origin_youku_playlist:
+                            delete_video_from_playlist(instance.youku_video_id,
+                                                       origin_youku_playlist.id)
+                        playlist_id = set_youku_playlist_online(
+                            instance.youku_video_id, setted_youku_playlist.id)
+                        if playlist_id:
+                            instance.youku_playlist = instance.setted_youku_playlist
+                            instance.save(update_fields=['youku_playlist'])
         formset.save_m2m()
 
 
