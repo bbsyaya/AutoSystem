@@ -11,6 +11,7 @@ def get_subscription_update_video(user, max_results):
     获取认证用户的youtube首页显示的订阅频道的视频信息，保存到本地数据库
     https://developers.google.com/youtube/v3/docs/activities/list#errors
     :param request:
+    max_results：最大为50
     :return:
     """
     youtube = get_authenticated_service(user)
@@ -19,6 +20,9 @@ def get_subscription_update_video(user, max_results):
     # parameter's value to true to retrieve the activity feed that displays on
     # the YouTube home page for the currently authenticated user.
 
+    # home=True 获取登陆用户的首页推荐视频
+    # mine=True 获取登陆用户进行like，upload等操作的视频
+    # home和mine 不能同时为True，否者会提示错误
     if youtube:
         res = youtube.activities().list(
         part='snippet, contentDetails',

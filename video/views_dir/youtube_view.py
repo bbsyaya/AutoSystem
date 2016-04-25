@@ -15,6 +15,7 @@ def get_subscription_update_video_view(request, max_results):
     获取认证用户的youtube首页显示的订阅频道的视频信息，保存到本地数据库
     https://developers.google.com/youtube/v3/docs/activities/list#errors
     :param request:
+    max_results: 最大为50
     :return:
     """
     result = get_subscription_update_video(request.user, max_results)

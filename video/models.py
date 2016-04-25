@@ -125,9 +125,9 @@ class Video(models.Model):
         if self.duration:
             m, s = divmod(self.duration, 60)
             if m:
-                return "%s分%s秒" % (m, s)
+                return "%s:%s" % (m, s)
             else:
-                return "%s秒" % s
+                return "%s" % s
         else:
             return self.duration
 

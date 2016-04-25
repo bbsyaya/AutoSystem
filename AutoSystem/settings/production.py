@@ -29,6 +29,16 @@ DATABASES = {
 YOUTUBE_DOWNLOAD_DIR = '/home/gotop/Media/Video/YouTube/'
 
 FFMPEG_LOCATION = "/usr/bin/ffmpeg"
+
+# reference: http://www.marinamele.com/use-the-google-analytics-api-with-django
+CLIENT_SECRETS = os.path.join(
+    os.path.dirname(__file__), 'client_secret.json')
+REDIRECT_URI = 'http://106.185.37.62/oauth2/oauth2callback'
+SCOPES = 'https://www.googleapis.com/auth/youtube'
+YOUTUBE_API_SERVICE_NAME = "youtube"
+YOUTUBE_API_VERSION = "v3"
+
+
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
 # &response_type=code&redirect_uri=http
 # ://127.0.0.1:8000

@@ -27,13 +27,18 @@ class VideoAdmin(admin.ModelAdmin):
         'title',
         'remark',
         # 'show_thumbnail',
-        'publishedAt',
-        'duration_readable', 'youtube_url',
+        'published_at_readable',
+        'duration_readable',
+        'youtube_url',
+        'show_video_of_channel',
         'allow_upload_youku',
-        'download_youtube_url', 'download_subtitle_url',
-        'merge_subtitle',
-        'merge_subtitle_to_video', 'youku_url',
-        'update_youku_online_url', 'delete_youku_video_url',
+        'download_youtube_url',
+        #'download_subtitle_url',
+        #'merge_subtitle',
+        #'merge_subtitle_to_video',
+        'youku_url',
+        'update_youku_online_url',
+        'delete_youku_video_url',
         'download_upload_video_url',
     )
     list_editable = ['allow_upload_youku', 'remark']
@@ -43,10 +48,12 @@ class VideoAdmin(admin.ModelAdmin):
                        'view_count', 'channel',
                        'like_count', 'tags_readable')
     list_per_page = 20
-    search_fields = ('title', 'video_id')  # 只能是model中的text field
+    search_fields = ('title', 'video_id', 'channel__title')  # 只能是model中的text
+    # field
     inlines = [YoukuInline, ]
 
-    list_filter = [DownloadFilter, UploadFilter, DownloadUploadFilter]
+    list_filter = [DownloadFilter, UploadFilter, DownloadUploadFilter,
+                   'channel__title']
 
     # 在change和edit页面显示哪些field
     fieldsets = (
@@ -130,12 +137,10 @@ class VideoAdmin(admin.ModelAdmin):
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
 
-    # def duration_readable(self, obj):
-    #     if obj.duration:
-    #         m, s = divmod(obj.duration, 60)
+    def published_at_readable(self, obj):
+        return obj.publishedAt.strftime("%Y-%m-%d %H:%M")
+    published_at_readable.short_description = '发布时间'
 
-    def youku_title(self, obj):
-        pass
 
     def youtube_url(self, obj):
         youtube_url = 'https://www.youtube.com/watch?v=%s' % obj.video_id
@@ -143,6 +148,15 @@ class VideoAdmin(admin.ModelAdmin):
 
     youtube_url.allow_tags = True
     youtube_url.short_description = 'YouTube'
+
+    def show_video_of_channel(self, obj):
+        change_url = reverse('admin:video_video_changelist')
+        extra = "?channel__title__exact=%s" % (obj.channel.title)
+        return "<a href='%s' target='_blank'>频道</a>" % \
+               (change_url + extra)
+
+    show_video_of_channel.allow_tags = True
+    show_video_of_channel.short_description = '频道'
 
     def download_youtube_url(self, obj):
         if obj.file:
@@ -341,7 +355,8 @@ class VideoAdmin(admin.ModelAdmin):
                 if setted_youku_playlist:
                     if setted_youku_playlist != origin_youku_playlist:
                         # todo 以下这段引用如果放在顶部则无法启动django server，原因未明
-                        from video.function.youku import delete_video_from_playlist, \
+                        from video.function.youku import \
+                            delete_video_from_playlist, \
                             set_youku_playlist_online
                         # 只要改变了field['youku_playlist']，自动在playlist_id的优酷playlist
                         # 中删除youku_video_id视频
@@ -351,7 +366,8 @@ class VideoAdmin(admin.ModelAdmin):
                         playlist_id = set_youku_playlist_online(
                             instance.youku_video_id, setted_youku_playlist.id)
                         if playlist_id:
-                            instance.youku_playlist = instance.setted_youku_playlist
+                            instance.youku_playlist = \
+                                instance.setted_youku_playlist
                             instance.save(update_fields=['youku_playlist'])
         formset.save_m2m()
 
