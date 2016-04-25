@@ -41,7 +41,7 @@ def authenticate_view(request):
     :param request:
     :return:
     """
-    result = get_authenticated_service(request.user.id)
+    result = get_authenticated_service(request.user)
 
     if result is None:
 
@@ -55,7 +55,7 @@ def authenticate_view(request):
         # there will be some error show I ignore the validate part
         # FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY, user)
         authorize_url = FLOW.step1_get_authorize_url()
-        user = request.user.id
+        user = request.user
         f = FlowModel(id=user, flow=FLOW)
         f.save()
         # 根据urls.py的设置，会调用oauth2callback_view()，打开authorize_url进行认证

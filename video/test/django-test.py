@@ -52,5 +52,4 @@ django.setup()
 
 # auto_upload(1)
 
-auto_clean_media_directory(max_size=1.6 * 1024 * 1024 * 1024, delete_file_num
-=1)
+auto_get_subscription_update_video(max_results=5)
