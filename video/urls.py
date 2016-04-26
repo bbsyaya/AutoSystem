@@ -65,10 +65,10 @@ urlpatterns = [
     url(r'download_subtitle/(?P<video_id>.+)$',
         youtube_view.download_subtitle_view, name='download_subtitle'),
 
-    # http://127.0.0.1:8000/video/get_multi_youtube_video_info/50
+    # http://127.0.0.1:8000/video/get_multi_youtube_video_info
     url(r'get_multi_youtube_video_info$',
         youtube_view.get_multi_youtube_video_info_view,
-        name=' get_multi_youtube_video_info'),
+        name='get_multi_youtube_video_info'),
 
     ###########################################################################
     # 字幕

@@ -54,13 +54,14 @@ class VideoForm(forms.ModelForm):
         # https://docs.djangoproject.com/en/dev/topics/forms/modelforms
         # /#overriding-the-default-fields
         # widgets = {
-        #     'title': forms.TextInput(attrs={'size': 180}),
-        #     'subtitle_en': forms.TextInput(attrs={'size': 180}),
-        #     'subtitle_cn': forms.TextInput(attrs={'size': 180}),
-        #     'subtitle_merge': forms.TextInput(attrs={'size': 180}),
-        #     'file': forms.TextInput(attrs={'size': 180}),
-        #     'subtitle_video_file': forms.TextInput(attrs={'size': 180}),
+        #     'remark': forms.TextInput(attrs={'cols': 80, 'rows': 2}),
+        #     # 'subtitle_en': forms.TextInput(attrs={'size': 180}),
+        #     # 'subtitle_cn': forms.TextInput(attrs={'size': 180}),
+        #     # 'subtitle_merge': forms.TextInput(attrs={'size': 180}),
+        #     # 'file': forms.TextInput(attrs={'size': 180}),
+        #     # 'subtitle_video_file': forms.TextInput(attrs={'size': 180}),
         # }
+
 
         fields = '__all__'  # Register your models here.
 
@@ -70,6 +71,9 @@ class VideoChangeListForm(forms.ModelForm):
     class Meta:
         model = Video
         # youku_title = forms.CharField()
+        widgets = {
+            'remark': forms.TextInput(attrs={'size': 80}),
+        }
         fields = []
 
     def __init__(self, *args, **kwargs):

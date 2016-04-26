@@ -33,9 +33,9 @@ class VideoAdmin(admin.ModelAdmin):
         'show_video_of_channel',
         'allow_upload_youku',
         'download_youtube_url',
-        #'download_subtitle_url',
-        #'merge_subtitle',
-        #'merge_subtitle_to_video',
+        # 'download_subtitle_url',
+        # 'merge_subtitle',
+        # 'merge_subtitle_to_video',
         'youku_url',
         'update_youku_online_url',
         'delete_youku_video_url',
@@ -53,6 +53,8 @@ class VideoAdmin(admin.ModelAdmin):
     inlines = [YoukuInline, ]
 
     list_filter = [DownloadFilter, UploadFilter, DownloadUploadFilter,
+                   'channel__is_download',
+                   'channel__category',
                    'channel__title']
 
     # 在change和edit页面显示哪些field
@@ -90,11 +92,12 @@ class VideoAdmin(admin.ModelAdmin):
     )
 
     # It is used to create the form presented on both the add/change pages.
+    # 用来定义 add和change页面的表格
     form = VideoForm
 
     # form =VideoChangeListForm
 
-    # 通过编写ModelAdmin类中的get_changelist_form()来自定义changelist form
+    # 通过编写ModelAdmin类中的get_changelist_form()来自定义changelist 页面的form
     def get_changelist_form(self, request, **kwargs):
         return VideoChangeListForm
 
@@ -104,7 +107,7 @@ class VideoAdmin(admin.ModelAdmin):
     # 设置使用select_related，在获取video的changelist页面直接获取video对象和其youku的值
     # 避免没一个video对象单独查询一次youku对象的信息
     list_select_related = (
-        'youku',
+        'youku', 'channel'
     )
 
     # 设置使用select_related，在获取video的changelist页面直接获取video对象和其youku的值
@@ -139,8 +142,8 @@ class VideoAdmin(admin.ModelAdmin):
 
     def published_at_readable(self, obj):
         return obj.publishedAt.strftime("%Y-%m-%d %H:%M")
-    published_at_readable.short_description = '发布时间'
 
+    published_at_readable.short_description = '发布时间'
 
     def youtube_url(self, obj):
         youtube_url = 'https://www.youtube.com/watch?v=%s' % obj.video_id
@@ -152,8 +155,8 @@ class VideoAdmin(admin.ModelAdmin):
     def show_video_of_channel(self, obj):
         change_url = reverse('admin:video_video_changelist')
         extra = "?channel__title__exact=%s" % (obj.channel.title)
-        return "<a href='%s' target='_blank'>频道</a>" % \
-               (change_url + extra)
+        return "<a href='%s' target='_blank'>%s</a>" % \
+               (change_url + extra, obj.channel.title)
 
     show_video_of_channel.allow_tags = True
     show_video_of_channel.short_description = '频道'

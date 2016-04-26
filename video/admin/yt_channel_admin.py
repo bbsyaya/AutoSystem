@@ -18,6 +18,11 @@ class YT_channelAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_download', 'category')
 
+    #一定要在后面加入逗号
+    list_select_related = (
+        'category',
+    )
+
     def show_channel_url(self, obj):
         return "<a href='%s' target='_blank'>频道Url</a>" % obj.url
 
