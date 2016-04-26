@@ -24,7 +24,7 @@ from oauth2_authentication.models import CredentialsModel, FlowModel
 from AutoSystem.settings import CLIENT_SECRETS, SCOPES, REDIRECT_URI, \
     YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION
 
-
+# reference: http://www.marinamele.com/use-the-google-analytics-api-with-django
 @login_required
 def authenticate_view(request):
     """

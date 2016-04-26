@@ -297,6 +297,7 @@ static/
 # local and server have difference __init__.py
 AutoSystem/settings/__init__.py
 
+client_secret.json
 fabfile.py
 db.sqlite3
 dump.rdb
