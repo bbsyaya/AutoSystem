@@ -26,7 +26,7 @@ class VideoAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'remark',
-        'show_thumbnail',
+        #'show_thumbnail',
         'published_at_readable',
         'show_duration_readable',
         'youtube_url',
