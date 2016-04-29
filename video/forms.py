@@ -72,7 +72,7 @@ class VideoChangeListForm(forms.ModelForm):
         model = Video
         # youku_title = forms.CharField()
         widgets = {
-            'remark': forms.TextInput(attrs={'size': 80}),
+            'remark': forms.TextInput(attrs={'size': 50}),
         }
         fields = []
 

@@ -26,9 +26,9 @@ class VideoAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'remark',
-        # 'show_thumbnail',
+        'show_thumbnail',
         'published_at_readable',
-        'duration_readable',
+        'show_duration_readable',
         'youtube_url',
         'show_video_of_channel',
         'allow_upload_youku',
@@ -140,8 +140,14 @@ class VideoAdmin(admin.ModelAdmin):
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
 
+    def show_duration_readable(self, object):
+        return object.duration_readable
+
+    show_duration_readable.short_description = "时长"
+
     def published_at_readable(self, obj):
-        return obj.publishedAt.strftime("%Y-%m-%d %H:%M")
+        #return obj.publishedAt.strftime("%Y-%m-%d %H:%M")
+        return obj.publishedAt.strftime("%m-%d %H:%M")
 
     published_at_readable.short_description = '发布时间'
 
@@ -171,7 +177,7 @@ class VideoAdmin(admin.ModelAdmin):
             return "<a href='%s' target='_blank'>下载</a>" % download_youtube_url
 
     download_youtube_url.allow_tags = True
-    download_youtube_url.short_description = '下载YouTube视频'
+    download_youtube_url.short_description = '下载YouTube'
 
     def download_subtitle_url(self, obj):
         if obj.subtitle_cn:
@@ -226,7 +232,7 @@ class VideoAdmin(admin.ModelAdmin):
                 # 显示已经上传到优酷网站的视频链接
                 youku_url = 'http://v.youku.com/v_show/id_%s.html' % \
                             obj.youku.youku_video_id
-                return "<a href='%s' target='_blank'>优酷网视频链接</a>" % youku_url
+                return "<a href='%s' target='_blank'>优酷视频链接</a>" % youku_url
             else:
                 # 显示上传video到优酷网站的链接
                 publish_youku_url = reverse('video:youku_upload',
@@ -239,7 +245,7 @@ class VideoAdmin(admin.ModelAdmin):
                    publish_youku_url
 
     youku_url.allow_tags = True
-    youku_url.short_description = '优酷网视频链接'
+    youku_url.short_description = '优酷视频链接'
 
     # def get_youku_video_info_url(self, obj):
     #     if hasattr(obj, 'youku'):
@@ -271,7 +277,7 @@ class VideoAdmin(admin.ModelAdmin):
                 edit_youku_url = reverse(
                     'video:update_youku_online_info',
                     args=[obj.youku.youku_video_id])
-                return "<a href='%s' target='_blank'>更新-在线优酷网信息</a>" % \
+                return "<a href='%s' target='_blank'>更新优酷OL</a>" % \
                        edit_youku_url
             else:
                 return "-"
@@ -279,7 +285,7 @@ class VideoAdmin(admin.ModelAdmin):
             return "-"
 
     update_youku_online_url.allow_tags = True
-    update_youku_online_url.short_description = '更新-在线优酷网信息'
+    update_youku_online_url.short_description = '更新优酷OL'
 
     def delete_youku_video_url(self, obj):
         if hasattr(obj, 'youku'):
@@ -295,7 +301,7 @@ class VideoAdmin(admin.ModelAdmin):
             return "-"
 
     delete_youku_video_url.allow_tags = True
-    delete_youku_video_url.short_description = '在线删除-优酷视频'
+    delete_youku_video_url.short_description = '删除优酷视频OL'
 
     def edit_youku_url(self, obj):
         if hasattr(obj, 'youku'):
@@ -308,7 +314,7 @@ class VideoAdmin(admin.ModelAdmin):
             return "<a href='%s' target='_blank'>Add Youku</a>" % edit_youku_url
 
     edit_youku_url.allow_tags = True
-    edit_youku_url.short_description = '修改-优酷信息'
+    edit_youku_url.short_description = '修改优酷信息OL'
 
     def download_upload_video_url(self, obj):
         if hasattr(obj, 'youku'):
@@ -319,16 +325,16 @@ class VideoAdmin(admin.ModelAdmin):
                 # video设置有对应的youku对象，但是youku.youku_video_id为空，说明没有上传到优酷
                 download_upload_video_url = reverse(
                     'video:download_upload_video', args=[obj.video_id, ])
-                return "<a href='%s' target='_blank'>下载+上传-视频</a>" % \
+                return "<a href='%s' target='_blank'>下载+上传</a>" % \
                        download_upload_video_url
         else:
             download_upload_video_url = reverse(
                 'video:download_upload_video', args=[obj.video_id, ])
-            return "<a href='%s' target='_blank'>下载+上传-视频</a>" % \
+            return "<a href='%s' target='_blank'>下载+上传</a>" % \
                    download_upload_video_url
 
     download_upload_video_url.allow_tags = True
-    download_upload_video_url.short_description = '下载+上传-视频'
+    download_upload_video_url.short_description = '下载+上传'
 
     def save_formset(self, request, form, formset, change):
         """

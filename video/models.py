@@ -15,14 +15,15 @@ class NeedUploadManager(models.Manager):
         # 返回Video model中 allow_upload_youku为true，设置有对应的youku model，
         # 已下载视频文件过，并且未上传到优酷网(youku__youku_video_id='')的video
         need_upload_queryset = super(NeedUploadManager,
-                                              self).get_queryset().filter(
+                                     self).get_queryset().filter(
             # 在SQLite数据库中，django model BooleanField True对应1，False对应0
             # 不知道在Django1.7之后的版本是否修改该bug
             allow_upload_youku=1,
             youku__isnull=False,
-            youku__youku_video_id='').exclude(file= '')
+            youku__youku_video_id='').exclude(file='')
 
         return need_upload_queryset
+
 
 class NeedDownloadUploadManager(models.Manager):
     def get_queryset(self):
@@ -41,6 +42,7 @@ class NeedDownloadUploadManager(models.Manager):
 
         return need_download_upload_queryset
 
+
 class NeedGetVideoInfoManager(models.Manager):
     # 返回video model中视频时长为空的video
     def get_queryset(self):
@@ -55,9 +57,11 @@ class DownloadedManager(models.Manager):
     """
     获取未下载过视频文件的youtube video对象
     """
+
     def get_queryset(self):
         return super(DownloadedManager, self).get_queryset().exclude(
             file='')
+
 
 # Create your models here.
 class Video(models.Model):
@@ -95,9 +99,10 @@ class Video(models.Model):
     subtitle_video_file = models.FileField(max_length=200, blank=True,
                                            default='')
     allow_upload_youku = models.BooleanField(blank=True, default='True',
+                                             verbose_name="是否上传",
                                              help_text='是否可以上传到优酷，默认为True')
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
-    remark = models.CharField(max_length=300, blank=True)
+    remark = models.CharField(verbose_name="优酷标题", max_length=300, blank=True)
 
     def __str__(self):
         return self.title
@@ -162,7 +167,7 @@ class Video(models.Model):
             if len(tags_fomart_list) > num:
                 tags_fomart_list = tags_fomart_list[:num]
 
-            #上传时优酷用英文逗号和空格来分割tags
+            # 上传时优酷用英文逗号和空格来分割tags
             return ','.join(tags_fomart_list)
         else:
             return False
@@ -255,7 +260,8 @@ class Youku(models.Model):
     title = models.CharField(max_length=100, blank=True,
                              help_text='视频标题，能填写2-50个字符,上传时必选')
     tags = models.TextField(max_length=200, blank=True,
-                            help_text="不超过10个;单个标签最少2个、最多12个字符;标签间用英文的逗号(,)和空格隔开，单个tag中，不允许有_ - ;必选")
+                            help_text="不超过10个;单个标签最少2个、最多12个字符;标签间用英文的逗号(,"
+                                      ")和空格隔开，单个tag中，不允许有_ - ;必选")
     description = models.TextField(max_length=300, blank=True, default='',
                                    help_text='视频描述，最多能写2000个字')
     category = models.CharField(max_length=50, blank=True,
@@ -351,7 +357,7 @@ class BaiduYun(models.Model):
 
 
 class Category(models.Model):
-    #Youtube的Channel的分类，设置有对应的youku_playlist的分类（优酷网站上的规定）
+    # Youtube的Channel的分类，设置有对应的youku_playlist的分类（优酷网站上的规定）
     title = models.CharField(max_length=50, blank=True)
     youku_playlist_category = models.CharField(max_length=50, blank=True,
                                                choices=YOUKU_CATEGORY,
