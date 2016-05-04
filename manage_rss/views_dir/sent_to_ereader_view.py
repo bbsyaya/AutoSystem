@@ -10,6 +10,7 @@ __author__ = 'GoTop'
 def sent_rss_to_ereader_view(request):
     group_rss_urls = gen_group_rss_url()
     kr = KindleReader(group_rss_urls)
-    #kr.main()
+    # kr.main()
 
-    return render_to_response('result.html', {'text': '将group rss 发送到 ereader！'})
+    return render_to_response('result.html',
+                              {'text': '将group rss 发送到 ereader！'})

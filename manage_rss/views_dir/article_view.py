@@ -31,14 +31,18 @@ def get_rss_article_view(request, group_id):
 
             # 如果使用fivefilters.org来获取rss的全文链接，需要在获取的文章后去除一段说明
             description = description.replace(
-                "This entry passed through the Full-Text RSS service - if this is your content and you're reading it on someone else's site, please read the FAQ at fivefilters.org/content-only/faq.php#publishers.",
+                "This entry passed through the Full-Text RSS service - if "
+                "this is your content and you're reading it on someone else's "
+                "site, please read the FAQ at "
+                "fivefilters.org/content-only/faq.php#publishers.",
                 '')
 
             url = feed['entries'][i].link
             url = unquote(url)
             # 将google alert的rss中的链接去掉google网站的前缀和后缀
             url = url.split('&ct')
-            url = url[0].replace("https://www.google.com/url?rct=j&sa=t&url=", '')
+            url = url[0].replace("https://www.google.com/url?rct=j&sa=t&url=",
+                                 '')
 
             try:
                 published = datetime(*feed['entries'][i].published_parsed[0:6])
@@ -46,11 +50,14 @@ def get_rss_article_view(request, group_id):
                 published = None
 
             (article, created) = Article.objects.get_or_create(url__exact=url,
-                                                               defaults={'title': title,
-                                                                         'context': description,
-                                                                         'published': published,
-                                                                         'url': url,
-                                                                         'rss': rss})
+                                                               defaults={
+                                                                   'title':
+                                                                       title,
+                                                                   'context':
+                                                                       description,
+                                                                   'published': published,
+                                                                   'url': url,
+                                                                   'rss': rss})
 
             articles.append(article)
 
@@ -82,6 +89,7 @@ def set_publishable_status_view(request, article_id, publishable_status):
 
     return render_to_response('result.html', {'text': result})
 
+
 def set_editable_status_view(request, article_id, editable_status):
     """
     设置文章的editable_status
@@ -103,7 +111,6 @@ def set_editable_status_view(request, article_id, editable_status):
     return render_to_response('result.html', {'text': result})
 
 
-
 def pub_article_view(request, site_id, article_id):
     """
     发布文章
@@ -118,7 +125,8 @@ def pub_article_view(request, site_id, article_id):
     article.pub_status = 'published'
     article.pub_info = pub_info
     article.save()
-    return render_to_response('result.html', {'text': article.title + '已发布id为article_id的文章，post id为 post_id'})
+    return render_to_response('result.html', {
+        'text': article.title + '已发布id为article_id的文章，post id为 post_id'})
 
 
 def get_categories_view(request, site_id):
