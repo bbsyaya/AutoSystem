@@ -143,7 +143,8 @@ class Video(models.Model):
         :return:
         """
         # 将list格式的tags转化为用逗号分隔形式是string
-        if self.tags:
+        # 对于没有tag的youtube video，下载该视频信息是会将null保存到video model的tag field中
+        if self.tags and self.tags != 'null':
             jsonDec = json.decoder.JSONDecoder()
             tags_list = jsonDec.decode(self.tags)
 

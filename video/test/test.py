@@ -46,5 +46,9 @@ __author__ = 'GoTop'
 # output = 'ouput.srt'
 # convert_file(input, output)
 
-tags = ["Amazon", "new", "march", "shows", "movies", "tv", "Streaming"]
-print(len(tags))
+# tags = ["Amazon", "new", "march", "shows", "movies", "tv", "Streaming"]
+# print(len(tags))
+
+import json
+tags_list = ''
+print(json.dumps(tags_list))

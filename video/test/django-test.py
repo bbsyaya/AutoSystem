@@ -52,4 +52,6 @@ django.setup()
 
 # auto_upload(1)
 
-auto_get_subscription_update_video(max_results=5)
+#auto_get_subscription_update_video(max_results=5)
+
+auto_upload(1)

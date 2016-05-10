@@ -73,7 +73,9 @@ def get_multi_youtube_video_info(user):
 
         # 某些youtube视频没有tags
         # 比如 https://www.youtube.com/watch?v=_Po6DWVPbmQ
-        tags_list = result['snippet'].get('tags', None)
+        # 如果没有tags,则返回'',这样json.dumps(tags_list)的结果就是''
+        # video model的tags是TEXTField，''就是其空值
+        tags_list = result['snippet'].get('tags', '')
         video.tags = json.dumps(tags_list)
 
         # https://docs.djangoproject.com/en/1.6/ref/models/instances
