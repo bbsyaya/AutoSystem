@@ -131,6 +131,14 @@ check 2016-4-10 更新到pull request版本的django-settings，支持django1.9
 https://github.com/jqb/django-settings/pull/30/commits
 check 2016-4-10
 
+在changelist的界面直接输入video对应的youku model的中文title
+check 2016-4
+
+
+在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist
+上传视频到优酷后，使用celery延时设置playlist即可
+check 2016-4
+
 
 =============================================================================================
 
@@ -144,26 +152,22 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 
 设置断点时无法正确映射到remote server（大小写问题）
 
-将subtiel分出来到另一个独立的app中，独立的model，用外键与video相连
+将subtitle分出来到另一个独立的app中，独立的model，用外键与video相连
 
 将youku分出来到另一个独立的app中
 
-在changelist的界面直接输入video对应的youku model的中文title
-
 增加对上传到youku多账号支持
 
+制定youtube channel与youku playlist的关联，设置自动下载youtube channel下的新视频，自动上传到不同账号的优酷，并设置到指定的youku playlist
+
 =============================================================================================
-
-在youku model中增加一个set playlist列，这样设置youku model时就能直接设置playlist
-上传视频到优酷后，使用celery延时设置playlist即可
-
 
 http://127.0.0.1:8000/admin/video/video/QTCJJiZrNYo/?_changelist_filters=p%3D1
 等部分视频下载视频信息时，未关联到对应的yt_channel
 
 =============================================================================================
 
-可以把youtube视频加入不同的list，根据list将视频上传到优酷上不同的专辑下
+可以把youtube视频加入不同的playlist，根据playlist将视频上传到优酷上不同的专辑下
 
 在youtube上建立一些playlist，浏览youtube是可以把需要下载的视频加入这些list，
 AutoSystem自动下载这些playlist下的视频，并根据playlist设置分类

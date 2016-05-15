@@ -370,6 +370,25 @@ class Category(models.Model):
         return self.title
 
 
+class video_config(models.Model):
+    # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
+    youtube_channel = models.ForeignKey('YT_channel',
+                                        related_name='youku_playlist_online',
+                                        on_delete=models.SET_NULL, null=True,
+                                        blank=True,
+                                        help_text=
+                                        "指定下载youtube上的指定channel")
+
+    youtube_playlist_id = models.CharField(max_length=100, blank=True)
+    youku_playlist = models.ForeignKey('YoukuPlaylist',
+                                       related_name='youku_playlist_online',
+                                       on_delete=models.SET_NULL, null=True,
+                                       blank=True,
+                                       help_text=
+                                       "设置视频在优酷网上的Playlist")
+    is_enable = models.BooleanField(null=True, blank=True)
+
+
 @Field.register_lookup
 class NotEqualLookup(Lookup):
     lookup_name = 'ne'
