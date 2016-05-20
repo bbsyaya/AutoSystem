@@ -49,6 +49,10 @@ __author__ = 'GoTop'
 # tags = ["Amazon", "new", "march", "shows", "movies", "tv", "Streaming"]
 # print(len(tags))
 
-import json
-tags_list = ''
-print(json.dumps(tags_list))
+# import json
+# tags_list = ''
+# print(json.dumps(tags_list))
+
+tag = "tech under $100, $50, $25, $500"
+tag = re.sub(ur"[^\u4e00-\u9fa5a-zA-Z0-9]", "", tag)
+print tag

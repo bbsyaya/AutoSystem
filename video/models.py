@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+import re
 
 from django import forms
 from django.db import models
@@ -150,16 +151,20 @@ class Video(models.Model):
 
             tags_fomart_list = []
             for tag in tags_list:
-                # 优酷的单个tag中，不允许有 下划线，减号, 点, &
-                # 除了中文和英文字幕以外的符号都不行
+                # 优酷的单个tag中，不允许有 空格，下划线，减号, 点, &
+                # 除了中文和英文字母以外的符号都不行
                 # 优酷用英文逗号和空格来分割tags，如果单个tag中存在空格，
                 # 可能会导致最终的tag数超过10个
-                tag = tag.replace(" ", "")
-                tag = tag.replace("-", "")
-                tag = tag.replace("_", "")
-                tag = tag.replace(".", "")
-                tag = tag.replace("+", "")
-                tag = tag.replace("&", "")
+                # tag = tag.replace(" ", "")
+                # tag = tag.replace("-", "")
+                # tag = tag.replace("_", "")
+                # tag = tag.replace(".", "")
+                # tag = tag.replace("+", "")
+                # tag = tag.replace("&", "")
+
+                # 替换掉 汉字、英文以外的所有字符
+                # http://blog.csdn.net/liuqian1104/article/details/8134293
+                tag = re.sub(ur"[^\u4e00-\u9fa5a-zA-Z0-9]", "", tag)
                 # 上传到优酷时，单个tag最多20个字符，所以剔除超过20个字符的tag
                 if len(tag) <= 20:
                     tags_fomart_list.append(tag)

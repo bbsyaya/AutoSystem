@@ -71,6 +71,10 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'redis'
 CELERY_TIMEZONE = 'Asia/Shanghai'
 
+#celery_once的设置
+ONCE_REDIS_URL = 'redis://localhost:6379/0'
+ONCE_DEFAULT_TIMEOUT = 60 * 60
+
 # That is, tasks will be executed locally instead of being sent to the queue.
 # 用于测试环境，可以不开启worker，和broker
 # CELERY_ALWAYS_EAGER = True
