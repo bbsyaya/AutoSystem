@@ -375,31 +375,31 @@ class Category(models.Model):
         return self.title
 
 
-class VideoConfig(models.Model):
-    # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
-    youtube_channel = models.ForeignKey('YT_channel',
-                                        # related_name='youku_playlist_online',
-                                        on_delete=models.SET_NULL, null=True,
-                                        blank=True,
-                                        help_text=
-                                        "指定下载youtube上的指定channel")
-
-    youtube_playlist_id = models.CharField(max_length=100, blank=True,
-                                           help_text=
-                                           "指定下载youtube上的指定playlist")
-
-    youku_account = models.CharField(max_length=100, blank=True,
-                                           help_text=
-                                           "指定上传到优酷的账号")
-
-    youku_playlist = models.ForeignKey('YoukuPlaylist',
-                                       related_name='youku_playlist_online',
-                                       on_delete=models.SET_NULL, null=True,
-                                       blank=True,
-                                       help_text=
-                                       "设置视频在优酷网上的Playlist")
-    is_enable = models.BooleanField(null=True, blank=True)
-    remark = models.CharField(verbose_name="备注", max_length=300, blank=True)
+# class VideoConfig(models.Model):
+#     # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
+#     youtube_channel = models.ForeignKey('YT_channel',
+#                                         # related_name='youku_playlist_online',
+#                                         on_delete=models.SET_NULL, null=True,
+#                                         blank=True,
+#                                         help_text=
+#                                         "指定下载youtube上的指定channel")
+#
+#     youtube_playlist_id = models.CharField(max_length=100, blank=True,
+#                                            help_text=
+#                                            "指定下载youtube上的指定playlist")
+#
+#     youku_account = models.CharField(max_length=100, blank=True,
+#                                            help_text=
+#                                            "指定上传到优酷的账号")
+#
+#     youku_playlist = models.ForeignKey('YoukuPlaylist',
+#                                        related_name='youku_playlist_online',
+#                                        on_delete=models.SET_NULL, null=True,
+#                                        blank=True,
+#                                        help_text=
+#                                        "设置视频在优酷网上的Playlist")
+#     is_enable = models.BooleanField(null=True, blank=True)
+#     remark = models.CharField(verbose_name="备注", max_length=300, blank=True)
 
 
 @Field.register_lookup
