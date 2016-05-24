@@ -5,10 +5,10 @@ from django.core.urlresolvers import reverse
 __author__ = 'GoTop'
 
 from django.contrib import admin
-from video.models import YT_channel
+from video.models import YouTubeChannel
 
 
-class YT_channelAdmin(admin.ModelAdmin):
+class YouTubeChannelAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'show_channel_url', 'show_thumbnail', 'description',
         'category',
@@ -47,7 +47,7 @@ class YT_channelAdmin(admin.ModelAdmin):
     # def show_category_url(self, obj):
     #     if obj.category_id:
     #         # 如果已经有 category_id 视频的信息，则显示访问 Category model的链接
-    #         category = YT_channel.objects.get(category_id=obj.category_id)
+    #         category = YouTubeChannel.objects.get(category_id=obj.category_id)
     #         if category:
     #             # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib
     # /admin/#reversing-admin-urls
@@ -67,4 +67,4 @@ class YT_channelAdmin(admin.ModelAdmin):
     # show_category_url.short_description = 'Category'
 
 
-admin.site.register(YT_channel, YT_channelAdmin)
+admin.site.register(YouTubeChannel, YouTubeChannelAdmin)

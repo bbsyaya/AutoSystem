@@ -5,7 +5,7 @@ from celery_once import QueueOnce
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
 from AutoSystem.settings import DEBUG
-from video.models import Video, YT_channel
+from video.models import Video, YouTubeChannel
 import youtube_dl
 from video.function.file import search_keyword_in_file
 

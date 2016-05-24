@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 __author__ = 'GoTop'
 
 from video.admin.video_admin import *
-from video.admin.yt_channel_admin import *
+from video.admin.youtube_channel_admin import *
 from video.admin.youku_admin import *
 from video.admin.category_admin import *
 from video.admin.youku_playlist_admin import *

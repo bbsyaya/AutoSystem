@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render, render_to_response
 
 from oauth2_authentication.views import get_authenticated_service
-from video.models import YT_channel
+from video.models import YouTubeChannel
 
 __author__ = 'GoTop'
 
@@ -41,7 +41,7 @@ def get_my_subscription_view(request):
         subscriptions_list.append(result['snippet'])
 
     for subscription in subscriptions_list:
-        channel, created = YT_channel.objects.update_or_create(
+        channel, created = YouTubeChannel.objects.update_or_create(
                 channel_id=subscription['resourceId']['channelId'],
                 defaults={'title': subscription['title'],
                           'description': subscription['description'],

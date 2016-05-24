@@ -1,6 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
-from video.models import Video, YT_channel
+from video.models import Video, YouTubeChannel
 from oauth2_authentication.views import get_authenticated_service
 
 __author__ = 'GoTop'
@@ -50,7 +50,7 @@ def get_subscription_update_video(user, max_results):
     # 从返回的对象里找出type为upload的
     video_list = []
     for result in res.get("items", []):
-        channel = YT_channel.objects.filter(
+        channel = YouTubeChannel.objects.filter(
             channel_id=result['snippet']["channelId"]).first()
         if channel and channel.is_download:
             # 如果该视频所属的频道 is_download 属性被设置为True，才进行下载

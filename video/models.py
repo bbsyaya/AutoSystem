@@ -72,7 +72,7 @@ class Video(models.Model):
     description = models.TextField(max_length=300, blank=True)
     publishedAt = models.DateTimeField(null=True, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
-    channel = models.ForeignKey('YT_channel', null=True, blank=True)
+    channel = models.ForeignKey('YouTubeChannel', null=True, blank=True)
 
     view_count = models.CharField(max_length=10, blank=True)
     like_count = models.CharField(max_length=10, blank=True)
@@ -197,7 +197,7 @@ class Video(models.Model):
     need_get_video_info = NeedGetVideoInfoManager()
 
 
-class YT_channel(models.Model):
+class YouTubeChannel(models.Model):
     channel_id = models.URLField(max_length=100, primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500, blank=True)
@@ -220,6 +220,9 @@ class YT_channel(models.Model):
     class Meta:
         verbose_name = 'YouTube Channel'
         verbose_name_plural = 'YouTube Channels'
+
+class YouTubePlaylist(models.Model):
+    channel_id = models.URLField(max_length=100, primary_key=True)
 
 
 class YouTube(models.Model):
@@ -375,31 +378,33 @@ class Category(models.Model):
         return self.title
 
 
-# class VideoConfig(models.Model):
-#     # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
-#     youtube_channel = models.ForeignKey('YT_channel',
-#                                         # related_name='youku_playlist_online',
-#                                         on_delete=models.SET_NULL, null=True,
-#                                         blank=True,
-#                                         help_text=
-#                                         "指定下载youtube上的指定channel")
-#
-#     youtube_playlist_id = models.CharField(max_length=100, blank=True,
-#                                            help_text=
-#                                            "指定下载youtube上的指定playlist")
-#
-#     youku_account = models.CharField(max_length=100, blank=True,
-#                                            help_text=
-#                                            "指定上传到优酷的账号")
-#
-#     youku_playlist = models.ForeignKey('YoukuPlaylist',
-#                                        related_name='youku_playlist_online',
-#                                        on_delete=models.SET_NULL, null=True,
-#                                        blank=True,
-#                                        help_text=
-#                                        "设置视频在优酷网上的Playlist")
-#     is_enable = models.BooleanField(null=True, blank=True)
-#     remark = models.CharField(verbose_name="备注", max_length=300, blank=True)
+class VideoConfig(models.Model):
+    # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
+    youtube_channel = models.ForeignKey('YouTubeChannel',
+                                        on_delete=models.SET_NULL, null=True,
+                                        blank=True,
+                                        help_text=
+                                        "指定下载youtube上的指定channel")
+
+    youtube_playlist = models.ForeignKey('YouTubePlaylist',
+                                        # related_name='youku_playlist_online',
+                                        on_delete=models.SET_NULL, null=True,
+                                        blank=True,
+                                        help_text=
+                                           "指定下载youtube channel里的特定playlist")
+
+    youku_account = models.CharField(max_length=100, blank=True,
+                                           help_text=
+                                           "指定上传到优酷的账号")
+
+    youku_playlist = models.ForeignKey('YoukuPlaylist',
+                                       related_name='youku_playlist_online',
+                                       on_delete=models.SET_NULL, null=True,
+                                       blank=True,
+                                       help_text=
+                                       "设置视频在优酷网上的Playlist")
+    is_enable = models.BooleanField(null=True, blank=True)
+    remark = models.CharField(verbose_name="备注", max_length=300, blank=True)
 
 
 @Field.register_lookup

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, absolute_import
 from django.db import models
 
-from video.models import YT_channel
+from video.models import YouTubeChannel
 
 __author__ = 'GoTop'
 
@@ -22,7 +22,7 @@ class Video(models.Model):
     description = models.TextField(max_length=300, blank=True)
     publishedAt = models.DateTimeField(null=True, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
-    channel = models.ForeignKey(YT_channel, null=True, blank=True)
+    channel = models.ForeignKey(YouTubeChannel, null=True, blank=True)
 
     title_cn = models.CharField(max_length=100, blank=True)
     subtitle_en = models.CharField(max_length=100, blank=True)

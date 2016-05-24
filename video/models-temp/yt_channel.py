@@ -4,7 +4,7 @@ from django.db import models
 
 __author__ = 'GoTop'
 
-class YT_channel(models.Model):
+class YouTubeChannel(models.Model):
     channel_id = models.URLField(max_length=100, primary_key=True)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=300, blank=True)

@@ -28,9 +28,9 @@ class CategoryFactory(DjangoModelFactory):
     youku_playlist_category = FuzzyChoice(YOUKU_CATEGORY)
 
 
-class YT_channelFactory(DjangoModelFactory):
+class YouTubeChannelFactory(DjangoModelFactory):
     class Meta:
-        model = 'video.YT_channel'
+        model = 'video.YouTubeChannel'
 
     channel_id = faker.uri()
     title = faker.last_name_male()
@@ -45,7 +45,7 @@ class VideoFactory(DjangoModelFactory):  # factory boy knows this is for the
 
     video_id = faker.word
     title = Sequence(lambda n: 'YouTube Video Title ' + str(n))
-    channel = SubFactory(YT_channelFactory)
+    channel = SubFactory(YouTubeChannelFactory)
 
 
 class YoukuFactory(DjangoModelFactory):  # factory boy knows this is for the
