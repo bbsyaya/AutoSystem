@@ -11,12 +11,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='YouTubePlaylist',
-            fields=[
-                ('channel_id', models.URLField(max_length=100, serialize=False, primary_key=True)),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='YouTubePlaylist',
+        #     fields=[
+        #         ('channel_id', models.URLField(max_length=100, serialize=False, primary_key=True)),
+        #     ],
+        # ),
         migrations.AlterField(
             model_name='video',
             name='allow_upload_youku',

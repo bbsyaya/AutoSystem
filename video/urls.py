@@ -2,8 +2,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
 from video.views_dir import youtube_view, youtube_subscription_view, \
-    youku_view, \
-    subtitle_view, video
+    youtube_playlist_view, youku_view, subtitle_view, video
 
 __author__ = 'GoTop'
 
@@ -69,6 +68,20 @@ urlpatterns = [
     url(r'get_multi_youtube_video_info$',
         youtube_view.get_multi_youtube_video_info_view,
         name='get_multi_youtube_video_info'),
+
+    ###########################################################################
+    # YouTube Playlist
+    ###########################################################################
+    url(
+        r'get_youtube_playlist_info/(?P<youtube_channel_id>.+)/('
+        r'?P<max_results>\d+)$',
+        youtube_playlist_view.get_youtube_playlist_info_view,
+        name='get_youtube_playlist_info'),
+    url(
+        r'get_youtube_playlist_video_info/(?P<youtube_playlist_id>.+)/('
+        r'?P<max_results>\d+)$',
+        youtube_playlist_view.get_youtube_playlist_video_info_view,
+        name='get_youtube_playlist_video_info'),
 
     ###########################################################################
     # 字幕

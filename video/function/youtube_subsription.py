@@ -50,8 +50,10 @@ def get_subscription_update_video(user, max_results):
     # 从返回的对象里找出type为upload的
     video_list = []
     for result in res.get("items", []):
+        # 查询看该视频所属的channel是否保存到了数据库中
         channel = YouTubeChannel.objects.filter(
             channel_id=result['snippet']["channelId"]).first()
+        #如果视频所属的channel保存在YouTubeChannel中，并且is_download属性为true
         if channel and channel.is_download:
             # 如果该视频所属的频道 is_download 属性被设置为True，才进行下载
             # todo 待测试

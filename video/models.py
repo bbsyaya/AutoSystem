@@ -221,8 +221,31 @@ class YouTubeChannel(models.Model):
         verbose_name = 'YouTube Channel'
         verbose_name_plural = 'YouTube Channels'
 
+
 class YouTubePlaylist(models.Model):
-    channel_id = models.URLField(max_length=100, primary_key=True)
+    playlist_id = models.CharField(max_length=100, primary_key=True)
+    title = models.CharField(max_length=50)
+    description =  models.TextField(max_length=500, blank=True)
+    thumbnail = models.URLField(max_length=300, blank=True)
+    publishedAt = models.DateTimeField(null=True, blank=True)
+    channel = models.ForeignKey('YouTubeChannel', null=True,
+                                        blank=True)
+    remark = models.CharField(max_length=50, blank=True)
+
+    @property
+    def url(self):
+        url = 'https://www.youtube.com/playlist?list=' + self.channel_id
+        return url
+
+    def thumbnail_image(self):
+        return '<img src="%s"/>' % self.thumbnail
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'YouTube Playlist'
+        verbose_name_plural = 'YouTube Playlists'
 
 
 class YouTube(models.Model):
@@ -387,23 +410,22 @@ class VideoConfig(models.Model):
                                         "指定下载youtube上的指定channel")
 
     youtube_playlist = models.ForeignKey('YouTubePlaylist',
-                                        # related_name='youku_playlist_online',
-                                        on_delete=models.SET_NULL, null=True,
-                                        blank=True,
-                                        help_text=
-                                           "指定下载youtube channel里的特定playlist")
+                                         # related_name='youku_playlist_online',
+                                         on_delete=models.SET_NULL, null=True,
+                                         blank=True,
+                                         help_text=
+                                         "指定下载youtube channel里的特定playlist")
 
     youku_account = models.CharField(max_length=100, blank=True,
-                                           help_text=
-                                           "指定上传到优酷的账号")
+                                     help_text=
+                                     "指定上传到优酷的账号")
 
     youku_playlist = models.ForeignKey('YoukuPlaylist',
-                                       related_name='youku_playlist_online',
                                        on_delete=models.SET_NULL, null=True,
                                        blank=True,
                                        help_text=
                                        "设置视频在优酷网上的Playlist")
-    is_enable = models.BooleanField(null=True, blank=True)
+    is_enable = models.BooleanField(blank=True)
     remark = models.CharField(verbose_name="备注", max_length=300, blank=True)
 
 

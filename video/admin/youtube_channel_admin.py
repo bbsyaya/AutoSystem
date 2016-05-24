@@ -12,13 +12,14 @@ class YouTubeChannelAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'show_channel_url', 'show_thumbnail', 'description',
         'category',
-        'is_download', 'show_video_of_channel', 'remark')
+        'is_download', 'show_video_of_channel', 'get_playlist_info_url',
+        'remark')
     list_editable = ('is_download', 'category')
     list_per_page = 50
     search_fields = ('title',)
     list_filter = ('is_download', 'category')
 
-    #一定要在后面加入逗号
+    # 一定要在后面加入逗号
     list_select_related = (
         'category',
     )
@@ -44,27 +45,37 @@ class YouTubeChannelAdmin(admin.ModelAdmin):
     show_video_of_channel.allow_tags = True
     show_video_of_channel.short_description = '查看视频'
 
-    # def show_category_url(self, obj):
-    #     if obj.category_id:
-    #         # 如果已经有 category_id 视频的信息，则显示访问 Category model的链接
-    #         category = YouTubeChannel.objects.get(category_id=obj.category_id)
-    #         if category:
-    #             # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib
-    # /admin/#reversing-admin-urls
-    #             category_change_url = reverse(
-    # 'admin:video_category_change', args=[obj.category_id])
-    #             return "<a href='%s' target='_blank'>%s</a>" % (
-    # category_change_url, category.title)
-    #     else:
-    #         # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib
-    # /admin/#reversing-admin-urls
-    #         category_change_url = reverse(
-    # 'admin:video_category_changelist')
-    #         return "<a href='%s' target='_blank'></a>" %
-    # category_change_url
-    #
-    # show_category_url.allow_tags = True
-    # show_category_url.short_description = 'Category'
+    def get_playlist_info_url(self, obj):
+        get_playlist_video_url = reverse(
+            'video:get_youtube_playlist_info',
+            args=[obj.channel_id, 50])
+        return "<a href='%s' target='_blank'>获取播单</a>" % get_playlist_video_url
+
+    get_playlist_info_url.allow_tags = True
+    get_playlist_info_url.short_description = '获取playlist'
+
+
+# def show_category_url(self, obj):
+#     if obj.category_id:
+#         # 如果已经有 category_id 视频的信息，则显示访问 Category model的链接
+#         category = YouTubeChannel.objects.get(category_id=obj.category_id)
+#         if category:
+#             # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib
+# /admin/#reversing-admin-urls
+#             category_change_url = reverse(
+# 'admin:video_category_change', args=[obj.category_id])
+#             return "<a href='%s' target='_blank'>%s</a>" % (
+# category_change_url, category.title)
+#     else:
+#         # 参考 https://docs.djangoproject.com/en/1.7/ref/contrib
+# /admin/#reversing-admin-urls
+#         category_change_url = reverse(
+# 'admin:video_category_changelist')
+#         return "<a href='%s' target='_blank'></a>" %
+# category_change_url
+#
+# show_category_url.allow_tags = True
+# show_category_url.short_description = 'Category'
 
 
 admin.site.register(YouTubeChannel, YouTubeChannelAdmin)
