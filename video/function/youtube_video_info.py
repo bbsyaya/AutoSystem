@@ -55,8 +55,8 @@ def get_multi_youtube_video_info(user):
     nextPageToken = res.get('nextPageToken')
     while ('nextPageToken' in res):
         nextPage = youtube.videos().list(
-            part="contentDetails",
-            id=video_list,
+            part="contentDetails, snippet, statistics",
+            id=video_id_string,
             pageToken=nextPageToken
         ).execute()
         res['items'] = res['items'] + nextPage['items']

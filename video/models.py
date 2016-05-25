@@ -73,7 +73,7 @@ class Video(models.Model):
     publishedAt = models.DateTimeField(null=True, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
     channel = models.ForeignKey('YouTubeChannel', null=True, blank=True)
-
+    playlist = models.ForeignKey('YouTubePlaylist', null=True, blank=True)
     view_count = models.CharField(max_length=10, blank=True)
     like_count = models.CharField(max_length=10, blank=True)
     tags = models.TextField(max_length=200, blank=True)
@@ -228,6 +228,7 @@ class YouTubePlaylist(models.Model):
     description =  models.TextField(max_length=500, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
     publishedAt = models.DateTimeField(null=True, blank=True)
+    video_num = models.CharField(max_length=10, blank=True, null=True)
     channel = models.ForeignKey('YouTubeChannel', null=True,
                                         blank=True)
     remark = models.CharField(max_length=50, blank=True)

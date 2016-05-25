@@ -8,7 +8,7 @@ __author__ = 'GoTop'
 
 
 def get_youtube_playlist_info(youtube_channel_id, max_results, user):
-    # 获取channel的youtube playlist的信息并保存到数据中
+    # 获取channel中的用户自定义的youtube playlist的信息并保存到数据中
     # https://developers.google.com/youtube/v3/docs/playlists/list#parameters
 
     # GET https://www.googleapis.com/youtube/v3/playlists?part=snippet
@@ -55,14 +55,15 @@ def get_youtube_playlist_info(youtube_channel_id, max_results, user):
             }
 
             d = dateutil.parser.parse(result['snippet']['publishedAt'])
-            youtube_playlist, created = YouTubePlaylist.objects.update_or_create(
-                playlist_id=playlist['playlist_id'],
-                defaults={'title': playlist['title'],
-                          'publishedAt': d,
-                          'thumbnail': playlist['thumbnail'],
-                          'channel': channel
-                          }
-            )
+            youtube_playlist, created = \
+                YouTubePlaylist.objects.update_or_create(
+                    playlist_id=playlist['playlist_id'],
+                    defaults={'title': playlist['title'],
+                              'publishedAt': d,
+                              'thumbnail': playlist['thumbnail'],
+                              'channel': channel
+                              }
+                )
 
             youtube_playlist_list.append(playlist)
     return youtube_playlist_list
@@ -78,12 +79,21 @@ def get_youtube_playlist_video_info(youtube_playlist_id, max_results, user):
     https://developers.google.com/apis-explorer/#p/youtube/v3/youtube
     .playlistItems.list
     """
+    # filter()返回的是一个list，就算只有一个结果
+    playlist = YouTubePlaylist.objects.filter(
+        playlist_id=youtube_playlist_id).first()
     youtube = get_authenticated_service(user)
     if youtube:
         res = youtube.playlistItems().list(
             part='snippet, contentDetails',
             playlistId=youtube_playlist_id,
             maxResults=max_results).execute()
+
+        # 将该playlist包含的视频数量保存到YouTubePlaylist中
+        if res:
+            video_num = res['pageInfo']['totalResults']
+            playlist.video_num = video_num
+            playlist.save(update_fields=['video_num'])
     else:
         return False
 
@@ -117,7 +127,8 @@ def get_youtube_playlist_video_info(youtube_playlist_id, max_results, user):
                 'title': result['snippet']["title"],
                 'publishedAt': result['snippet']["publishedAt"],
                 'thumbnail': result['snippet']['thumbnails']['default']['url'],
-                'channel': channel
+                'channel': channel,
+                'playlist': playlist
             }
 
             # publishedAt 为ISO 8601 (
@@ -129,7 +140,8 @@ def get_youtube_playlist_video_info(youtube_playlist_id, max_results, user):
                 defaults={'title': video['title'],
                           'publishedAt': d,
                           'thumbnail': video['thumbnail'],
-                          'channel': channel
+                          'channel': channel,
+                          'playlist': video['playlist']
                           }
             )
             video_list.append(video)

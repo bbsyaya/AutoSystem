@@ -31,6 +31,7 @@ class VideoAdmin(admin.ModelAdmin):
         'show_duration_readable',
         'youtube_url',
         'show_video_of_channel',
+        'show_video_of_playlist',
         'allow_upload_youku',
         'download_youtube_url',
         # 'download_subtitle_url',
@@ -55,7 +56,8 @@ class VideoAdmin(admin.ModelAdmin):
     list_filter = [DownloadFilter, UploadFilter, DownloadUploadFilter,
                    'channel__is_download',
                    'channel__category',
-                   'channel__title']
+                   'channel__title',
+                   'playlist__title']
 
     # 在change和edit页面显示哪些field
     fieldsets = (
@@ -159,13 +161,29 @@ class VideoAdmin(admin.ModelAdmin):
     youtube_url.short_description = 'YouTube'
 
     def show_video_of_channel(self, obj):
-        change_url = reverse('admin:video_video_changelist')
-        extra = "?channel__title__exact=%s" % (obj.channel.title)
-        return "<a href='%s' target='_blank'>%s</a>" % \
-               (change_url + extra, obj.channel.title)
+        if obj.channel:
+            change_url = reverse('admin:video_video_changelist')
+            extra = "?playlist__title__exact=%s" % (obj.channel.title)
+            return "<a href='%s' target='_blank'>%s</a>" % \
+                   (change_url + extra, obj.channel.title)
+        else:
+            return "-"
 
     show_video_of_channel.allow_tags = True
     show_video_of_channel.short_description = '频道'
+
+    def show_video_of_playlist(self, obj):
+        #video不一定有对应playlist
+        if obj.playlist:
+            change_url = reverse('admin:video_video_changelist')
+            extra = "?playlist__title__exact=%s" % (obj.playlist.title)
+            return "<a href='%s' target='_blank'>%s</a>" % \
+                   (change_url + extra, obj.playlist.title)
+        else:
+            return "-"
+
+    show_video_of_playlist.allow_tags = True
+    show_video_of_playlist.short_description = '播单'
 
     def download_youtube_url(self, obj):
         if obj.file:
