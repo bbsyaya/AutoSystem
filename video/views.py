@@ -46,7 +46,7 @@ def search_view(request, q, max_results):
 
 def my_homepage_subscription_view(request, max_results):
     """
-    获取认证用户的youtube首页显示的订阅频道信息
+    获取认证用户的youtube首页显示的订阅频道信息,显示出来，但是不保存
     https://developers.google.com/youtube/v3/docs/activities/list#errors
     :param request:
     :return:
