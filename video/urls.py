@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
 from video.views_dir import youtube_view, youtube_subscription_view, \
-    youtube_playlist_view, youku_view, subtitle_view, video
+    youtube_channel_view, youtube_playlist_view, youku_view, subtitle_view, \
+    video
 
 __author__ = 'GoTop'
 
@@ -61,12 +62,20 @@ urlpatterns = [
         name='get_multi_youtube_video_info'),
 
     ###########################################################################
-    # YouTube Playlist
+    # YouTube Channel
     ###########################################################################
+
+
+    # 根据channel_id,获取channel的信息，并保存到数据库中
+    # http://127.0.0.1:8000/video/get_youtube_channel_info/UCEQpJTOXGkvS1UQsdCm6lLA
+    url(r'get_youtube_channel_info/(?P<channel_id>.+)$',
+        youtube_channel_view.get_youtube_channel_info_view,
+        name='get_youtube_channel_info'),
+
     # 获取认证用户订阅的频道的信息
     # http://127.0.0.1:8000/video/get_my_subscription
     url(r'get_my_subscription$',
-        youtube_subscription_view.get_my_subscription_view,
+        youtube_subscription_view.get_my_subscribe_channel_view,
         name='my_subscription'),
 
     # 获取认证用户的youtube首页显示的订阅频道信息,显示出来，但是不保存

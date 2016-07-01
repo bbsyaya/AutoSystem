@@ -159,6 +159,9 @@ youtube视频不提供自动字幕时，字幕处理。比如video id UQ0w6nO-8s
 增加对上传到youku多账号支持
 
 制定youtube channel与youku playlist的关联，设置自动下载youtube channel下的新视频，自动上传到不同账号的优酷，并设置到指定的youku playlist
+2016-6-30
+
+获取ImGoTop playlist的视频，提示失败
 
 =============================================================================================
 
