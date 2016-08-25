@@ -231,6 +231,8 @@ class YouTubePlaylist(models.Model):
     video_num = models.CharField(max_length=10, blank=True, null=True)
     channel = models.ForeignKey('YouTubeChannel', null=True,
                                         blank=True)
+    youku_playlist = models.ForeignKey('YoukuPlaylist', null=True,
+                                        blank=True)
     remark = models.CharField(max_length=50, blank=True)
 
     @property

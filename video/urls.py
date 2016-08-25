@@ -65,7 +65,6 @@ urlpatterns = [
     # YouTube Channel
     ###########################################################################
 
-
     # 根据channel_id,获取channel的信息，并保存到数据库中
     # http://127.0.0.1:8000/video/get_youtube_channel_info/UCEQpJTOXGkvS1UQsdCm6lLA
     url(r'get_youtube_channel_info/(?P<channel_id>.+)$',

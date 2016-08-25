@@ -33,7 +33,7 @@ def auto_download_upload_video():
 @task
 def download_upload_video(video_id):
     """
-    下载youtube视频和中英字幕，合并字幕到视频，设置优酷目录，然后上传到优酷
+    下载video_id为 video_id 的youtube视频和中英字幕，合并字幕到视频，设置优酷目录，然后上传到优酷
     :param video_id:
     :return:
     """
@@ -55,9 +55,9 @@ def download_upload_video(video_id):
     # 因为Linode上压制字幕到视频的时间很慢，所以先注释掉 2016-3-31
     # add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
 
-    #如果该video没有对应的Youku对象，就新建一个，title就用video的英文title
+    # 如果该video没有对应的Youku对象，就新建一个，title就用video的英文title
     if not hasattr(video, 'youku'):
-        Youku.objects.create(title = video.title,video = video)
+        Youku.objects.create(title=video.title, video=video)
 
     set_youku_category_local(video.youku.id)
 
@@ -66,4 +66,4 @@ def download_upload_video(video_id):
     else:
         youku_video_id = False
 
-    return (video_filepath, subtitle_fielpath_list, youku_video_id )
+    return (video_filepath, subtitle_fielpath_list, youku_video_id)
