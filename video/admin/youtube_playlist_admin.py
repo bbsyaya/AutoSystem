@@ -19,6 +19,11 @@ class YouTubePlaylistAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('channel',)
 
+    # 设置在change和edit页面显示哪些field
+    # fieldsets = (
+    #     ('None', {'fields': '__all__'}),
+    # )
+
     # 一定要在后面加入逗号
     list_select_related = (
         'channel',
@@ -38,10 +43,11 @@ class YouTubePlaylistAdmin(admin.ModelAdmin):
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
 
-    def show_change_channel_url(self,obj):
+    def show_change_channel_url(self, obj):
         url = reverse("admin:video_youtubechannel_change",
                       args=[obj.channel.channel_id])
-        return "<a href='%s' target='_blank'>%s</a>" % (url,obj.channel.title)
+        return "<a href='%s' target='_blank'>%s</a>" % (url, obj.channel.title)
+
     show_change_channel_url.allow_tags = True
     show_change_channel_url.short_description = '查看channel'
 

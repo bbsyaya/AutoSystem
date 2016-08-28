@@ -12,7 +12,8 @@ class YouTubeChannelAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'show_channel_url', 'show_thumbnail', 'description',
         'category',
-        'is_download', 'show_video_of_channel', 'get_playlist_info_url',
+        'is_download', 'show_video_of_channel', 'show_playlist_of_channel',
+        'get_playlist_info_url',
         'remark')
     list_editable = ('is_download', 'category')
     list_per_page = 50
@@ -35,6 +36,16 @@ class YouTubeChannelAdmin(admin.ModelAdmin):
 
     show_thumbnail.allow_tags = True
     show_thumbnail.short_description = 'Thumbnail'
+
+    def show_playlist_of_channel(self, obj):
+        change_url = reverse('admin:video_youtubeplaylist_changelist')
+        # channel__channel_id__exact=UCEQpJTOXGkvS1UQsdCm6lLA
+        extra = "?channel__channel_id__exact=%s" % (obj.channel_id)
+        return "<a href='%s' target='_blank'>查看playlist</a>" % \
+               (change_url + extra)
+
+    show_playlist_of_channel.allow_tags = True
+    show_playlist_of_channel.short_description = '查看playlist'
 
     def show_video_of_channel(self, obj):
         change_url = reverse('admin:video_video_changelist')

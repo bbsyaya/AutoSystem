@@ -37,7 +37,7 @@ def download_multi_youtube_video_main(num):
 
 @task(base=QueueOnce)
 def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
-'mp4'):
+'mp4', options={}):
     """
     下载单个youtube视频，并将下载后的视频文件的目录保存到Video.file
     :param video_id:
@@ -50,42 +50,49 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
 
     video = Video.objects.get(video_id=video_id)
 
-    # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding
-    # -youtube-dl
-    # 参数 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/YoutubeDL
-    # .py#L121-L269
-    # 参考 http://willdrevo.com/downloading-youtube-and-soundcloud-audio-with
-    # -python-and-pandas/
-    # 支持参数列表 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/options.py
-    options = {
-        # 'format': '160+250',  # 质量最低的视频，可以节约带宽，用于测试
-        # 'format': '137+140',  # 质量最高的视频，且上传到优酷有声音
+    #如果没设置options，则使用默认的设置
+    if options == {}:
+        # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding
+        # -youtube-dl
+        # 参数 https://github.com/rg3/youtube-dl/blob/master/youtube_dl/YoutubeDL
+        # .py#L121-L269
+        # 参考 http://willdrevo.com/downloading-youtube-and-soundcloud-audio-with
+        # -python-and-pandas/
+        # 支持参数列表 https://github.com/rg3/youtube-dl/blob/master/youtube_dl
+        # /options.py
+        options = {
+            # 'format': '160+250',  # 质量最低的视频，可以节约带宽，用于测试
+            # 'format': '137+140',  # 质量最高的视频，且上传到优酷有声音
+            'format': 'bestvideo[ext=mp4][height <=? 1080]+bestaudio['
+                      'ext=m4a]/bestvideo[height <=? 1080] +bestaudio/best['
+                      'height <=? 1080] ',
 
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-        # 'format': 'bestvideo+bestaudio/best',
-        # 'extractaudio': True,  # only keep the audio
-        # 'audioformat': "mp3",  # convert to mp3
-        # You must use %(stitle)s (and not %(title)s) to insert the video title
-        # in the --output template. The "s" one is sanitized for filesystems.
-        'outtmpl': YOUTUBE_DOWNLOAD_DIR + '%(title)s-%(id)s.%(ext)s',
-        # name the file the ID of the video
-        'restrictfilenames': True,
-        'noplaylist': True,  # only download single song, not playlist
-        'verbose': True,  # Print various debugging information
-        # 'subtitleslangs': ['zh-Hans', 'en'],  # 要写成list的形式
-        # 'subtitlesformat': 'srt',
-        # 'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
-        # 'embedsubtitles': False,  # Embed subtitles in the video (only for
-        # mkv and mp4 videos
-        'merge_output_format': file_extend,
-        'prefer_ffmpeg': True,
+            # 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[
+            # ext=mp4]/best',
+            # 'format': 'bestvideo+bestaudio/best',
+            # 'extractaudio': True,  # only keep the audio
+            # 'audioformat': "mp3",  # convert to mp3
+            # You must use %(stitle)s (and not %(title)s) to insert the video
+            #  title
+            # in the --output template. The "s" one is sanitized for
+            # filesystems.
+            'outtmpl': YOUTUBE_DOWNLOAD_DIR + '%(title)s-%(id)s.%(ext)s',
+            # name the file the ID of the video
+            'restrictfilenames': True,
+            'noplaylist': True,  # only download single song, not playlist
+            'verbose': True,  # Print various debugging information
+            # 'subtitleslangs': ['zh-Hans', 'en'],  # 要写成list的形式
+            # 'subtitlesformat': 'srt',
+            # 'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
+            # 'embedsubtitles': False,  # Embed subtitles in the video (only for
+            # mkv and mp4 videos
+            'merge_output_format': file_extend,
+            'prefer_ffmpeg': True,
+            'ffmpeg_location': FFMPEG_LOCATION,
+            # 'progress_hooks': [my_hook],
+        }
 
-        'ffmpeg_location': FFMPEG_LOCATION,
-
-        # 'progress_hooks': [my_hook],
-    }
-
-    # 如果是本地debug状态则使用代理
+    # 如果是本地运行，则使用代理
     if SETTING_FILE == 'local':
         options['socksproxy'] = '127.0.0.1:8115'
         # options['proxy'] = '127.0.0.1:8115'

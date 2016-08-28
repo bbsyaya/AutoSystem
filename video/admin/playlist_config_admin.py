@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 __author__ = 'GoTop'
 
 from django.contrib import admin
-from video.models import VideoConfig
+from video.models import PlaylistConfig
 
 
 class VideoConfigAdmin(admin.ModelAdmin):
@@ -65,4 +65,4 @@ class VideoConfigAdmin(admin.ModelAdmin):
     get_playlist_video_info_url.short_description = '获取播单视频信息'
 
 
-admin.site.register(VideoConfig, VideoConfigAdmin)
+admin.site.register(PlaylistConfig, VideoConfigAdmin)

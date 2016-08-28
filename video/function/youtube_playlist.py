@@ -27,7 +27,7 @@ def get_youtube_playlist_info(youtube_channel_id, max_results, user):
         nextPage = youtube.playlists().list(
             part='snippet',
             channelId=youtube_channel_id,
-            maxResults=max_results,
+            # maxResults=int(max_results),
             pageToken=nextPageToken
         ).execute()
 
@@ -135,6 +135,7 @@ def get_youtube_playlist_video_info(youtube_playlist_id, max_results, user):
             # YYYY-MM-DDThh:mm:ss.sZ)格式，类似2008-09-26T01:51:42.000Z
             d = dateutil.parser.parse(video['publishedAt'])
 
+            # 将获取到的playlist的视频信息保存到数据库的Video model中
             youtube_video, created = Video.objects.update_or_create(
                 video_id=video['video_id'],
                 defaults={'title': video['title'],

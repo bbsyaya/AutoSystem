@@ -20,6 +20,8 @@ urlpatterns = patterns('',
                        url(r'^oauth2/', include('oauth2_authentication.urls',
                                                 namespace="oauth2")),
 
+                       # https://github.com/digi604/django-smart-selects
+                       url(r'^chaining/', include('smart_selects.urls')),
                        )
 
 # urlpatterns += patterns('',

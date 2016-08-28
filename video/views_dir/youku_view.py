@@ -4,14 +4,13 @@ import json
 import time
 from datetime import datetime
 from django.db.models import Q
-from django.shortcuts import render, render_to_response
-from video.libs.youku import YoukuVideos, YoukuUpload, YoukuPlaylists
+from django.shortcuts import render_to_response
+from video.libs.youku import YoukuVideos
 from AutoSystem.settings import YOUKU_CLIENT_ID
-from oauth2_authentication.function.youku import youku_get_authenticate
 from video.function.youku import set_youku_category_local, youku_upload, \
-    update_youku_online_info, set_youku_playlist_online, \
-    delete_youku_video
-from video.models import Video, Youku, YoukuPlaylist
+    update_youku_online_info, delete_youku_video
+from video.function.youku_playlist import set_youku_playlist_online
+from video.models import Youku
 
 CLIENT_ID = YOUKU_CLIENT_ID
 
@@ -28,19 +27,12 @@ def youku_upload_view(request, youku_id):
         'text': '上传成功, 在优酷上的video id为 ' + youku_video_id})
 
 
-def set_youku_playlist_view(request, youku_id):
-    youku = Youku.objects.get(pk=youku_id)
-    result = set_youku_playlist_online(youku.youku_video_id, youku.youku_playlist_id)
-    return render_to_response('result.html',
-                              {'text': '更新playlist成功, youku_id为 ' + youku_id})
-
-
 def update_youku_online_info_view(request, youku_video_id):
     updated_youku_video_id = update_youku_online_info(youku_video_id)
-    youku = Youku.objects.get(youku_video_id = updated_youku_video_id)
+    youku = Youku.objects.get(youku_video_id=updated_youku_video_id)
     if youku.setted_youku_playlist:
         updated_youku_playlist_video_id = set_youku_playlist_online(
-                youku_video_id, youku.setted_youku_playlist.id)
+            youku_video_id, youku.setted_youku_playlist.id)
         if updated_youku_playlist_video_id:
             youku.youku_playlist = youku.setted_youku_playlist
             youku.save(update_fields=['youku_playlist'])
@@ -77,32 +69,6 @@ def get_youku_video_info_view(request, video_id):
     return render_to_response('result.html', {'dict_items': video_info})
 
 
-def get_my_playlists_view(request):
-    """
-    获取认证账号的专辑playlist
-    :param request:
-    :return:
-    """
-    youku_access_token = youku_get_authenticate()
-    youku_service = YoukuPlaylists(CLIENT_ID)
-    playlists_dict = youku_service.find_playlists_by_me(youku_access_token)
-    for playlist in playlists_dict['playlists']:
-        YoukuPlaylist.objects.update_or_create(id=playlist['id'],
-                                               defaults={
-                                                   'name': playlist['name'],
-                                                   'duration': playlist[
-                                                       'duration'],
-                                                   'link': playlist['link'],
-                                                   'play_link': playlist[
-                                                       'play_link'],
-                                                   'view_count': playlist[
-                                                       'view_count'],
-                                                   'video_count': playlist[
-                                                       'video_count'], }
-                                               )
-    return render_to_response('result.html', {'dict_in_list': playlists_dict})
-
-
 def auto_set_youku_category_view(request):
     '''
     查找youku model中所有填写了title但是没有设置category的视频
@@ -124,7 +90,8 @@ def auto_set_youku_category_view(request):
 
 def auto_youku_upload_view(request, num):
     """
-    查找对应video的subtitle_video_file不是null（已经下载到本地,并且已经合并了字幕）, youku_video_id为''(还没上传到优酷)
+    查找对应video的subtitle_video_file不是null（已经下载到本地,并且已经合并了字幕）,
+    youku_video_id为''(还没上传到优酷)
     title和category的youku model
     将其上传到优酷网上
     :param request:

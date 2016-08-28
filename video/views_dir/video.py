@@ -4,6 +4,7 @@ from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render_to_response
 
 from video.function.video import download_upload_video
+from video.function.youku_playlist import download_upload_playlist_video
 
 __author__ = 'GoTop'
 
@@ -31,3 +32,18 @@ def download_upload_video_view(request, video_id):
                                        youku_video_text}
                               )
 
+def download_upload_playlist_video_view(request, num):
+    """
+    下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
+    :param request:
+    :param num:
+    :return:
+    """
+    result = download_upload_playlist_video(num, request.user)
+    if result:
+        return render_to_response('result.html', {'text': '下载并上传指定youtube '
+                                                          'playlist的视频成功。',
+                                                  'dict_items': result})
+    else:
+        return render_to_response('result.html', {'text': '下载并上传指定youtube '
+                                                          'playlist的视频失败。'})

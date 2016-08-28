@@ -113,7 +113,7 @@ def auto_download_upload_video(num):
 def auto_upload(num):
     """
     自动查找num个填写了对应youku信息、allow_upload_youku为true、已经下载了视频文件、
-    但为上传的video，将其上传到优酷
+    但未上传的video，将其上传到优酷
     :param num:
     :return:
     """

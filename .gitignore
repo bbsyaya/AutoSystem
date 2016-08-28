@@ -298,6 +298,7 @@ static/
 AutoSystem/settings/__init__.py
 
 client_secret.json
+AutoSystem-c7e714b350c6.json
 fabfile.py
 db.sqlite3
 dump.rdb

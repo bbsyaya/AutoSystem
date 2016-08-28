@@ -24,7 +24,7 @@ def get_youtube_playlist_info_view(request, youtube_channel_id,
         text = 'YouTube Playlist' + youtube_channel_id + '的视频已保存'
     else:
         playlist_list = []
-        text = '获取youtube channel的playlist信息失败'
+        text = '获取youtube channel的playlist信息失败,原因是无法获取到youtube服务'
 
     return render_to_response('result.html',
                               {'text': text,

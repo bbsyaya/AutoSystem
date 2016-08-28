@@ -59,7 +59,7 @@ class VideoAdmin(admin.ModelAdmin):
                    'channel__title',
                    'playlist__title']
 
-    # 在change和edit页面显示哪些field
+    # 设置在change和edit页面显示哪些field
     fieldsets = (
         ('Main', {
             # 'classes': ('wide',),
@@ -382,7 +382,7 @@ class VideoAdmin(admin.ModelAdmin):
                 if setted_youku_playlist:
                     if setted_youku_playlist != origin_youku_playlist:
                         # todo 以下这段引用如果放在顶部则无法启动django server，原因未明
-                        from video.function.youku import \
+                        from video.function.youku_playlist import \
                             delete_video_from_playlist, \
                             set_youku_playlist_online
                         # 只要改变了field['youku_playlist']，自动在playlist_id的优酷playlist

@@ -60,6 +60,8 @@ INSTALLED_APPS = (
     # 'django_youtube',
     'oauth2_authentication',
     'video',
+    # https://github.com/digi604/django-smart-selects
+    'smart_selects',
 )
 
 MIDDLEWARE_CLASSES = (

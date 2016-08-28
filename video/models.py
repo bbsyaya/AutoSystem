@@ -9,6 +9,7 @@ from django.db import models
 
 from django.db.models import Lookup
 from django.db.models.fields import Field
+from smart_selects.db_fields import ChainedForeignKey
 
 
 class NeedUploadManager(models.Manager):
@@ -66,6 +67,9 @@ class DownloadedManager(models.Manager):
 
 # Create your models here.
 class Video(models.Model):
+    """
+    代表youtube上的video，并包括下载到本地后的视频文件的路径、字幕文件的属性
+    """
     # id = models.CharField(max_length=50, null=True, blank=True)
     video_id = models.CharField(max_length=50, primary_key=True)
     title = models.CharField(max_length=200, )
@@ -155,12 +159,6 @@ class Video(models.Model):
                 # 除了中文和英文字母以外的符号都不行
                 # 优酷用英文逗号和空格来分割tags，如果单个tag中存在空格，
                 # 可能会导致最终的tag数超过10个
-                # tag = tag.replace(" ", "")
-                # tag = tag.replace("-", "")
-                # tag = tag.replace("_", "")
-                # tag = tag.replace(".", "")
-                # tag = tag.replace("+", "")
-                # tag = tag.replace("&", "")
 
                 # 替换掉 汉字、英文以外的所有字符
                 # http://blog.csdn.net/liuqian1104/article/details/8134293
@@ -190,6 +188,33 @@ class Video(models.Model):
         self.subtitle_merge.delete()
         self.subtitle_video_file.delete()
 
+    @property
+    def is_download(self):
+        """
+        返回该视频是否已经下载视频文件到本地的判断
+        :return:
+        """
+        if self.file=='':
+            return False
+        else:
+            return True
+    @property
+    def is_upload(self):
+        """
+        返回该视频是否已经上传视频文件到本地的判断
+        如果视频文件在本地中已经删除，但是之前曾经上传到优酷上，也算已上传
+        :return:
+        """
+        if self.youku is not None:
+            if self.youku.youku_video_id:
+                return True
+            else:
+                return False
+        return False
+
+
+
+
     objects = models.Manager()
     need_download_upload = NeedDownloadUploadManager()
     need_upload = NeedUploadManager()
@@ -198,7 +223,7 @@ class Video(models.Model):
 
 
 class YouTubeChannel(models.Model):
-    channel_id = models.URLField(max_length=100, primary_key=True)
+    channel_id = models.CharField(max_length=100, primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
@@ -225,14 +250,19 @@ class YouTubeChannel(models.Model):
 class YouTubePlaylist(models.Model):
     playlist_id = models.CharField(max_length=100, primary_key=True)
     title = models.CharField(max_length=50)
-    description =  models.TextField(max_length=500, blank=True)
+    description = models.TextField(max_length=500, blank=True)
     thumbnail = models.URLField(max_length=300, blank=True)
     publishedAt = models.DateTimeField(null=True, blank=True)
     video_num = models.CharField(max_length=10, blank=True, null=True)
     channel = models.ForeignKey('YouTubeChannel', null=True,
-                                        blank=True)
-    youku_playlist = models.ForeignKey('YoukuPlaylist', null=True,
-                                        blank=True)
+                                blank=True)
+
+    # 因为使用了VideoConfig model来进行多对多的关系设置，所以以下先注释掉
+    # # 因为要在youtube_playlist里设置对应的youku_playlist，
+    # # 所以ManyToManyField属性要设置在YouTubePlaylist model里
+    # youku_playlist = models.ManyToManyField('YoukuPlaylist', null=True,
+    #                                       blank=True)
+
     remark = models.CharField(max_length=50, blank=True)
 
     @property
@@ -288,6 +318,9 @@ YOUKU_CATEGORY = (
 
 
 class Youku(models.Model):
+    """
+    代表上传到youku网站上的视频
+    """
     # 主键的名称为 id
     # youku_video_id 是视频上传到优酷的video id
     youku_video_id = models.CharField(max_length=50, blank=True)
@@ -404,25 +437,43 @@ class Category(models.Model):
         return self.title
 
 
-class VideoConfig(models.Model):
-    # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
-    youtube_channel = models.ForeignKey('YouTubeChannel',
-                                        on_delete=models.SET_NULL, null=True,
-                                        blank=True,
-                                        help_text=
-                                        "指定下载youtube上的指定channel")
+class PlaylistConfig(models.Model):
+    """
+    设置youtube playlist和youku playlist的对应关系（多对多）
 
-    youtube_playlist = models.ForeignKey('YouTubePlaylist',
-                                         # related_name='youku_playlist_online',
-                                         on_delete=models.SET_NULL, null=True,
-                                         blank=True,
-                                         help_text=
-                                         "指定下载youtube channel里的特定playlist")
+    这样可以自动下载指定youtube上的playlist的视频后上传到youku，并设置到指定优酷playlist
+    """
+    # 使用django-smart-selects，在django admin页面可以联动
+    youtube_channel = models.ForeignKey(YouTubeChannel)
+    youtube_playlist = ChainedForeignKey(
+        YouTubePlaylist,
+        chained_field="youtube_channel",
+        # YouTubePlaylist中对应上面chained_field的那个field
+        chained_model_field="channel",
+        show_all=True,
+        auto_choose=True
+    )
+
+    # # 自动下载指定playlist的youtube视频后上传到youku，并设置到指定playlist的相关配置
+    # youtube_channel = models.ForeignKey('YouTubeChannel',
+    #                                     on_delete=models.SET_NULL, null=True,
+    #                                     blank=True,
+    #                                     help_text=
+    #                                     "指定下载youtube上的指定channel")
+    #
+    # youtube_playlist = models.ForeignKey('YouTubePlaylist',
+    #                                      #
+    # related_name='youku_playlist_online',
+    #                                      on_delete=models.SET_NULL, null=True,
+    #                                      blank=True,
+    #                                      help_text=
+    #                                      "指定下载youtube channel里的特定playlist")
 
     youku_account = models.CharField(max_length=100, blank=True,
                                      help_text=
                                      "指定上传到优酷的账号")
 
+    # todo 增加youku account的model，youku_playlist可以与youku account设置联动
     youku_playlist = models.ForeignKey('YoukuPlaylist',
                                        on_delete=models.SET_NULL, null=True,
                                        blank=True,

@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, include, url
 from video.views_dir import youtube_view, youtube_subscription_view, \
-    youtube_channel_view, youtube_playlist_view, youku_view, subtitle_view, \
-    video
+    youtube_channel_view, youtube_playlist_view, youku_view, \
+    youku_playlist_view, subtitle_view, video
 
 __author__ = 'GoTop'
 
@@ -66,7 +66,8 @@ urlpatterns = [
     ###########################################################################
 
     # 根据channel_id,获取channel的信息，并保存到数据库中
-    # http://127.0.0.1:8000/video/get_youtube_channel_info/UCEQpJTOXGkvS1UQsdCm6lLA
+    # http://127.0.0.1:8000/video/get_youtube_channel_info
+    # /UCEQpJTOXGkvS1UQsdCm6lLA
     url(r'get_youtube_channel_info/(?P<channel_id>.+)$',
         youtube_channel_view.get_youtube_channel_info_view,
         name='get_youtube_channel_info'),
@@ -132,7 +133,7 @@ urlpatterns = [
     ########################################################################
     # 优酷
     #########################################################################
-    # 将youtube上下载的视频上传到优酷
+    # 将从youtube下载的视频上传到优酷
     # http://127.0.0.1:8000/video/youku_upload/1
     url(r'youku_upload/(?P<youku_id>.+)/$', youku_view.youku_upload_view,
         name='youku_upload'),
@@ -149,14 +150,14 @@ urlpatterns = [
     url(r'get_youku_video_info/(?P<video_id>.+)$',
         youku_view.get_youku_video_info_view, name='get_youku_video_info'),
 
-    # 获取youku认证账号的专辑playlist
+    # 获取youku认证账号的专辑playlist信息并保存到youku playlist数据库中
     # http://127.0.0.1:8000/video/get_my_playlists
-    url(r'get_my_playlists$', youku_view.get_my_playlists_view),
+    url(r'get_my_playlists$', youku_playlist_view.get_my_playlists_view),
 
-    # 根据youku的youkuplaylist属性，在优酷网上将youku对象添加到该playlist中
+    # 根据youku的youku playlist属性，在优酷网上将youku对象添加到该playlist中
     # http://127.0.0.1:8000/video/set_youku_playlist/XMTQyOTQ3NzgyOA==
     url(r'set_youku_playlist/(?P<youku_video_id>.+)$',
-        youku_view.set_youku_playlist_view),
+        youku_playlist_view.set_youku_playlist_view),
 
     # http://127.0.0.1:8000/video/update_youku_info/
     url(r'update_youku_online_info/(?P<youku_video_id>.+)$',
@@ -178,4 +179,11 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
     url(r'download_upload_video/(?P<video_id>.+)$',
         video.download_upload_video_view, name='download_upload_video'),
+
+    # 下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
+    # http://127.0.0.1:8000/video/download_upload_playlist_video/1
+    url(r'download_upload_playlist_video/(?P<num>\d+)$',
+        video.download_upload_playlist_video_view,
+        name='download_upload_video'),
+
 ]
