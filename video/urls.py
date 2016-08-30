@@ -95,15 +95,13 @@ urlpatterns = [
     ###########################################################################
 
     # 获取youtube channel的playlist信息，并保存
-    url(
-        r'get_youtube_playlist_info/(?P<youtube_channel_id>.+)/('
+    url(r'get_youtube_playlist_info/(?P<youtube_channel_id>.+)/('
         r'?P<max_results>\d+)$',
         youtube_playlist_view.get_youtube_playlist_info_view,
         name='get_youtube_playlist_info'),
 
     # 获取youtube_playlist_id的所有video的信息,并保存
-    url(
-        r'get_youtube_playlist_video_info/(?P<youtube_playlist_id>.+)/('
+    url(r'get_youtube_playlist_video_info/(?P<youtube_playlist_id>.+)/('
         r'?P<max_results>\d+)$',
         youtube_playlist_view.get_youtube_playlist_video_info_view,
         name='get_youtube_playlist_video_info'),
@@ -182,8 +180,8 @@ urlpatterns = [
 
     # 下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
     # http://127.0.0.1:8000/video/download_upload_playlist_video/1
-    url(r'download_upload_playlist_video/(?P<num>\d+)$',
-        video.download_upload_playlist_video_view,
+    url(r'download_playlist_video/(?P<num>\d+)$',
+        video.download_playlist_video_view,
         name='download_upload_video'),
 
 ]

@@ -50,7 +50,7 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
 
     video = Video.objects.get(video_id=video_id)
 
-    #如果没设置options，则使用默认的设置
+    # 如果没设置options，则使用默认的设置
     if options == {}:
         # 代码参考 https://github.com/rg3/youtube-dl/blob/master/README.md#embedding
         # -youtube-dl
@@ -94,8 +94,10 @@ def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
 
     # 如果是本地运行，则使用代理
     if SETTING_FILE == 'local':
-        options['socksproxy'] = '127.0.0.1:8115'
-        # options['proxy'] = '127.0.0.1:8115'
+        # 2016-3-1fork后，支持socks代理的youtube-dl时的代理设置
+        # options['socksproxy'] = '127.0.0.1:8115'
+        # 2016-8-28 官方支持socks5代理时的设置
+        options['proxy'] = 'socks5://127.0.0.1:8115/'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         # youtube_url = video.youtube_url

@@ -5,6 +5,9 @@ import httplib2
 from django.shortcuts import render, render_to_response
 # Create your views here.
 from django.template import RequestContext
+
+from oauth2_authentication.function.google_oauth2_server_to_server import \
+    get_authenticated_service_s2s
 from video.models import Video
 from oauth2_authentication.views import get_authenticated_service
 
@@ -18,7 +21,8 @@ def search_view(request, q, max_results):
     :param max_results:
     :return:
     """
-    youtube = get_authenticated_service(request.user)
+    #youtube = get_authenticated_service(request.user)
+    youtube = get_authenticated_service_s2s()
     search_response = youtube.search().list(
         q=q,
         part="id,snippet",
@@ -53,7 +57,8 @@ def my_homepage_subscription_view(request, max_results):
     :param request:
     :return:
     """
-    youtube = get_authenticated_service(request.user)
+    #youtube = get_authenticated_service(request.user)
+    youtube = get_authenticated_service_s2s()
 
     if youtube:
         # 如果youtube.activities().list().execute(http=myhttp)使用以下代理则会提示错误:
@@ -100,7 +105,8 @@ def my_watchlater_lists_view(request, max_results):
     :param max_results:
     :return:
     """
-    youtube = get_authenticated_service(request.user)
+    #youtube = get_authenticated_service(request.user)
+    youtube = get_authenticated_service_s2s()
 
     myproxy = httplib2.ProxyInfo(proxy_type=httplib2.socks.PROXY_TYPE_SOCKS5,
                                  proxy_host='127.0.0.1', proxy_port=8115)

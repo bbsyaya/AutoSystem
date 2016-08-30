@@ -5,7 +5,7 @@ from django.shortcuts import render, render_to_response
 # Create your views here.
 import os
 import httplib2
-from oauth2client import xsrfutil
+#from oauth2client import xsrfutil
 from oauth2client.client import flow_from_clientsecrets, Storage
 #from oauth2client.django_orm import Storage
 
@@ -20,7 +20,7 @@ from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import get_current_site
 
-from oauth2_authentication.models import CredentialsModel, FlowModel
+from oauth2_authentication.models import CredentialsModel
 from AutoSystem.settings import CLIENT_SECRETS, SCOPES, REDIRECT_URI, \
     YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, SETTING_FILE
 
@@ -83,11 +83,11 @@ def get_authenticated_service(user):
             http = httplib2.Http()
             http = credential.authorize(http)
 
-        # 如果是本地运行，则使用代理
+        # 如果是本地运行，则使用代理,貌似使用socks5代理会出错，尝试使用http代理
         if SETTING_FILE == 'local':
             myproxy = httplib2.ProxyInfo(
-                proxy_type=httplib2.socks.PROXY_TYPE_SOCKS5,
-                proxy_host='127.0.0.1', proxy_port=8115)
+                proxy_type=httplib2.socks.PROXY_TYPE_HTTP,
+                proxy_host='127.0.0.1', proxy_port=8118)
             http = httplib2.Http(proxy_info=myproxy)
             http = credential.authorize(http)
 

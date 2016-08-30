@@ -1,6 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render, render_to_response
+
+from oauth2_authentication.function.google_oauth2_server_to_server import \
+    get_authenticated_service_s2s
 from oauth2_authentication.views import get_authenticated_service
 from video.models import YouTubeChannel, Video
 
@@ -15,7 +18,8 @@ def get_my_subscribe_channel_view(request):
     :return:
     """
     max_results = 10
-    youtube = get_authenticated_service(request.user)
+    #youtube = get_authenticated_service(request.user)
+    youtube = get_authenticated_service_s2s()
     res = youtube.subscriptions().list(part='snippet',
                                        mine=True,
                                        maxResults=max_results).execute()

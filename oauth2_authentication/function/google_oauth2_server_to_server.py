@@ -8,51 +8,32 @@ from oauth2client.service_account import ServiceAccountCredentials
 __author__ = 'GoTop'
 
 from AutoSystem.settings import SCOPES, YOUTUBE_API_SERVICE_NAME, \
-    YOUTUBE_API_VERSION
-
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    'G:\Python\Project\AutoSystem\AutoSystem\settings\AutoSystem-c7e714b350c6'
-    '.json',
-    SCOPES)
-myproxy = httplib2.ProxyInfo(
-    proxy_type=httplib2.socks.PROXY_TYPE_HTTP,
-    proxy_host='127.0.0.1', proxy_port=8118)
-
-proxy_http = httplib2.Http(proxy_info=myproxy)
-
-youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                credentials=credentials, http=proxy_http)
-
-if youtube:
-    res = youtube.playlistItems().list(
-        part='snippet, contentDetails',
-        playlistId='PLNWIWf8IRkr_gX4fOQndZOIeuvofx4L6z',
-        maxResults=50).execute()
-
-    # 将该playlist包含的视频数量保存到YouTubePlaylist中
-    # if res:
-    #     video_num = res['pageInfo']['totalResults']
-    #     playlist.video_num = video_num
-    #     playlist.save(update_fields=['video_num'])
+    YOUTUBE_API_VERSION, GOOGLE_KEY_FILE, SETTING_FILE
 
 
+def get_authenticated_service_s2s():
+    """
+    使用oauth2 server to server的方式获取认证的google服务
+    :param user:
+    :return:
+    """
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        GOOGLE_KEY_FILE,
+        SCOPES)
 
-    # 循环获取完所有的结果
-    nextPageToken = res.get('nextPageToken')
-    while ('nextPageToken' in res):
-        nextPage = youtube.playlistItems().list(
-            part='snippet, contentDetails',
-            playlistId='PLNWIWf8IRkr_gX4fOQndZOIeuvofx4L6z',
-            maxResults=50,
-            pageToken=nextPageToken
-        ).execute()
+    #SETTING_FILE = 'production'
+    # 如果是VPS中运行，则不使用代理
+    if SETTING_FILE == 'production':
+        proxy_http = None
 
-        res['items'] = res['items'] + nextPage['items']
+    # 如果是本地运行，则使用代理
+    if SETTING_FILE == 'local':
+        myproxy = httplib2.ProxyInfo(
+            proxy_type=httplib2.socks.PROXY_TYPE_HTTP,
+            proxy_host='127.0.0.1', proxy_port=8118)
+        proxy_http = httplib2.Http(proxy_info=myproxy)
 
-        if 'nextPageToken' not in nextPage:
-            res.pop('nextPageToken', None)
-        else:
-            nextPageToken = nextPage['nextPageToken']
+    youtube_service = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+                            credentials=credentials, http=proxy_http)
 
-    for result in res.get("items", []):
-        print(result)
+    return youtube_service

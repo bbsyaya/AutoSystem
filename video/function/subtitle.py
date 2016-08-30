@@ -6,7 +6,7 @@ import django
 from django.utils.text import slugify, get_valid_filename
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.libs.subtitle import merge_subtitle, add_subtitle_to_video, \
-    srt_to_ass, edit_two_lang_style, edit_cn_ass_subtitle_style
+    convert_subtilte_format, edit_two_lang_style, edit_cn_ass_subtitle_style
 from video.models import Video
 from video.libs.convert_subtitles import convert_file
 
@@ -43,8 +43,10 @@ def merge_video_subtitle(video_id):
 
         # 将vtt字幕转换为srt
         subs_cn_srt_filename = '%s-%s.cn.srt' % (
-            get_valid_filename(video.title), video.video_id)
+        get_valid_filename(video.title), video.video_id)
         subs_cn_srt = os.path.join(YOUTUBE_DOWNLOAD_DIR, subs_cn_srt_filename)
+
+        # 此功能失效
         subs_cn_srt_result = convert_file(input_captions=video.subtitle_cn.path,
                                           output_writer=subs_cn_srt)
 
@@ -95,7 +97,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
 
         ass_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, ass_filename)
 
-        subtitle_file = srt_to_ass(subtitle_file, ass_subs_dir)
+        subtitle_file = convert_subtilte_format(subtitle_file, ass_subs_dir)
 
         subtitle_file = edit_cn_ass_subtitle_style(subtitle_file)
         # youtube上的英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码
@@ -149,7 +151,7 @@ def srt_to_ass_process(video_id, srt_file_dir):
 
     ass_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, ass_filename)
 
-    srt_to_ass(srt_file_dir, ass_subs_dir)
+    convert_subtilte_format(srt_file_dir, ass_subs_dir)
 
     # 如果成功生成srt_file_dir文件，则将字幕文件地址返回
     if os.path.isfile(ass_subs_dir):

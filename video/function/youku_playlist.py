@@ -106,7 +106,7 @@ def get_youku_playlist():
         orderby='published', page=1, count=20)
 
 
-def download_upload_playlist_video(num, user):
+def download_playlist_video(num, user):
     """
     下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
     :param num:
@@ -141,25 +141,23 @@ def download_upload_playlist_video(num, user):
                         download_num = download_num + 1
                         if download_num <= num:
                             break
-
-                    # 如果该视频已下载，但是未上传到优酷，则上传
-                    elif video.is_upload == False:
-                        # video对象还没有创建对应的youku对象怎么办？
-                        youku_upload(video.youku.id)
-                        # 在优酷上设置视频的playlist
-                        set_youku_playlist_online_from_config_playlist(video_id)
-                        upload_num = upload_num + 1
-                        if upload_num <= num:
-                            break
-                    result_list.append({'download_num': download_num,
-                                        'upload_num': upload_num,
-                                        'text': text})
             else:
                 video_list = []
                 text = '获取youtube playlist的视频信息失败'
 
     return result_list
 
-    #
-    # if __name__ == '__main__':
-    #     set_youku_category_local(youku_id=3)
+# def upload_playlist_video(num, user):
+#     upload_num = 0
+#     # 如果该视频已下载，但是未上传到优酷，则上传
+#     if video.is_upload == False:
+#         # video对象还没有创建对应的youku对象怎么办？
+#         youku_upload(video.youku.id)
+#         # 在优酷上设置视频的playlist
+#         set_youku_playlist_online_from_config_playlist(video_id)
+#         upload_num = upload_num + 1
+#         if upload_num <= num:
+#             break
+#     result_list.append({'download_num': download_num,
+#                         'upload_num': upload_num,
+#                         'text': text})

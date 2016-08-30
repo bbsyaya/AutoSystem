@@ -25,19 +25,17 @@ DATABASES = {
     }
 }
 
-
 YOUTUBE_DOWNLOAD_DIR = '/home/gotop/Media/Video/YouTube/'
 
 FFMPEG_LOCATION = "/usr/bin/ffmpeg"
 
 # reference: http://www.marinamele.com/use-the-google-analytics-api-with-django
-CLIENT_SECRETS = os.path.join(
-    os.path.dirname(__file__), 'client_secret.json')
+CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secret.json')
+GOOGLE_KEY_FILE = os.path.join(os.path.dirname(__file__), 'AutoSystem-c7e714b350c6.json')
 REDIRECT_URI = 'http://106.185.37.62/oauth2/oauth2callback'
 SCOPES = 'https://www.googleapis.com/auth/youtube'
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-
 
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
 # &response_type=code&redirect_uri=http
@@ -47,7 +45,6 @@ YOUTUBE_API_VERSION = "v3"
 YOUKU_CLIENT_ID = "a6aeb5ff9627346b"
 YOUKU_CLIENT_SECRET = "1c2c6330b65fdb2a4cd3e20dee8fac22"
 REDIRECT_URL = 'http://106.185.37.62/oauth2/youku_oauth2callback'
-
 
 ALLOWED_HOSTS = ['*']
 
@@ -69,7 +66,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'redis'
 # That is, tasks will be executed locally instead of being sent to the queue.
 # 用于测试环境，可以不开启worker，和broker
-#CELERY_ALWAYS_EAGER = True
+# CELERY_ALWAYS_EAGER = True
 
 
 # 使用redis的设置
@@ -88,4 +85,5 @@ CELERY_RESULT_BACKEND = 'redis'
 # CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
 
 import djcelery
+
 djcelery.setup_loader()

@@ -40,7 +40,7 @@ def find_subtitle(subtitle, from_t, to_t, lo=0):
 
 def merge_subtitle(sub_a, sub_b, delta):
     """
-    合并两种不同言语的字幕
+    合并两种不同言语的srt字幕
     参考 https://github.com/byroot/pysrt/issues/15
     https://github.com/byroot/pysrt/issues/17
     :param sub_a:
@@ -76,7 +76,7 @@ def merge_subtitle(sub_a, sub_b, delta):
 @task
 def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     """
-    将video_id对应的视频的字母，软写入到对应的视频中
+    将video_id对应的视频的字幕，软写入到对应的视频中
 
     :param video_id:
     :return:
@@ -137,9 +137,10 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     #     print '>>> {}'.format(line.rstrip())
 
 
-def srt_to_ass(srt_file, ass_file):
+def convert_subtilte_format(srt_file, ass_file):
     """
-    使用ffmpeg将srt格式的字幕转化为ass格式的字幕
+    使用ffmpeg将srt,vtt等格式的字幕转化为另一种格式(vtt,srt)的字幕
+    只要是ffmpeg支持转化的字幕格式都可以转换
 
     :param srt_file:
     :param ass_file:

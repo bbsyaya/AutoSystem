@@ -21,23 +21,28 @@ DATABASES = {
 
 DEBUG = True
 INSTALLED_APPS += (
-    #"django_rq",
-    #"django_rq_dashboard",
+    # "django_rq",
+    # "django_rq_dashboard",
     # 'debug_toolbar', # and other apps for local development
 )
 
 YOUTUBE_DOWNLOAD_DIR = 'E:\Media\Video\YouTube\\'
 FFMPEG_LOCATION = 'E:\\Program Files\\ffmpeg\\bin'
 
-
 # reference: http://www.marinamele.com/use-the-google-analytics-api-with-django
-CLIENT_SECRETS = os.path.join(
-    os.path.dirname(__file__), 'client_secret.json')
+CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secret.json')
+# oauth2client 3.0.0版之后要求设置GOOGLE_OAUTH2_CLIENT_SECRETS_JSON变量
+# http://oauth2client.readthedocs.io/en/latest/source/oauth2client.contrib
+# .django_util.html
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(os.path.dirname(__file__),
+                                                 'client_secret.json')
+GOOGLE_KEY_FILE = os.path.join(os.path.dirname(__file__),
+                               'AutoSystem-c7e714b350c6.json')
+
 REDIRECT_URI = 'http://127.0.0.1:8000/oauth2/oauth2callback'
 SCOPES = 'https://www.googleapis.com/auth/youtube'
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-
 
 # 访问 https://openapi.youku.com/v2/oauth2/authorize?client_id=bdf4fcf59c05aff9
 # &response_type=code&redirect_uri=http
@@ -65,7 +70,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'redis'
 
-#celery_once的设置
+# celery_once的设置
 ONCE_REDIS_URL = 'redis://localhost:6379/0'
 ONCE_DEFAULT_TIMEOUT = 60 * 60
 
@@ -92,7 +97,8 @@ import djcelery
 
 djcelery.setup_loader()
 
-# This allows you to easily change the schedules, even while Django and Celery are running.
+# This allows you to easily change the schedules, even while Django and
+# Celery are running.
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 # https://github.com/ui/django-rq
@@ -156,6 +162,7 @@ class SuppressDeprecated(logging.Filter):
         return not any(
             [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
 
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -209,7 +216,7 @@ LOGGING = {
 
     'loggers': {
         'AutoSystem': {
-            'handlers': ['console','logfile'],
+            'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
         },
         'myapp.request': {

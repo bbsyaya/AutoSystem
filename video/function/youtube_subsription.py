@@ -1,5 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
+
+from oauth2_authentication.function.google_oauth2_server_to_server import \
+    get_authenticated_service_s2s
 from video.models import Video, YouTubeChannel
 from oauth2_authentication.views import get_authenticated_service
 
@@ -14,7 +17,8 @@ def get_subscription_update_video(user, max_results):
     max_results：最大为50
     :return:
     """
-    youtube = get_authenticated_service(user)
+    #youtube = get_authenticated_service(user)
+    youtube = get_authenticated_service_s2s()
     # home: This parameter can only be used in a properly
     # authorized request. Set this
     # parameter's value to true to retrieve the activity feed that displays on

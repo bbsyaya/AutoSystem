@@ -2,6 +2,9 @@
 from __future__ import unicode_literals, absolute_import
 import json
 import isodate as isodate
+
+from oauth2_authentication.function.google_oauth2_server_to_server import \
+    get_authenticated_service_s2s
 from video.models import Video
 import youtube_dl
 from oauth2_authentication.views import get_authenticated_service
@@ -44,7 +47,8 @@ def get_multi_youtube_video_info(user):
         video_id_list.append(video.video_id)
 
     video_id_string = ', '.join(video_id_list)
-    youtube = get_authenticated_service(user)
+    #youtube = get_authenticated_service(user)
+    youtube = get_authenticated_service_s2s()
     # https://developers.google.com/youtube/v3/docs/videos/list
     res = youtube.videos().list(
         part="contentDetails, snippet, statistics",

@@ -1,6 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 import dateutil.parser
+
+from oauth2_authentication.function.google_oauth2_server_to_server import \
+    get_authenticated_service_s2s
 from oauth2_authentication.views import get_authenticated_service
 from video.models import Video, YouTubeChannel, YouTubePlaylist
 
@@ -13,7 +16,8 @@ def get_youtube_playlist_info(youtube_channel_id, max_results, user):
 
     # GET https://www.googleapis.com/youtube/v3/playlists?part=snippet
     # &channelId=UCEQpJTOXGkvS1UQsdCm6lLA&key={YOUR_API_KEY}
-    youtube = get_authenticated_service(user)
+    #youtube = get_authenticated_service(user)
+    youtube = get_authenticated_service_s2s()
     if youtube:
         res = youtube.playlists().list(
             part='snippet',
@@ -82,7 +86,8 @@ def get_youtube_playlist_video_info(youtube_playlist_id, max_results, user):
     # filter()返回的是一个list，就算只有一个结果
     playlist = YouTubePlaylist.objects.filter(
         playlist_id=youtube_playlist_id).first()
-    youtube = get_authenticated_service(user)
+    #youtube = get_authenticated_service(user)
+    youtube = get_authenticated_service_s2s()
     if youtube:
         res = youtube.playlistItems().list(
             part='snippet, contentDetails',

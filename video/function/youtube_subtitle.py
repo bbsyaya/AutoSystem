@@ -32,16 +32,19 @@ def download_subtitle(video_id, subtitlesformat = 'vtt', max_retey=3):
         # name the file the ID of the video
         'verbose': True,  # Print various debugging information
         'restrictfilenames': True,
-        'subtitleslangs': ['zh-Hans' ],  # 要写成list的形式
-        # 'convertsubtitles': 'srt',
-        'subtitlesformat': subtitlesformat,
+        'subtitleslangs': ['zh-Hans','en' ],  # 要写成list的形式
+        #'convertsubtitles': 'srt',
+        #'subtitlesformat': subtitlesformat,
         'writeautomaticsub': True,  # 下载字幕，这里的字幕是youtube自动生成的CC字幕
         'skip_download': True,
         'progress_hooks': [my_hook],}
 
-    # 如果是本地debug状态则使用代理
+    # 如果是本地运行，则使用代理
     if SETTING_FILE == 'local':
-        options['socksproxy'] = '127.0.0.1:8115'
+        # 2016-3-1fork后，支持socks代理的youtube-dl时的代理设置
+        # options['socksproxy'] = '127.0.0.1:8115'
+        # 2016-8-28 官方支持socks5代理时的设置
+        options['proxy'] = 'socks5://127.0.0.1:8115/'
 
     with youtube_dl.YoutubeDL(options) as ydl:
         n = 0

@@ -1,6 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 
+from oauth2_authentication.function.google_oauth2_server_to_server import \
+    get_authenticated_service_s2s
 from oauth2_authentication.views import get_authenticated_service
 from video.models import YouTubeChannel
 
@@ -20,7 +22,8 @@ def get_youtube_channel_info(channel_id, user):
     :param user:
     :return:
     """
-    youtube = get_authenticated_service(user)
+    #youtube = get_authenticated_service(user)
+    youtube = get_authenticated_service_s2s()
 
     if youtube:
         res = youtube.channels().list(

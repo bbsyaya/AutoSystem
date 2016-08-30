@@ -9,7 +9,8 @@ import subprocess
 import math
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
-from video.libs.convert_subtitles import convert_file
+from video.libs.convert_subtitles import convert_file, convert_subtilte_format
+from video.libs.subtitle import srt_to_ass
 
 __author__ = 'GoTop'
 
@@ -53,6 +54,14 @@ __author__ = 'GoTop'
 # tags_list = ''
 # print(json.dumps(tags_list))
 
-tag = "tech under $100, $50, $25, $500"
-tag = re.sub(ur"[^\u4e00-\u9fa5a-zA-Z0-9]", "", tag)
-print tag
+# tag = "tech under $100, $50, $25, $500"
+# tag = re.sub(ur"[^\u4e00-\u9fa5a-zA-Z0-9]", "", tag)
+# print tag
+
+# input_file = "E:\Media\Video\YouTube\The_iPhone_Notification_Case-k8nm1C8ByOY.en.vtt"
+# output_format = "srt"
+# convert_subtilte_format(input_file, output_format)
+input_file = "E:\Media\Video\YouTube\The_iPhone_Notification_Case-k8nm1C8ByOY.en.vtt"
+ouput_file = "E:\Media\Video\YouTube\The_iPhone_Notification_Case-k8nm1C8ByOY" \
+             ".en.srt"
+srt_to_ass(input_file, ouput_file)

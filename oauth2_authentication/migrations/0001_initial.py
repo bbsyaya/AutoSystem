@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import oauth2client.django_orm
+import oauth2client.contrib.django_util.models
 from django.conf import settings
 
 
@@ -17,14 +17,14 @@ class Migration(migrations.Migration):
             name='CredentialsModel',
             fields=[
                 ('id', models.ForeignKey(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('credential', oauth2client.django_orm.CredentialsField(null=True)),
+                ('credential', oauth2client.contrib.django_util.models.CredentialsField(null=True)),
             ],
         ),
-        migrations.CreateModel(
-            name='FlowModel',
-            fields=[
-                ('id', models.ForeignKey(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('flow', oauth2client.django_orm.FlowField(null=True)),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='FlowModel',
+        #     fields=[
+        #         ('id', models.ForeignKey(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+        #         ('flow', oauth2client.django_orm.FlowField(null=True)),
+        #     ],
+        # ),
     ]
