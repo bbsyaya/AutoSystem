@@ -146,8 +146,12 @@ def set_youku_category_local(youku_id):
     :return:
     """
     youku = Youku.objects.get(pk=youku_id)
-    youku.category = \
-        youku.video.channel.category.get_youku_playlist_category_display()
+    #如果该video对象对应的video对象所属的channel设置了category属性，则
+    if youku.video.channel.category:
+        youku.category = \
+            youku.video.channel.category.get_youku_playlist_category_display()
+    else:
+        return False
 
     youku.save(update_fields=['category'])
     return youku

@@ -10,7 +10,7 @@ from video.function.youku import set_youku_category_local, youku_upload
 from video.function.youtube_download import download_single_youtube_video_main
 from video.function.youtube_subsription import get_subscription_update_video
 from video.function.youtube_subtitle import download_subtitle
-from video.libs.subtitle import edit_two_lang_style, srt_to_ass
+from video.libs.subtitle import edit_two_lang_style
 from video.models import Video, Youku
 
 __author__ = 'GoTop'

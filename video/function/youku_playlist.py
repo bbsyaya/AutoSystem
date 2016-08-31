@@ -144,7 +144,6 @@ def download_playlist_video(num, user):
             else:
                 video_list = []
                 text = '获取youtube playlist的视频信息失败'
-
     return result_list
 
 # def upload_playlist_video(num, user):

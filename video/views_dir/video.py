@@ -24,7 +24,7 @@ def download_upload_video_view(request, video_id):
     if youku_video_id:
         youku_video_text = "将视频上传到youku成功， youku_video_id为: " + youku_video_id
     else:
-        video_filepath_text = ''
+        youku_video_text = ''
 
     return render_to_response('result.html',
                               {'text': video_filepath_text + '\n' +
