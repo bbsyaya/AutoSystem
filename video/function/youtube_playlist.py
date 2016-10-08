@@ -73,7 +73,7 @@ def get_youtube_playlist_info(youtube_channel_id, max_results, user):
     return youtube_playlist_list
 
 
-def get_youtube_playlist_video_info(youtube_playlist_id, max_results, user):
+def get_youtube_playlist_video_info(youtube_playlist_id, max_results):
     """
     获取youtube_playlist_id的所有video的信息
     :param youtube_playlist_id:

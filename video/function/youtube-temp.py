@@ -90,7 +90,7 @@ def get_subscription_update_video(user, max_results):
     return video_list
 
 
-def get_multi_youtube_video_info(user):
+def get_multi_youtube_video_info():
     """
     一次获取max_results个youtube视频的时长，播放数等额外信息
     :param user:
@@ -103,7 +103,7 @@ def get_multi_youtube_video_info(user):
         video_id_list.append(video.video_id)
 
     video_id_string = ', '.join(video_id_list)
-    youtube = get_authenticated_service(user)
+    youtube = get_authenticated_service()
     # https://developers.google.com/youtube/v3/docs/videos/list
     res = youtube.videos().list(
         part="contentDetails, snippet, statistics",

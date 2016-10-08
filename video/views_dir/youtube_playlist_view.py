@@ -8,8 +8,9 @@ from video.function.youtube_playlist import get_youtube_playlist_video_info, \
 
 __author__ = 'GoTop'
 
+
 def get_youtube_playlist_info_view(request, youtube_channel_id,
-                                         max_results=50):
+                                   max_results=50):
     """
     获取youtube channel的playlist信息，并保存
     :param request:
@@ -18,7 +19,7 @@ def get_youtube_playlist_info_view(request, youtube_channel_id,
     :return:
     """
     result = get_youtube_playlist_info(youtube_channel_id, max_results,
-                                             request.user)
+                                       request.user)
     if result:
         playlist_list = result
         text = 'YouTube Playlist' + youtube_channel_id + '的视频已保存'
@@ -30,6 +31,7 @@ def get_youtube_playlist_info_view(request, youtube_channel_id,
                               {'text': text,
                                'dict_in_list': playlist_list})
 
+
 def get_youtube_playlist_video_info_view(request, youtube_playlist_id,
                                          max_results=50):
     """
@@ -39,8 +41,7 @@ def get_youtube_playlist_video_info_view(request, youtube_playlist_id,
     :param max_results:
     :return:
     """
-    result = get_youtube_playlist_video_info(youtube_playlist_id, max_results,
-                                             request.user)
+    result = get_youtube_playlist_video_info(youtube_playlist_id, max_results)
     if result:
         video_list = result
         text = 'YouTube Playlist' + youtube_playlist_id + '的视频已保存'

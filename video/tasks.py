@@ -63,7 +63,7 @@ def auto_get_multi_youtube_video_info(max_results=5):
 
     # 获取admin 的 user对象
     user = User.objects.get(id=1)
-    youtube_video_id_list = get_multi_youtube_video_info(user)
+    youtube_video_id_list = get_multi_youtube_video_info()
     return youtube_video_id_list
 
 
@@ -88,6 +88,7 @@ def auto_download_upload_video(num):
         # set_youku_category_local(video.youku.id)
         # youku_upload.s(video.youku.id).delay()
 
+        #si表示imutalbe subtask，其函数返回值不会传递给下一个subtask作为参数
         download_video_task = download_single_youtube_video_main.si(
             video.video_id)
         download_subtitle_task = download_subtitle.si(video.video_id)

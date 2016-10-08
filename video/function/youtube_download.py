@@ -9,8 +9,10 @@ from youtube_dl.utils import ContentTooShortError
 
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR, SETTING_FILE
 from AutoSystem.settings import FFMPEG_LOCATION
+from video.function.youtube_playlist import get_youtube_playlist_video_info
+from video.function.youtube_subtitle import download_subtitle
 
-from video.models import Video
+from video.models import Video, PlaylistConfig
 import youtube_dl
 from video.function.file import search_keyword_in_file
 
@@ -137,3 +139,44 @@ def search_video_file(video_id, file_extend):
     else:
         # 找到多个文件，暂时返回False
         return False
+
+
+def download_playlist_video(num):
+    """
+    下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
+    :param num:
+    :return:
+    """
+    playlist_config_list = PlaylistConfig.objects.filter(is_enable=True)
+    result_list = []
+    for playlist_config in playlist_config_list:
+        # 如果设置了需要下载的youtube playlist，则获取该playlist下的video id，下载
+        if playlist_config.youtube_playlist.playlist_id:
+            # 获取youtube_playlist中的视频的video_id
+            result = get_youtube_playlist_video_info(
+                youtube_playlist_id=playlist_config.youtube_playlist
+                    .playlist_id, max_results=int(num))
+            if result:
+                video_info_list = result
+                text = 'YouTube Playlist' + \
+                       playlist_config.youtube_playlist.playlist_id + '的视频已保存'
+                download_num = 0
+                upload_num = 0
+                # 下载该playlist中的视频
+                for video_info in video_info_list:
+                    video_id = video_info['video_id']
+                    video = Video.objects.get(video_id=video_id)
+                    # 如果该视频未下载，则下载视频文件和字幕文件
+                    if video.is_download == False:
+                        download_single_youtube_video_main.si(video_id,
+                                                           max_retey=5,
+                                                           file_extend='mp4')
+                        #download_subtitle.si(video_id)
+
+                        download_num = download_num + 1
+                        if download_num <= num:
+                            break
+            else:
+                video_list = []
+                text = '获取youtube playlist的视频信息失败'
+    return result_list

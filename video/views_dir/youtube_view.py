@@ -8,6 +8,7 @@ from video.function.youtube_download import download_single_youtube_video_main
 from video.function.youtube_video_info import get_multi_youtube_video_info
 from video.function.youtube_subtitle import download_subtitle
 from video.function.youtube_subsription import get_subscription_update_video
+from video.models import Video
 
 
 def get_subscription_update_video_view(request, max_results):
@@ -58,7 +59,7 @@ def download_subtitle_view(request, video_id):
 
 
 def get_multi_youtube_video_info_view(request):
-    youtube_video_id_list = get_multi_youtube_video_info(request.user)
+    youtube_video_id_list = get_multi_youtube_video_info()
     return render_to_response('result.html',
                               {'list': youtube_video_id_list}
                               )

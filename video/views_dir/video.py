@@ -4,7 +4,7 @@ from __future__ import unicode_literals, absolute_import
 from django.shortcuts import render_to_response
 
 from video.function.video import download_upload_video
-from video.function.youku_playlist import download_playlist_video
+from video.function.youtube_download import download_playlist_video
 
 __author__ = 'GoTop'
 
@@ -39,7 +39,7 @@ def download_playlist_video_view(request, num):
     :param num:
     :return:
     """
-    result = download_playlist_video(num, request.user)
+    result = download_playlist_video(num)
     if result:
         return render_to_response('result.html', {'text': '下载并上传指定youtube '
                                                           'playlist的视频成功。',

@@ -31,7 +31,10 @@ FFMPEG_LOCATION = "/usr/bin/ffmpeg"
 
 # reference: http://www.marinamele.com/use-the-google-analytics-api-with-django
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secret.json')
-GOOGLE_KEY_FILE = os.path.join(os.path.dirname(__file__), 'AutoSystem-c7e714b350c6.json')
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(os.path.dirname(__file__),
+                                                 'client_secret.json')
+GOOGLE_KEY_FILE = os.path.join(os.path.dirname(__file__),
+                               'AutoSystem-c7e714b350c6.json')
 REDIRECT_URI = 'http://106.185.37.62/oauth2/oauth2callback'
 SCOPES = 'https://www.googleapis.com/auth/youtube'
 YOUTUBE_API_SERVICE_NAME = "youtube"

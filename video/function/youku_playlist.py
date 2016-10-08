@@ -5,6 +5,9 @@ from AutoSystem.settings import YOUKU_CLIENT_ID
 
 from youku import YoukuPlaylists
 
+from celery import task
+from celery_once import QueueOnce
+
 from oauth2_authentication.function.youku import youku_get_authenticate
 from video.function.playlist_config import \
     get_youku_playlist_from_playlist_config
@@ -44,7 +47,7 @@ def set_youku_playlist_online(youku_video_id, playlist_id):
     else:
         return False
 
-
+@task(base=QueueOnce)
 def set_youku_playlist_online_from_config_playlist(video_id):
     """
     根据上传到优酷的视频的video_id的YouTube上的playlist，设置视频在优酷上的playlist
@@ -106,45 +109,7 @@ def get_youku_playlist():
         orderby='published', page=1, count=20)
 
 
-def download_playlist_video(num, user):
-    """
-    下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
-    :param num:
-    :return:
-    """
-    playlist_config_list = PlaylistConfig.objects.filter(is_enable=True)
-    result_list = []
-    for playlist_config in playlist_config_list:
-        # 如果设置了需要下载的youtube playlist，则获取该playlist下的video id，下载
-        if playlist_config.youtube_playlist.playlist_id:
-            # 获取youtube_playlist中的视频的video_id
-            result = get_youtube_playlist_video_info(
-                youtube_playlist_id=playlist_config.youtube_playlist
-                    .playlist_id, max_results=int(num), user=user)
-            if result:
-                video_info_list = result
-                text = 'YouTube Playlist' + \
-                       playlist_config.youtube_playlist.playlist_id + '的视频已保存'
-                download_num = 0
-                upload_num = 0
-                # 下载该playlist中的视频
-                for video_info in video_info_list:
-                    video_id = video_info['video_id']
-                    video = Video.objects.get(video_id=video_id)
-                    # 如果该视频未下载，则下载视频文件和字幕文件
-                    if video.is_download == False:
-                        download_single_youtube_video_main(video_id,
-                                                           max_retey=5,
-                                                           file_extend='mp4')
-                        download_subtitle(video_id)
 
-                        download_num = download_num + 1
-                        if download_num <= num:
-                            break
-            else:
-                video_list = []
-                text = '获取youtube playlist的视频信息失败'
-    return result_list
 
 # def upload_playlist_video(num, user):
 #     upload_num = 0

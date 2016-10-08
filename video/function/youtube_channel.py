@@ -9,7 +9,7 @@ from video.models import YouTubeChannel
 __author__ = 'GoTop'
 
 
-def get_youtube_channel_info(channel_id, user):
+def get_youtube_channel_info(channel_id):
     """
     根据channel_id,获取channel的信息，并保存到数据库中
 

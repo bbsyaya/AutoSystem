@@ -34,7 +34,7 @@ def get_video_info(video_id):
         video.save()
 
 
-def get_multi_youtube_video_info(user):
+def get_multi_youtube_video_info():
     """
     一次获取max_results个保存在Video model中的youtube视频的时长，播放数等额外信息
     :param user:

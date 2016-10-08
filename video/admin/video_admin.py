@@ -26,7 +26,7 @@ class VideoAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'remark',
-        #'show_thumbnail',
+        # 'show_thumbnail',
         'published_at_readable',
         'show_duration_readable',
         'youtube_url',
@@ -148,7 +148,7 @@ class VideoAdmin(admin.ModelAdmin):
     show_duration_readable.short_description = "时长"
 
     def published_at_readable(self, obj):
-        #return obj.publishedAt.strftime("%Y-%m-%d %H:%M")
+        # return obj.publishedAt.strftime("%Y-%m-%d %H:%M")
         return obj.publishedAt.strftime("%m-%d %H:%M")
 
     published_at_readable.short_description = '发布时间'
@@ -173,7 +173,7 @@ class VideoAdmin(admin.ModelAdmin):
     show_video_of_channel.short_description = '频道'
 
     def show_video_of_playlist(self, obj):
-        #video不一定有对应playlist
+        # video不一定有对应playlist
         if obj.playlist:
             change_url = reverse('admin:video_video_changelist')
             extra = "?playlist__title__exact=%s" % (obj.playlist.title)
@@ -356,7 +356,16 @@ class VideoAdmin(admin.ModelAdmin):
 
     def save_formset(self, request, form, formset, change):
         """
-        form 为vdieo的form
+        当Video Admin的页面保存inline对象(youku)时,如果更改了youku的playlist设置,
+        则在playlist_id的优酷playlist中删除youku_video_id视频,
+        并在优酷网上将视频添加到新设置的playlist中
+        同时更新youku的playlist属性的值
+
+        save_formset is called potentially many times during each add / change,
+        once for every inline defined on your ModelAdmin.
+        It is called by the base class implementation of save_related.
+
+        form 为video的form
         formset是 inline对象 youku 的form
 
         :param request:
