@@ -52,8 +52,8 @@ def download_upload_video(video_id):
     # merge_sub_edit_style(video_id)
 
     # 将字幕添加到视频上
-    # 因为Linode上压制字幕到视频的时间很慢，所以先注释掉 2016-3-31
-    # add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
+    # todo 因为Linode上压制字幕到视频很慢，用时很长，所以先注释掉 2016-3-31
+    add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
 
     # 如果该video没有对应的Youku对象，就新建一个，title就用video的英文title
     if not hasattr(video, 'youku'):

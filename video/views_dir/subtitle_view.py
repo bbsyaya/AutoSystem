@@ -19,7 +19,7 @@ from pysrt import SubRipFile, SubRipItem, SubRipTime
 
 def merge_subtitle_view(request, video_id):
     """
-    合并video_id视频的中英字幕
+    将video_id的中英vtt字幕转换为srt字幕，然后合并为srt格式的字幕
 
     :param request:
     :param video_id:

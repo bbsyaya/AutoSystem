@@ -37,7 +37,7 @@ class VideoAdmin(admin.ModelAdmin):
         'download_youtube_url',
         'download_subtitle_url',
         'merge_subtitle',
-        # 'merge_subtitle_to_video',
+        'merge_subtitle_to_video',
         'youku_url',
         'update_youku_online_url',
         'delete_youku_video_url',
@@ -228,8 +228,9 @@ class VideoAdmin(admin.ModelAdmin):
 
     def merge_subtitle_to_video(self, obj):
         if obj.subtitle_video_file:
-            return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % \
-                   obj.subtitle_video_file
+            subtitle_video_file_url = "file:///" + urlquote(
+                obj.subtitle_video_file.path)
+            return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % subtitle_video_file_url
         elif obj.file and obj.subtitle_cn:
             merge_subtitle_to_video_url = reverse(
                 'video:merge_subtitle_to_video',

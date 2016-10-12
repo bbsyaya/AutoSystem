@@ -23,7 +23,7 @@ https://github.com/byroot/pysrt/issues/17
 
 def merge_video_subtitle(video_id):
     """
-    将video_id的中英字幕进行合并为srt格式的字幕
+    将video_id的中英vtt字幕转换为srt字幕，然后合并为srt格式的字幕
     :param video_id:
     :return:
     """
@@ -82,7 +82,7 @@ def merge_video_subtitle(video_id):
         merge_subs.save(merge_subs_path, encoding=encoding)
 
         video.subtitle_merge = merge_subs_path
-        video.save()
+        video.save(update_fields=['subtitle_merge'])
         return merge_subs_path
     else:
         return False
@@ -111,7 +111,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
         subtitle_file = convert_subtilte_format(subtitle_file, ass_subs_dir)
 
         subtitle_file = edit_cn_ass_subtitle_style(subtitle_file)
-        # youtube上的英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码
+        # youtube上的 英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码
         # 暂时不知道该如何处理，所以只合并中文字幕到视频
     # elif sub_lang_type == 'en' and video.subtitle_en.name:
     #     subtitle_file = video.subtitle_en.path
@@ -141,7 +141,7 @@ def add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans'):
     if result == True and os.path.exists(subtitle_video):
         # 如何将字幕合并到视频成功，则保存视频文件地址到Video module中
         video.subtitle_video_file = subtitle_video
-        video.save()
+        video.save(update_fields=['subtitle_video_file'])
         return True
     else:
         print(result)

@@ -79,7 +79,7 @@ def merge_subtitle(sub_a, sub_b, delta, encoding='utf-8'):
 @task
 def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     """
-    将video_id对应的视频的字幕，软写入到对应的视频中
+    将video_id对应的视频的字幕，写入到对应的视频中(可以设定使用软写入还是硬写入)
 
     :param video_id:
     :return:
@@ -91,8 +91,7 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
         FFMPEG_BIN = "ffmpeg"  # on Linux ans Mac OS
 
     import subprocess
-    # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in
-    # -subtitles-in-ffmpeg-video-filter
+    # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in-subtitles-in-ffmpeg-video-filter
     soft_add_subtitle_command = [FFMPEG_BIN,
                                  '-i', video_file,
                                  '-i', subtitle,
