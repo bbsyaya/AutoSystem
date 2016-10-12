@@ -34,28 +34,38 @@ def merge_video_subtitle(video_id):
     encoding = "utf_8"
 
     if (video.subtitle_cn != '') & (video.subtitle_en != ''):
-
         # convert_file(input_captions = video.subtitle_cn, output_writer)
 
         # vtt格式的字幕
-        subs_cn_vtt = SubRipFile.open(video.subtitle_cn.path, encoding=encoding)
-        subs_en_vtt = SubRipFile.open(video.subtitle_en.path, encoding=encoding)
+        # subs_cn_vtt = SubRipFile.open(video.subtitle_cn.path, encoding=encoding)
+        # subs_en_vtt = SubRipFile.open(video.subtitle_en.path, encoding=encoding)
 
         # 将vtt字幕转换为srt
         subs_cn_srt_filename = '%s-%s.cn.srt' % (
-        get_valid_filename(video.title), video.video_id)
-        subs_cn_srt = os.path.join(YOUTUBE_DOWNLOAD_DIR, subs_cn_srt_filename)
+            get_valid_filename(video.title), video.video_id)
+        subs_cn_srt_path = os.path.join(YOUTUBE_DOWNLOAD_DIR,
+                                      subs_cn_srt_filename)
 
         # 此功能失效
-        subs_cn_srt_result = convert_file(input_captions=video.subtitle_cn.path,
-                                          output_writer=subs_cn_srt)
+        # subs_cn_srt_result = convert_file(
+        # input_captions=video.subtitle_cn.path,output_writer=subs_cn_srt)
 
-        subs_en_srt_filename = '%s-%s.cn.srt' % (
+        subs_cn_srt_result = convert_subtilte_format(srt_file=
+                                                     video.subtitle_cn.path,
+                                                     ass_file=subs_cn_srt_path)
+
+        subs_en_srt_filename = '%s-%s.en.srt' % (
             get_valid_filename(video.title), video.video_id)
-        subs_en_srt = os.path.join(YOUTUBE_DOWNLOAD_DIR, subs_en_srt_filename)
-        subs_en_srt_result = convert_file(input_captions=video.subtitle_en.path,
-                                          output_writer=subs_en_srt)
+        subs_en_srt_path = os.path.join(YOUTUBE_DOWNLOAD_DIR,
+                                      subs_en_srt_filename)
+        # subs_en_srt_result = convert_file(input_captions=video.subtitle_en.path,output_writer = subs_en_srt)
+        subs_en_srt_path = convert_subtilte_format(srt_file=
+                                                     video.subtitle_en.path,
+                                                     ass_file=subs_en_srt_path)
 
+
+        subs_cn_srt = SubRipFile.open(subs_cn_srt_path, encoding=encoding)
+        subs_en_srt = SubRipFile.open(subs_en_srt_path, encoding=encoding)
         merge_subs = merge_subtitle(subs_cn_srt, subs_en_srt, delta)
 
         # 某些youtube视频的title有非ASCII的字符，或者/等不能出现在文件名中的字符
@@ -66,13 +76,14 @@ def merge_video_subtitle(video_id):
         merge_subs_filename = '%s-%s.zh-Hans.en.srt' % (
             get_valid_filename(video.title), video.video_id)
 
-        merge_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, merge_subs_filename)
+        merge_subs_path = os.path.join(YOUTUBE_DOWNLOAD_DIR,
+                                       merge_subs_filename)
 
-        merge_subs.save(merge_subs_dir, encoding=encoding)
+        merge_subs.save(merge_subs_path, encoding=encoding)
 
-        video.subtitle_merge = merge_subs_dir
+        video.subtitle_merge = merge_subs_path
         video.save()
-        return merge_subs_dir
+        return merge_subs_path
     else:
         return False
 

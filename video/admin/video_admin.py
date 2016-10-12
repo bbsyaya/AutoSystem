@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django.template.loader import render_to_string
+from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
 
 __author__ = 'GoTop'
@@ -187,7 +188,8 @@ class VideoAdmin(admin.ModelAdmin):
 
     def download_youtube_url(self, obj):
         if obj.file:
-            return "<a href='%s' target='_blank'>文件-地址</a>" % obj.file
+            view_file_url = "file:///" + urlquote(obj.file.path)
+            return "<a href='%s' target='_blank'>文件-地址</a>" % view_file_url
         else:
             download_youtube_url = reverse(
                 'video:download_single_youtube_video',

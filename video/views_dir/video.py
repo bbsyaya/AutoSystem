@@ -10,6 +10,12 @@ __author__ = 'GoTop'
 
 
 def download_upload_video_view(request, video_id):
+    """
+    下载video_id为 video_id 的youtube视频和中英字幕，合并字幕到视频，设置优酷目录，然后上传到优酷
+    :param request:
+    :param video_id:
+    :return:
+    """
     (video_filepath, subtitle_fielpath_list, youku_video_id) = download_upload_video(video_id)
 
     if video_filepath:

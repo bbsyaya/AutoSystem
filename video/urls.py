@@ -18,9 +18,9 @@ urlpatterns = [
     url(r'^search/(?P<q>\w+)/(?P<max_results>\d+)$', views.search_view,
         name='search'),
 
-    #####################
+    ##########################################################################
     # YouTube 获取视频信息
-    #####################
+    ##########################################################################
 
     # 获取认证用户的youtube首页显示的订阅频道的视频信息，保存到本地数据库
     # http://127.0.0.1:8000/video/get_subscription_update_video/50
@@ -32,6 +32,15 @@ urlpatterns = [
     url(r'^get_subscription_update_video/(?P<max_results>\d+)$',
         youtube_view.get_subscription_update_video_view,
         name='my_youtube_homepage'),
+
+    ##########################################################################
+    # YouTube 下载视频、字幕
+    ##########################################################################
+    # 一次获取max_results个保存在Video model中的youtube视频的时长，播放数等额外信息
+    # http://127.0.0.1:8000/video/get_multi_youtube_video_info
+    url(r'^get_multi_youtube_video_info$',
+        youtube_view.get_multi_youtube_video_info_view,
+        name='get_multi_youtube_video_info'),
 
     # 下载num个已对标题进行翻译的youtube视频
     # http://127.0.0.1:8000/video/download_youtube_video/1
@@ -54,12 +63,6 @@ urlpatterns = [
     # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
     url(r'^download_subtitle/(?P<video_id>.+)$',
         youtube_view.download_subtitle_view, name='download_subtitle'),
-
-    # 一次获取max_results个保存在Video model中的youtube视频的时长，播放数等额外信息
-    # http://127.0.0.1:8000/video/get_multi_youtube_video_info
-    url(r'^get_multi_youtube_video_info$',
-        youtube_view.get_multi_youtube_video_info_view,
-        name='get_multi_youtube_video_info'),
 
     ###########################################################################
     # YouTube Channel
@@ -112,7 +115,8 @@ urlpatterns = [
 
     # 合并video_id视频的中英字幕
     # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
-    url(r'^merge_subtitle/(?P<video_id>.+)/$', subtitle_view.merge_subtitle_view,
+    url(r'^merge_subtitle/(?P<video_id>.+)/$',
+        subtitle_view.merge_subtitle_view,
         name='merge_subtitle'),
 
     # 合并srt字幕，然后将srt字幕转换为ass格式，添加双语字幕式样，合并到视频中
@@ -171,9 +175,14 @@ urlpatterns = [
     #########################################################################
     # 综合操作
     #########################################################################
+    # 查找对应video的subtitle_video_file不是null（已经下载到本地,并且已经合并了字幕）,
+    # youku_video_id为''(还没上传到优酷)
+    # title和category的youku model
+    # 将其上传到优酷网上
     # http://127.0.0.1:8000/video/auto_youku_upload/1
     url(r'^auto_youku_upload/(?P<num>\d+)$', youku_view.auto_youku_upload_view),
 
+    # 下载video_id为 video_id 的youtube视频和中英字幕，合并字幕到视频，设置优酷目录，然后上传到优酷
     # http://127.0.0.1:8000/video/download_upload_video/cJ5uaUTnMps
     url(r'^download_upload_video/(?P<video_id>.+)$',
         video.download_upload_video_view, name='download_upload_video'),

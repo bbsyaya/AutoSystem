@@ -2,16 +2,13 @@
 from __future__ import unicode_literals, absolute_import
 import platform
 import subprocess
-
 import os.path
-
 import sys
 from celery import task
 from pysrt import SubRipFile, SubRipItem, SubRipTime
 # from pysubs2.ssafile import SSAFile
 import pysubs2
 import ass
-
 from AutoSystem.settings import YOUTUBE_DOWNLOAD_DIR
 from video.libs.ffmpeg_runner import FFMPegRunner
 
@@ -38,12 +35,18 @@ def find_subtitle(subtitle, from_t, to_t, lo=0):
     return "", i
 
 
-def merge_subtitle(sub_a, sub_b, delta):
+def merge_subtitle(sub_a, sub_b, delta, encoding='utf-8'):
     """
     合并两种不同言语的srt字幕
-    参考 https://github.com/byroot/pysrt/issues/15
-    https://github.com/byroot/pysrt/issues/17
-    :param sub_a:
+
+    因为两个字幕文件的时间轴不一样，所以合并后的字幕会在某一字幕文件转换时生成新的一条字幕，
+    导致双语字幕并不是同时变化，不过这也是没有办法的事，无法避免
+
+    参考https://github.com/byroot/pysrt/issues/17
+
+    https://github.com/byroot/pysrt/issues/15
+
+    :param sub_a: 使用sub_a = SubRipFile.open(sub_a_path, encoding=encoding)
     :param sub_b:
     :param delta:
     :return:
@@ -125,7 +128,7 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     def status_handler(old, new):
         print "From {0}% to {1}%".format(old, new)
 
-    result = runner.run_session(command = command,
+    result = runner.run_session(command=command,
                                 status_handler=status_handler)
     return result
 
@@ -210,6 +213,7 @@ def edit_two_lang_style(subtitle_file):
 
         if os.path.exists(subtitle_file):
             return subtitle_file
+
 
 def edit_cn_ass_subtitle_style(subtitle_file):
     """

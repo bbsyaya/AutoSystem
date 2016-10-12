@@ -47,7 +47,7 @@ def convert_file(input_captions, output_writer):
     converter.read(input_captions, reader())
     return converter.write(output_writer)
 
-# todo,未完成，现在使用ffmpeg的转化字幕功能
+# todo,未完成，现在使用ffmpeg的转化字幕功能subtitle.py convert_subtilte_format
 def convert_subtilte_format(input_file, output_format):
     # 根据需要转换的字幕格式，选择pycaption库对应的类
     output_writer_class = SUPPORTED_WRITERS[output_format]
