@@ -36,7 +36,8 @@ class VideoAdmin(admin.ModelAdmin):
         'allow_upload_youku',
         'download_youtube_url',
         'download_subtitle_url',
-        'merge_subtitle',
+        # 'merge_subtitle',
+        'change_vtt_to_ass_and_edit_style',
         'merge_subtitle_to_video',
         'youku_url',
         'update_youku_online_url',
@@ -226,15 +227,32 @@ class VideoAdmin(admin.ModelAdmin):
     merge_subtitle.allow_tags = True
     merge_subtitle.short_description = '合并中英字幕'
 
+    def change_vtt_to_ass_and_edit_style(self, obj):
+        if obj.subtitle_merge:
+            return "<a href='%s' target='_blank'>式样字幕</a>" % \
+                   obj.subtitle_merge
+        elif obj.subtitle_cn:
+            change_vtt_to_ass_and_edit_style_url = reverse(
+                'video:change_vtt_to_ass_and_edit_style',
+                args=[obj.video_id])
+            return "<a href='%s' target='_blank'>生成式样字幕</a>" % \
+                   change_vtt_to_ass_and_edit_style_url
+        else:
+            return "无cn字幕"
+
+    change_vtt_to_ass_and_edit_style.allow_tags = True
+    change_vtt_to_ass_and_edit_style.short_description = '式样字幕'
+
     def merge_subtitle_to_video(self, obj):
         if obj.subtitle_video_file:
             subtitle_video_file_url = "file:///" + urlquote(
                 obj.subtitle_video_file.path)
-            return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % subtitle_video_file_url
+            return "<a href='%s' target='_blank'>包含字幕视频-地址</a>" % \
+                   subtitle_video_file_url
         elif obj.file and obj.subtitle_cn:
             merge_subtitle_to_video_url = reverse(
                 'video:merge_subtitle_to_video',
-                args=[obj.video_id, 'zh-Hans'])
+                args=[obj.video_id, 'soft', 'zh-Hans'])
             return "<a href='%s' target='_blank'>合并-字幕到视频</a>" % \
                    merge_subtitle_to_video_url
         else:

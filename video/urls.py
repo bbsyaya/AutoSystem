@@ -113,7 +113,7 @@ urlpatterns = [
     # 字幕
     ###########################################################################
 
-    # 合并video_id视频的中英字幕
+    # 合并video_id视频的中、英vtt字幕为ass字幕
     # http://127.0.0.1:8000/video/merge_subtitle/_9coAtC2PZI
     url(r'^merge_subtitle/(?P<video_id>.+)/$',
         subtitle_view.merge_subtitle_view,
@@ -125,9 +125,17 @@ urlpatterns = [
         subtitle_view.merge_sub_edit_style_view,
         name='merge_sub_edit_style'),
 
+    # 将video_id对应的Video对象的subtitle_cn指向的中文vtt格式字幕，
+    # 转化为ass格式，保存到subtitle_merge字段
+    # 然后修改ass字幕的文字式样
+    # http://127.0.0.1:8000/video/change_vtt_to_ass_and_edit_style/_9coAtC2PZI
+    url(r'^change_vtt_to_ass_and_edit_style/(?P<video_id>.+)/$',
+        subtitle_view.change_vtt_to_ass_and_edit_style_view,
+        name='change_vtt_to_ass_and_edit_style'),
+
     # 将指定语言类型的字幕合并到video_id的视频中
-    # http://127.0.0.1:8000/video/merge_subtitle_to_video/_9coAtC2PZI/zh-Hans_en
-    url(r'^merge_subtitle_to_video/(?P<video_id>.{11})/('
+    # http://127.0.0.1:8000/video/merge_subtitle_to_video/_9coAtC2PZI/soft/zh-Hans_en
+    url(r'^merge_subtitle_to_video/(?P<video_id>.{11})/(?P<mode>.+)/('
         r'?P<sub_lang_type>(en|zh-Hans|zh-Hans_en))$',
         subtitle_view.merge_subtitle_to_video_view,
         name='merge_subtitle_to_video'),

@@ -35,6 +35,62 @@ def find_subtitle(subtitle, from_t, to_t, lo=0):
     return "", i
 
 
+def convert_subtilte_format(origin_sub, output_sub):
+    """
+    使用ffmpeg将srt,vtt等格式的字幕转化为另一种格式(vtt,srt)的字幕
+    只要是ffmpeg支持转化的字幕格式都可以转换
+    To list all the subtitle codecs that FFmpeg supports,
+    you can type:
+    ffmpeg -codecs | grep "^...S"
+
+
+    :param srt_file:
+    :param ass_file:
+    :return:
+    """
+    if platform.system() == "Windows":
+        FFMPEG_BIN = "ffmpeg.exe"  # on Windows
+    else:
+        FFMPEG_BIN = "ffmpeg"  # on Linux ans Mac OS
+
+    if os.path.isfile(output_sub):
+        os.remove(output_sub)
+
+    command = [FFMPEG_BIN,
+               '-i', origin_sub, output_sub]
+    process = subprocess.Popen(command, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    stdout, stderr = process.communicate()
+
+    if stderr:
+        print(stderr)
+        return False
+    else:
+        return output_sub
+
+
+def convert_subtilte_format_wrapper(origin_sub, output_sub_format):
+    """
+    调用 convert_subtilte_format(srt_file, ass_file) 函数
+    使用ffmpeg转化字幕文件的格式
+    转化后的字幕的目录和名称与原字幕一样，仅后缀名不同
+    :param origin_sub: 支持的格式请查看ffmpeg, 比如 'srt'
+    :param sub_format: 支持的格式请查看ffmpeg, 比如 'ass'
+    :return:
+    """
+
+    output_sub_filename = \
+        os.path.splitext(os.path.basename(origin_sub))[
+            0] + '.' + output_sub_format
+    output_sub_dir = os.path.dirname(origin_sub)
+    output_sub_path = os.path.join(output_sub_dir,
+                                   output_sub_filename)
+    # 使用ffmpeg转化字幕文件的格式
+    output_sub = convert_subtilte_format(origin_sub, output_sub_path)
+
+    return output_sub
+
+
 def merge_subtitle(sub_a, sub_b, delta, encoding='utf-8'):
     """
     合并两种不同言语的srt字幕
@@ -91,7 +147,8 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
         FFMPEG_BIN = "ffmpeg"  # on Linux ans Mac OS
 
     import subprocess
-    # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in-subtitles-in-ffmpeg-video-filter
+    # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in
+    # -subtitles-in-ffmpeg-video-filter
     soft_add_subtitle_command = [FFMPEG_BIN,
                                  '-i', video_file,
                                  '-i', subtitle,
@@ -139,36 +196,6 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
     #     print '>>> {}'.format(line.rstrip())
 
 
-def convert_subtilte_format(srt_file, ass_file):
-    """
-    使用ffmpeg将srt,vtt等格式的字幕转化为另一种格式(vtt,srt)的字幕
-    只要是ffmpeg支持转化的字幕格式都可以转换
-
-    :param srt_file:
-    :param ass_file:
-    :return:
-    """
-    if platform.system() == "Windows":
-        FFMPEG_BIN = "ffmpeg.exe"  # on Windows
-    else:
-        FFMPEG_BIN = "ffmpeg"  # on Linux ans Mac OS
-
-    if os.path.isfile(ass_file):
-        os.remove(ass_file)
-
-    command = [FFMPEG_BIN,
-               '-i', srt_file, ass_file]
-    process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    stdout, stderr = process.communicate()
-
-    if stderr:
-        print(stderr)
-        return False
-    else:
-        return ass_file
-
-
 def edit_two_lang_style(subtitle_file):
     """
     为ass格式的双语字幕设置style
@@ -188,7 +215,8 @@ def edit_two_lang_style(subtitle_file):
         # Alignment, MarginL, MarginR, MarginV, Encoding
         # Style: Default,方正黑体_GBK,21,&H00FFFFFF,&HF0000000,&H006C3300,
         # &H00000000,-1,0,0,0,100,100,0,0,1,2,1,2,5,5,5,134
-        subtitle.styles[0].fontname = '方正黑体_GBK'
+        # subtitle.styles[0].fontname = '方正黑体_GBK'
+        subtitle.styles[0].fontname = '黑体'
         subtitle.styles[0].fontsize = 21
         subtitle.styles[0].primary_color = '&H00FFFFFF'
         subtitle.styles[0].secondary_color = '&HF0000000'
@@ -204,7 +232,7 @@ def edit_two_lang_style(subtitle_file):
             utf8string = events.text.decode("utf-8")
             events.text = utf8string.replace(
                 r'\N',
-                r'\N{\fn方正综艺_GBK\fs14\b0\c&HFFFFFF&\3c&H2F2F2F&\4c&H000000&}'
+                r'\N{\fn黑体\fs14\b0\c&HFFFFFF&\3c&H2F2F2F&\4c&H000000&}'
             )
 
         with open(subtitle_file, "w") as f:
@@ -226,7 +254,8 @@ def edit_cn_ass_subtitle_style(subtitle_file):
 
         print(subtitle.styles)
 
-        subtitle.styles[0].fontname = '方正黑体_GBK'
+        # subtitle.styles[0].fontname = '方正黑体_GBK'
+        subtitle.styles[0].fontname = '黑体'
         subtitle.styles[0].fontsize = 21
         subtitle.styles[0].primary_color = '&H00FFFFFF'
         subtitle.styles[0].secondary_color = '&HF0000000'
