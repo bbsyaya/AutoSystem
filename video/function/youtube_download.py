@@ -38,8 +38,8 @@ def download_multi_youtube_video_main(num):
 
 
 @task(base=QueueOnce)
-def download_single_youtube_video_main(video_id, max_retey=5, file_extend=
-'mp4', options={}):
+def download_single_youtube_video_main(video_id, file_extend=
+'mp4', max_retey=5, options={}):
     """
     下载单个youtube视频，并将下载后的视频文件的目录保存到Video.file
     :param video_id:
@@ -169,9 +169,9 @@ def download_playlist_video(num):
                     # 如果该视频未下载，则下载视频文件和字幕文件
                     if video.is_download == False:
                         download_single_youtube_video_main.si(video_id,
-                                                           max_retey=5,
-                                                           file_extend='mp4')
-                        #download_subtitle.si(video_id)
+                                                              max_retey=5,
+                                                              file_extend='mp4')
+                        # download_subtitle.si(video_id)
 
                         download_num = download_num + 1
                         if download_num <= num:

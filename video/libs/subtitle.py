@@ -147,8 +147,10 @@ def add_subtitle_to_video(video_file, subtitle, output_video_file, mode='soft'):
         FFMPEG_BIN = "ffmpeg"  # on Linux ans Mac OS
 
     import subprocess
-    # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in
-    # -subtitles-in-ffmpeg-video-filter
+    # http://stackoverflow.com/questions/21363334/how-to-add-font-size-in-subtitles-in-ffmpeg-video-filter
+    # 以下命令只使用与input和output都是mkv文件的情况
+    # 如果input和output都是mp4格式，则output文件会是一个空文件
+    # http://stackoverflow.com/questions/8672809/use-ffmpeg-to-add-text-subtitles/33289845#33289845
     soft_add_subtitle_command = [FFMPEG_BIN,
                                  '-i', video_file,
                                  '-i', subtitle,
