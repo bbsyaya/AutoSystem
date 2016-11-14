@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-
 from AutoSystem.settings import DEBUG, MEDIA_ROOT, STATIC_ROOT
 
 admin.autodiscover()
@@ -14,9 +13,8 @@ urlpatterns = patterns('',
                        url(r'manage_rss/', include('manage_rss.urls')),
 
                        url(r'^tinymce/', include('tinymce.urls')),
-                       url(r'^video/', include('video.urls', namespace="video"),
-                           # url(r'^youtube/', include('django_youtube.urls')),
-                           ),
+                       url(r'^video/', include('video.urls', namespace="video")),
+                       url(r'^ad/', include('ad.urls')),
                        url(r'^oauth2/', include('oauth2_authentication.urls',
                                                 namespace="oauth2")),
 

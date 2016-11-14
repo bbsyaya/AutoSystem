@@ -1,8 +1,11 @@
 # coding=utf-8
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 
 # Create your views here.
-def import_taobaoke_excel_view(request, num):
+from ad.function.taobaoke import import_taobaoke_excel
+
+
+def import_taobaoke_excel_view(request):
     """
     下载config model中设置好的youtube playlist中的num个视频，并上传到优酷，设置其playlist
     :param request:
@@ -10,7 +13,7 @@ def import_taobaoke_excel_view(request, num):
     :return:
     """
 
-    result = download_playlist_video(num)
+    result = import_taobaoke_excel()
     if result:
         return render_to_response('result.html', {'text': '下载并上传指定youtube '
                                                           'playlist的视频成功。',
