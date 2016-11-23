@@ -11,6 +11,8 @@ from django.db.models import Lookup
 from django.db.models.fields import Field
 from smart_selects.db_fields import ChainedForeignKey
 
+from ad.models import TaoBao
+
 
 class NeedUploadManager(models.Manager):
     def get_queryset(self):
@@ -70,7 +72,6 @@ class Video(models.Model):
     """
     代表youtube上的video，并包括下载到本地后的视频文件的路径、字幕文件的属性
     """
-    # id = models.CharField(max_length=50, null=True, blank=True)
     video_id = models.CharField(max_length=50, primary_key=True)
     title = models.CharField(max_length=200, )
     description = models.TextField(max_length=300, blank=True)
@@ -108,6 +109,8 @@ class Video(models.Model):
                                              help_text='是否可以上传到优酷，默认为True')
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(verbose_name="优酷标题", max_length=300, blank=True)
+    #taobao_ad = models.ForeignKey('oauth2_authentication.CredentialsModel',null=True)
+    taobao_ad = models.ForeignKey('ad.TaoBao',null=True)
 
     def __str__(self):
         return self.title

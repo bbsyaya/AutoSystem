@@ -59,6 +59,7 @@ INSTALLED_APPS = (
 
     # 'django_youtube',
     'oauth2_authentication',
+
     'video',
     'ad',
     # https://github.com/digi604/django-smart-selects
@@ -180,4 +181,4 @@ YOUKU_AUTHORIZE_CODE = "6ba16e4808c2fd5767012465b497510f"
 #             [warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
 
 # 放置淘宝客信息的excel文件夹位置
-TAOBAOKE_EXCEL_FILE = BASE_DIR + r'/AutoSystem/taobaoke/'
+TAOBAOKE_EXCEL_FILE = BASE_DIR + r'/AutoSystem/taobaoke/1070 显卡-2016-11-12.xls'

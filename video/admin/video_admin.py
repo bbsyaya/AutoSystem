@@ -91,7 +91,7 @@ class VideoAdmin(admin.ModelAdmin):
         ('Others', {
             'classes': ('collapse',),
             'fields': (
-                'baidu_yun', 'remark',)
+                'baidu_yun', 'remark','taobao_ad')
         }),
     )
 
