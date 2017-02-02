@@ -26,7 +26,8 @@ def get_authenticated_service_s2s():
     if SETTING_FILE == 'production':
         proxy_http = None
 
-    # 如果是本地运行，则使用代理
+    # 如果是本地运行，则使用代理,使用的是http代理，记得使用privoxy将s5代理转化为http代理
+    # 同时不用开vpn
     if SETTING_FILE == 'local':
         myproxy = httplib2.ProxyInfo(
             proxy_type=httplib2.socks.PROXY_TYPE_HTTP,

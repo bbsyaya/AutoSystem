@@ -121,7 +121,11 @@ def auto_upload(num):
     video_list = Video.need_upload.order_by('publishedAt', 'title')[:num]
     youku_video_id_list = []
     for idx, video in enumerate(video_list):
-        youku_video_id = youku_upload(video.youku.id)
+        # 使用celery 任务的放置执行youku_upload(),
+        # 使用celery_once来限定，对于同一个youku对象，只执行一个youku_upload()
+        # 未测试
+        youku_upload_task = youku_upload.si(video.youku.id)
+        youku_video_id =  youku_upload_task.apply_async()
         youku_video_id_list.append(youku_video_id)
 
     return youku_video_id_list

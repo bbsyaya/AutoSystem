@@ -76,7 +76,7 @@ ONCE_DEFAULT_TIMEOUT = 60 * 60
 
 # That is, tasks will be executed locally instead of being sent to the queue.
 # 用于测试环境，可以不开启worker，和broker
-# CELERY_ALWAYS_EAGER = True
+CELERY_ALWAYS_EAGER = True
 
 # 使用redis的设置
 # BROKER_HOST = "localhost"
@@ -241,5 +241,4 @@ LOGGING = {
         },
     }
 }
-
 

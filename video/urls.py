@@ -103,7 +103,7 @@ urlpatterns = [
         youtube_playlist_view.get_youtube_playlist_info_view,
         name='get_youtube_playlist_info'),
 
-    # 获取youtube_playlist_id的所有video的信息,并保存
+    # 获取youtube_playlist_id的所有video的信息,并保存到数据库中
     url(r'^get_youtube_playlist_video_info/(?P<youtube_playlist_id>.+)/('
         r'?P<max_results>\d+)$',
         youtube_playlist_view.get_youtube_playlist_video_info_view,
@@ -134,9 +134,9 @@ urlpatterns = [
         name='change_vtt_to_ass_and_edit_style'),
 
     # 将指定语言类型的字幕合并到video_id的视频中
-    # http://127.0.0.1:8000/video/merge_subtitle_to_video/_9coAtC2PZI/soft/zh-Hans_en
+    # http://127.0.0.1:8000/video/merge_subtitle_to_video/_9coAtC2PZI/soft/merge
     url(r'^merge_subtitle_to_video/(?P<video_id>.{11})/(?P<mode>.+)/('
-        r'?P<sub_lang_type>(en|zh-Hans|zh-Hans_en))$',
+        r'?P<sub_lang_type>(en|zh-Hans|merge))$',
         subtitle_view.merge_subtitle_to_video_view,
         name='merge_subtitle_to_video'),
 

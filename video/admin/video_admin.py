@@ -252,14 +252,14 @@ class VideoAdmin(admin.ModelAdmin):
         elif obj.file and obj.subtitle_cn:
             merge_subtitle_to_video_url = reverse(
                 'video:merge_subtitle_to_video',
-                args=[obj.video_id, 'soft', 'zh-Hans'])
-            return "<a href='%s' target='_blank'>合并-字幕到视频</a>" % \
+                args=[obj.video_id, 'soft', 'merge'])
+            return "<a href='%s' target='_blank'>合并式样字幕到视频</a>" % \
                    merge_subtitle_to_video_url
         else:
             return "-"
 
     merge_subtitle_to_video.allow_tags = True
-    merge_subtitle_to_video.short_description = '合并字幕到视频'
+    merge_subtitle_to_video.short_description = '合并式样字幕到视频'
 
     def youku_url(self, obj):
         # To check if the (OneToOne) relation exists or not, you can use the

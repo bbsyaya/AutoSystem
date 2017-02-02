@@ -75,7 +75,7 @@ def get_youtube_playlist_info(youtube_channel_id, max_results, user):
 
 def get_youtube_playlist_video_info(youtube_playlist_id, max_results):
     """
-    获取youtube_playlist_id的所有video的信息
+    获取youtube_playlist_id的所有video的信息，并保存到数据库中
     :param youtube_playlist_id:
     :param max_results:最大为50
     :param user:

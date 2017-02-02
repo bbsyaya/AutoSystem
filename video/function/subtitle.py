@@ -92,12 +92,12 @@ def merge_video_subtitle(video_id):
 
 
 @task
-def add_subtitle_to_video_process(video_id, mode,sub_lang_type='zh-Hans'):
+def add_subtitle_to_video_process(video_id, mode, sub_lang_type='zh-Hans'):
     """
-    将video_id对应的视频的vtt字幕转为ass格式，然后硬入到对应的视频中
+    将video_id对应的视频的vtt字幕转为ass格式，然后写入到对应的视频中
 
     :param video_id:
-    :param subtitle_type: (en,zh-Hans,zh-Hans_en)
+    :param subtitle_type: (en,zh-Hans,merge)
     :param mode:指定使用soft还是使用hard的模式将字幕写入视频文件
     :return:
     """
@@ -106,21 +106,13 @@ def add_subtitle_to_video_process(video_id, mode,sub_lang_type='zh-Hans'):
     # 如果要求写入的中文字幕，而且中文字幕vtt存在
     # 则将中文vtt字幕先转为srt，再转为ass，添加式样
     if sub_lang_type == 'zh-Hans' and video.subtitle_cn.name:
-        subtitle_file = video.subtitle_cn.path
-
-        ass_filename = '%s-%s.zh-Hans.ass' % (
-            get_valid_filename(video.title), video_id)
-
-        ass_subs_dir = os.path.join(YOUTUBE_DOWNLOAD_DIR, ass_filename)
-        # 则将中文vtt字幕先转为srt，再转为ass，添加式样
-        subtitle_file = convert_subtilte_format(subtitle_file, ass_subs_dir)
-
-        subtitle_file = edit_cn_ass_subtitle_style(subtitle_file)
+        subtitle_file = video.subtitle_en.path
+        #subtitle_file = edit_cn_ass_subtitle_style(video.subtitle_cn.path)
         # youtube上的 英文vtt字幕包含格式，导致转换成srt字幕再和中文srt字幕合并后有代码
         # 暂时不知道该如何处理，所以只合并中文字幕到视频
     # elif sub_lang_type == 'en' and video.subtitle_en.name:
     #     subtitle_file = video.subtitle_en.path
-    elif sub_lang_type == 'zh-Hans_en' and video.subtitle_merge.name:
+    elif sub_lang_type == 'merge' and video.subtitle_merge.name:
         # 如果要求写入的中文和英文的合并字幕，而且合并字幕存在
         subtitle_file = video.subtitle_merge.path
     else:
@@ -212,4 +204,3 @@ def change_vtt_to_ass_and_edit_style(video_id):
         style_ass_sub = edit_cn_ass_subtitle_style(ass_path)
         if style_ass_sub:
             return style_ass_sub
-

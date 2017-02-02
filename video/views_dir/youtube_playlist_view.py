@@ -22,7 +22,8 @@ def get_youtube_playlist_info_view(request, youtube_channel_id,
                                        request.user)
     if result:
         playlist_list = result
-        text = 'YouTube Playlist' + youtube_channel_id + '的视频已保存'
+        text = 'YouTube Playlist' + youtube_channel_id + \
+               '的信息（包括其playlist的信息）已保存'
     else:
         playlist_list = []
         text = '获取youtube channel的playlist信息失败,原因是无法获取到youtube服务'

@@ -109,8 +109,9 @@ class Video(models.Model):
                                              help_text='是否可以上传到优酷，默认为True')
     baidu_yun = models.ForeignKey('BaiduYun', null=True, blank=True)
     remark = models.CharField(verbose_name="优酷标题", max_length=300, blank=True)
-    #taobao_ad = models.ForeignKey('oauth2_authentication.CredentialsModel',null=True)
-    taobao_ad = models.ForeignKey('ad.TaoBao',null=True)
+    # taobao_ad = models.ForeignKey('oauth2_authentication.CredentialsModel',
+    # null=True)
+    taobao_ad = models.ForeignKey('ad.TaoBao', blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -197,10 +198,11 @@ class Video(models.Model):
         返回该视频是否已经下载视频文件到本地的判断
         :return:
         """
-        if self.file=='':
+        if self.file == '':
             return False
         else:
             return True
+
     @property
     def is_upload(self):
         """
@@ -214,9 +216,6 @@ class Video(models.Model):
             else:
                 return False
         return False
-
-
-
 
     objects = models.Manager()
     need_download_upload = NeedDownloadUploadManager()
