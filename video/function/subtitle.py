@@ -92,7 +92,7 @@ def merge_video_subtitle(video_id):
 
 
 @task
-def add_subtitle_to_video_process(video_id, mode, sub_lang_type='zh-Hans'):
+def add_subtitle_to_video_process(video_id, mode, sub_lang_type='zh-merge'):
     """
     将video_id对应的视频的vtt字幕转为ass格式，然后写入到对应的视频中
 
@@ -192,8 +192,8 @@ def merge_sub_edit_style(video_id):
 
 def change_vtt_to_ass_and_edit_style(video_id):
     """
-    将video_id对应的Video对象的subtitle_cn指向的中文vtt格式字幕，
-    转化为ass格式，保存到subtitle_merge字段
+    将video_id对应的Video对象的中文vtt字幕转换为ass格式
+    并将中文ass字幕的地址保存到subtitle_merge字段
     然后修改ass字幕的文字式样
     :param video_id:
     :return:

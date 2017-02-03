@@ -15,7 +15,7 @@ def get_youtube_channel_info_view(request, channel_id):
     :return:
     """
     # todo 未测试
-    result = get_youtube_channel_info(channel_id, request.user)
+    result = get_youtube_channel_info(channel_id)
     if result:
         channel_info = result
         text = 'youtube channel ' + channel_id + '的信息已保存'

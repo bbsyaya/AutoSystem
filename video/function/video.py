@@ -1,11 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
-
 from celery import task
-
 from video.function.subtitle import merge_video_subtitle, \
     add_subtitle_to_video_process, \
-    srt_to_ass_process, merge_sub_edit_style
+    srt_to_ass_process, merge_sub_edit_style, change_vtt_to_ass_and_edit_style
 from video.function.youku import set_youku_category_local, youku_upload
 from video.function.youtube_download import download_single_youtube_video_main
 from video.function.youtube_subsription import get_subscription_update_video
@@ -50,10 +48,17 @@ def download_upload_video(video_id):
         subtitle_fielpath_list = []
 
     # merge_sub_edit_style(video_id)
+    # 将video_id对应的Video对象的中文vtt字幕转换为ass格式
+    # 并将中文ass字幕的地址保存到subtitle_merge字段
+    # 然后修改ass字幕的文字式样
+    change_vtt_to_ass_and_edit_style(video_id)
 
-    # 将字幕添加到视频上
-    # todo 因为Linode上压制字幕到视频很慢，用时很长，所以先注释掉 2016-3-31
-    add_subtitle_to_video_process(video_id, sub_lang_type='zh-Hans')
+    # 将字幕用软压的方式添加到视频上
+    # 优酷推荐的格式未：MKV容器格式，内嵌字幕的字体最好是用黑体，SSA/SRT都支持的比较好，SUB支持的不怎么好。
+    # 文本编码一般正常情况下都能识别，如果不能识别就改成ANSI
+    # https://www.hi-pda.com/forum/viewthread.php?tid=1962179
+    add_subtitle_to_video_process(video_id, mode=
+    'soft', sub_lang_type='merge')
 
     # 如果该video没有对应的Youku对象，就新建一个，title就用video的英文title
     if not hasattr(video, 'youku'):

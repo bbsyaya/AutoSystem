@@ -42,14 +42,13 @@ def get_youtube_playlist_video_info_view(request, youtube_playlist_id,
     :param max_results:
     :return:
     """
-    result = get_youtube_playlist_video_info(youtube_playlist_id, max_results)
+    result, result_text = get_youtube_playlist_video_info(youtube_playlist_id,
+                                                max_results)
     if result:
         video_list = result
-        text = 'YouTube Playlist' + youtube_playlist_id + '的视频已保存'
     else:
         video_list = []
-        text = '获取youtube视频信息失败'
 
     return render_to_response('result.html',
-                              {'text': text,
+                              {'text': result_text,
                                'dict_in_list': video_list})
