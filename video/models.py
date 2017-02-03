@@ -111,7 +111,7 @@ class Video(models.Model):
     remark = models.CharField(verbose_name="优酷标题", max_length=300, blank=True)
     # taobao_ad = models.ForeignKey('oauth2_authentication.CredentialsModel',
     # null=True)
-    taobao_ad = models.ForeignKey('ad.TaoBao', blank=True, null=True)
+    # taobao_ad = models.ForeignKey('ad.TaoBao', blank=True, null=True)
 
     def __str__(self):
         return self.title
