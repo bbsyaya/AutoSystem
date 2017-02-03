@@ -256,6 +256,7 @@ class YouTubePlaylist(models.Model):
     thumbnail = models.URLField(max_length=300, blank=True)
     publishedAt = models.DateTimeField(null=True, blank=True)
     video_num = models.CharField(max_length=10, blank=True, null=True)
+    is_download = models.BooleanField(default=False)
     channel = models.ForeignKey('YouTubeChannel', null=True,
                                 blank=True)
 

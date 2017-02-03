@@ -92,7 +92,7 @@ def merge_video_subtitle(video_id):
 
 
 @task
-def add_subtitle_to_video_process(video_id, mode, sub_lang_type='zh-merge'):
+def add_subtitle_to_video_process(video_id, mode, sub_lang_type='merge'):
     """
     将video_id对应的视频的vtt字幕转为ass格式，然后写入到对应的视频中
 

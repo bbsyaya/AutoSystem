@@ -68,6 +68,11 @@ def merge_subtitle_to_video_view(request, video_id, mode, sub_lang_type):
     :param sub_lang_type:
     :return:
     """
-    add_subtitle_to_video_process(video_id, mode, sub_lang_type)
+    result = add_subtitle_to_video_process(video_id, mode, sub_lang_type)
 
-    return render_to_response('result.html', {'text': '合并的字幕到视频完成!'})
+    if result:
+        text = '合并的字幕到视频完成!'
+    else:
+        text = '合并的字幕到视频失败!'
+
+    return render_to_response('result.html', {'text': text})

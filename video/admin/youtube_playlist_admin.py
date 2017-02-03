@@ -11,13 +11,13 @@ from video.models import YouTubePlaylist
 class YouTubePlaylistAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'show_playlist_url', 'show_thumbnail',
-        'video_num', 'description',
+        'video_num', 'description','is_download',
         'show_change_channel_url',
         'show_video_of_playlist',
         'get_playlist_video_info_url', 'remark')
     list_per_page = 50
     search_fields = ('title',)
-    list_filter = ('channel',)
+    list_filter = ('is_download','channel',)
 
     # 设置在change和edit页面显示哪些field
     # fieldsets = (

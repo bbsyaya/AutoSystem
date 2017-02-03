@@ -103,6 +103,6 @@ def search_subtitles_file(video_id, subtitle_format):
     video.save(update_fields=["subtitle_en", "subtitle_cn"])
 
     if result == []:
-        result = False
+        return False
     else:
         return result
