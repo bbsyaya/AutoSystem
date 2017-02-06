@@ -48,21 +48,23 @@ def set_youku_playlist_online(youku_video_id, playlist_id):
         return False
 
 @task(base=QueueOnce)
-def set_youku_playlist_online_from_config_playlist(video_id):
+def set_youku_playlist_online_from_playlist_config(video_id):
     """
-    根据上传到优酷的视频的video_id的YouTube上的playlist，设置视频在优酷上的playlist
+    在playlist_config表中，根据video_id视频所属的youtube playlist对应的youku playlist
+    设置该视频在优酷上的playlist
     数据库中youtube_playlist与youku_playlist是多对多关系
     :param youku_video_id:
     :return:
     """
-    playlist_id_list = get_youku_playlist_from_playlist_config(video_id)
+    playlist_config_list = get_youku_playlist_from_playlist_config(video_id)
 
-    if playlist_id_list:
-        video = Video.get(video_id=video_id)
+    if playlist_config_list:
+        video = Video.objects.get(video_id=video_id)
         setted_playlist_id_list = []
-        for playlist_id in playlist_id_list:
+        for playlist_config in playlist_config_list:
+            #在优酷上添加视频到播单中
             setted_playlist_id = set_youku_playlist_online(
-                video.youku_video_id, playlist_id)
+                video.youku.youku_video_id, playlist_config.youku_playlist.id)
             setted_playlist_id_list.append(setted_playlist_id)
         return setted_playlist_id_list
     else:

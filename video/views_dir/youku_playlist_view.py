@@ -1,15 +1,11 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
-
 from django.shortcuts import render, render_to_response
-
 from oauth2_authentication.function.youku import youku_get_authenticate
-from video.function.youku_playlist import \
-    set_youku_playlist_online_from_config_playlist, set_youku_playlist_online
+from video.function.youku_playlist import set_youku_playlist_online, \
+    set_youku_playlist_online_from_playlist_config
 from video.models import Youku, YoukuPlaylist
-
 from video.libs.youku import YoukuVideos, YoukuUpload, YoukuPlaylists
-
 from AutoSystem.settings import YOUKU_CLIENT_ID
 
 CLIENT_ID = YOUKU_CLIENT_ID
@@ -31,13 +27,14 @@ def set_youku_playlist_view(request, youku_id):
                               {'text': '更新playlist成功, youku_id为 ' + youku_id})
 
 
-def set_youku_playlist_online_from_config_playlist_view(video_id):
+def set_youku_playlist_online_from_config_playlist_view(request, video_id):
     """
-    根据上传到优酷的视频的video_id的YouTube上的playlist，设置视频在优酷上的playlist
+    在playlist_config表中，根据video_id视频所属的youtube playlist对应的youku playlist
+    设置该视频在优酷上的playlist
     :param video_id:
     :return:
     """
-    result = set_youku_playlist_online_from_config_playlist(video_id)
+    result = set_youku_playlist_online_from_playlist_config(video_id)
     if result:
         setted_playlist_id_list = result
 
@@ -69,7 +66,7 @@ def get_my_playlists_view(request):
                                                    'view_count': playlist[
                                                        'view_count'],
                                                    'video_count': playlist[
-                                                       'video_count'],}
+                                                       'video_count'], }
                                                )
     return render_to_response('result.html', {'text': "获取认证用户的Playlist信息成功",
                                               'dict_items': playlists_dict})

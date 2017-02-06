@@ -1,6 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 import dateutil.parser
+from django.core.exceptions import ObjectDoesNotExist
+
 from oauth2_authentication.function.google_oauth2_server_to_server import \
     get_authenticated_service_s2s
 from oauth2_authentication.views import get_authenticated_service
@@ -167,3 +169,26 @@ def get_youtube_playlist_video_info(youtube_playlist_id, max_results):
     result_text = 'YouTube Playlist为{youtube_playlist_id}的视频已保存'.format(
         youtube_playlist_id=youtube_playlist_id)
     return video_list, result_text
+
+
+def auto_get_youtube_playlist_video_info():
+    """
+    在数据库中查找出所有is_download属性设置为true的youtube playlist对象
+    下载这些youtube playlist里的视频信息并保存到数据库中
+    :return:
+    """
+    try:
+        youtube_playlist_list = YouTubePlaylist.objects.filter(
+            is_download=True)
+        getted_youtube_playlist_list = []
+        getted_video_list = []
+        for youtube_playlist in youtube_playlist_list:
+            video_list, result_text = get_youtube_playlist_video_info(
+                youtube_playlist.playlist_id, 50)
+            getted_video_list.extend(video_list)
+            getted_youtube_playlist_list.append(youtube_playlist.playlist_id)
+        return getted_video_list, getted_youtube_playlist_list
+
+    except ObjectDoesNotExist:
+        print("不存在is_download属性设置为true的YouTube Playlist对象")
+

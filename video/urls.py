@@ -109,6 +109,12 @@ urlpatterns = [
         youtube_playlist_view.get_youtube_playlist_video_info_view,
         name='get_youtube_playlist_video_info'),
 
+    # 下载is_download属性设置为true的youtubeplaylist里的视频信息并保存到数据库中
+    # http://127.0.0.1:8000/video/auto_get_youtube_playlist_video_info
+    url(r'^auto_get_youtube_playlist_video_info$',
+        youtube_playlist_view.auto_get_youtube_playlist_video_info_view,
+        name='auto_get_youtube_playlist_video_info'),
+
     ###########################################################################
     # 字幕
     ###########################################################################
@@ -173,6 +179,13 @@ urlpatterns = [
     url(r'^update_youku_online_info/(?P<youku_video_id>.+)$',
         youku_view.update_youku_online_info_view,
         name='update_youku_online_info'),
+
+    # http://127.0.0.1:8000/video/update_youku_info/
+    #在playlist_config表中，根据video_id视频所属的youtube playlist对应的youku playlist
+    #设置该视频在优酷上的playlist
+    url(r'^set_youku_playlist_online_from_config_playlist/(?P<video_id>.+)$',
+        youku_playlist_view.set_youku_playlist_online_from_config_playlist_view,
+        name='set_youku_playlist_online_from_config_playlist'),
 
     # http://127.0.0.1:8000/video/auto_set_youku_category
     url(r'^auto_set_youku_category', youku_view.auto_set_youku_category_view),

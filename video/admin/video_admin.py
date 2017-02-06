@@ -40,6 +40,7 @@ class VideoAdmin(admin.ModelAdmin):
         'change_vtt_to_ass_and_edit_style',
         'merge_subtitle_to_video',
         'youku_url',
+        'set_youku_playlist_online_from_config_playlist_url',
         'update_youku_online_url',
         'delete_youku_video_url',
         'download_upload_video_url',
@@ -309,6 +310,24 @@ class VideoAdmin(admin.ModelAdmin):
     #
     # get_youku_video_info_url.allow_tags = True
     # get_youku_video_info_url.short_description = '获取优酷视频信息'
+
+    def set_youku_playlist_online_from_config_playlist_url(self,obj):
+        if hasattr(obj, 'youku'):
+            # 如果youku对象有youku_video_id(说明视频已经上传到优酷)
+            if obj.youku.youku_video_id != '':
+                set_youku_playlist_online_from_config_playlist_url = reverse(
+                    'video:set_youku_playlist_online_from_config_playlist',
+                    args=[obj.video_id])
+
+                return "<a href='%s' target='_blank'>设置优酷播单OL</a>" % \
+                       set_youku_playlist_online_from_config_playlist_url
+            else:
+                return "-"
+        else:
+            return "-"
+    set_youku_playlist_online_from_config_playlist_url.allow_tags = True
+    set_youku_playlist_online_from_config_playlist_url.short_description = '设置优酷播单OL'
+
 
     def update_youku_online_url(self, obj):
         if hasattr(obj, 'youku'):

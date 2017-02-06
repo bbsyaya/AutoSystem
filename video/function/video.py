@@ -5,6 +5,8 @@ from video.function.subtitle import merge_video_subtitle, \
     add_subtitle_to_video_process, \
     srt_to_ass_process, merge_sub_edit_style, change_vtt_to_ass_and_edit_style
 from video.function.youku import set_youku_category_local, youku_upload
+from video.function.youku_playlist import \
+    set_youku_playlist_online_from_playlist_config
 from video.function.youtube_download import download_single_youtube_video_main
 from video.function.youtube_subsription import get_subscription_update_video
 from video.function.youtube_subtitle import download_subtitle
@@ -65,6 +67,9 @@ def download_upload_video(video_id):
         Youku.objects.create(title=video.title, video=video)
 
     set_youku_category_local(video.youku.id)
+
+    # 根据
+    set_youku_playlist_online_from_playlist_config(video_id)
 
     if not video.youku.video_id:
         youku_video_id = youku_upload(video.youku.id)
