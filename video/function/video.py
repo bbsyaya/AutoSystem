@@ -68,11 +68,14 @@ def download_upload_video(video_id):
 
     set_youku_category_local(video.youku.id)
 
-    # 根据
-    set_youku_playlist_online_from_playlist_config(video_id)
-
-    if not video.youku.video_id:
+    if not video.youku.youku_video_id:
         youku_video_id = youku_upload(video.youku.id)
+
+        if  youku_video_id:
+            # 在playlist_config表中，根据video_id视频所属的youtube
+            # playlist对应的youku playlist
+            # 设置该视频在优酷上的playlist
+            set_youku_playlist_online_from_playlist_config(video_id)
     else:
         youku_video_id = False
 
