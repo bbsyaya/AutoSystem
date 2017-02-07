@@ -109,6 +109,28 @@ def auto_download_upload_video(num):
                 'interval_max': 0.2,
             }
         )
+@task
+def auto_download_upload_video_2(num):
+    """
+    查找出num个设置了youku对象标题的视频
+    将其分配给celery，使用download_upload_video(video_id)进行下载上传
+    :param num:
+    :return:
+    """
+    tran_video_list = Video.need_download_upload.order_by(
+        'publishedAt', 'title')[:num]
+    for idx, video in enumerate(tran_video_list):
+        download_upload_video_task= download_upload_video.si(video.video_id)
+        # 执行下载视频、字幕、合并字幕到视频，上传到优酷，设置其优酷播单的任务
+        download_upload_video_task.apply_async(
+            retry=True,
+            retry_policy={'max_retries': 10,
+                             'interval_start': 0,
+                             'interval_step': 0.2,
+                             'interval_max': 0.2,
+                          }
+        )
+
 
 @task
 def auto_upload(num):
